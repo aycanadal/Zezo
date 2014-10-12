@@ -12,6 +12,6 @@
     android:icon="@drawable/end"
     android:orderInCategory="2"
     android:showAsAction="always"
-    android:title="End2"/>
+    android:title="@string/Exit"/>
  
 </menu>
