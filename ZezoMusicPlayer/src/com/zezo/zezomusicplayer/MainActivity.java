@@ -2,6 +2,8 @@ package com.zezo.zezomusicplayer;
 
 import android.widget.MediaController.MediaPlayerControl;
 
+import android.app.Activity;
+
 import android.os.IBinder;
 import android.content.ComponentName;
 import android.content.Context;
@@ -20,12 +22,12 @@ import android.net.Uri;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.widget.ListView;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends ActionBarActivity implements
+
+public class MainActivity extends Activity implements
 		MediaPlayerControl {
 
 	private boolean paused = false, playbackPaused = false;
@@ -162,6 +164,7 @@ public class MainActivity extends ActionBarActivity implements
 		controller.setMediaPlayer(this);
 		controller.setAnchorView(findViewById(R.id.song_list));
 		controller.setEnabled(true);
+		controller.setAnchorView(songView);
 
 	}
 
