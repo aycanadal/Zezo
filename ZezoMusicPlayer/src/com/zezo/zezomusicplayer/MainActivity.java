@@ -139,7 +139,7 @@ public class MainActivity extends Activity implements
 		  musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
 		  musicSrv.playSong();
 		  if(playbackPaused){
-		    setController();
+		    //setController();
 		    playbackPaused=false;
 		  }
 		  controller.show(0);
@@ -178,7 +178,7 @@ public class MainActivity extends Activity implements
 	protected void onResume() {
 		super.onResume();
 		if (paused) {
-			setController();
+			//setController();
 			paused = false;
 		}
 	}
@@ -279,5 +279,7 @@ public class MainActivity extends Activity implements
 		}
 		controller.show(0);
 	}
+
+	
 
 }
