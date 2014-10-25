@@ -147,7 +147,7 @@ public class MainActivity extends Activity implements
 
 	private void setController() {
 		// set the controller up
-		controller = new MusicController(this);
+		if (controller == null) controller = new MusicController(this);
 
 		controller.setPrevNextListeners(new View.OnClickListener() {
 			@Override
