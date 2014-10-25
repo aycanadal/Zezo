@@ -239,7 +239,7 @@ public class MainActivity extends Activity implements
 
 	@Override
 	public int getCurrentPosition() {
-		if (musicSrv != null && musicBound & musicSrv.isPng())
+		if (musicSrv != null && musicBound)
 			return musicSrv.getPosn();
 		else
 			return 0;
@@ -247,7 +247,7 @@ public class MainActivity extends Activity implements
 
 	@Override
 	public int getDuration() {
-		if (musicSrv != null && musicBound && musicSrv.isPng())
+		if (musicSrv != null && musicBound)
 			return musicSrv.getDur();
 		else
 			return 0;
