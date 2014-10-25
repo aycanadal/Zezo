@@ -1,14 +1,15 @@
 package com.zezo.zezomusicplayer;
 
 import android.widget.MediaController.MediaPlayerControl;
-
 import android.app.Activity;
-
 import android.os.IBinder;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -40,6 +41,15 @@ public class MainActivity extends Activity implements
 
 	private ArrayList<Song> songList;
 	private ListView songView;
+	
+	// Broadcast receiver to determine when music player has been prepared
+	private BroadcastReceiver onPrepareReceiver = new BroadcastReceiver() {
+	@Override
+	public void onReceive(Context c, Intent i) {
+	    // When music player has been prepared, show controller
+	    controller.show(0);
+	    }
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -181,6 +191,10 @@ public class MainActivity extends Activity implements
 			//setController();
 			paused = false;
 		}
+		
+		// Set up receiver for media player onPrepared broadcast
+		LocalBroadcastManager.getInstance(this).registerReceiver(onPrepareReceiver,
+		        new IntentFilter("MEDIA_PLAYER_PREPARED"));
 	}
 
 	@Override

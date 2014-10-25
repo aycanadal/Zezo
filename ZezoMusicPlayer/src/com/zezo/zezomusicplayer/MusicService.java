@@ -1,18 +1,20 @@
 package com.zezo.zezomusicplayer;
 
 import java.util.Random;
+
 import android.app.Notification;
 import android.app.PendingIntent;
 
 import java.util.ArrayList;
+
 import android.content.ContentUris;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.PowerManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -136,8 +138,11 @@ public class MusicService extends Service implements
 		Notification not = builder.build();
 
 		startForeground(NOTIFY_ID, not);
+		
+		Intent onPreparedIntent = new Intent("MEDIA_PLAYER_PREPARED");
+	    LocalBroadcastManager.getInstance(this).sendBroadcast(onPreparedIntent);
 	}
-
+	
 	@Override
 	public boolean onUnbind(Intent intent) {
 		player.stop();
