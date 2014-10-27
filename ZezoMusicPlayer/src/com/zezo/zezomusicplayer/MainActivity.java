@@ -1,5 +1,6 @@
 package com.zezo.zezomusicplayer;
 
+import android.widget.EditText;
 import android.widget.MediaController.MediaPlayerControl;
 import android.app.Activity;
 import android.os.IBinder;
@@ -10,6 +11,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -30,6 +33,8 @@ import android.view.MenuItem;
 
 public class MainActivity extends Activity implements
 		MediaPlayerControl {
+	
+	private SongAdapter songAdt;
 
 	private boolean paused = false, playbackPaused = false;
 
@@ -41,6 +46,7 @@ public class MainActivity extends Activity implements
 
 	private ArrayList<Song> songList;
 	private ListView songView;
+	private EditText inputSearch;
 	
 	// Broadcast receiver to determine when music player has been prepared
 	private BroadcastReceiver onPrepareReceiver = new BroadcastReceiver() {
@@ -51,11 +57,38 @@ public class MainActivity extends Activity implements
 	    }
 	};
 
+	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		songView = (ListView) findViewById(R.id.song_list);
+		
+		inputSearch = (EditText) findViewById(R.id.inputSearch);
+		
+		inputSearch.addTextChangedListener(new TextWatcher() {
+		     
+		    @Override
+		    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+		        // When user changed the Text
+		        MainActivity.this.songAdt.getFilter().filter(cs);   
+		    }
+		     
+		    @Override
+		    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+		            int arg3) {
+		        // TODO Auto-generated method stub
+		         
+		    }
+		     
+		    @Override
+		    public void afterTextChanged(Editable arg0) {
+		        // TODO Auto-generated method stub                          
+		    }
+		});
+		
+		
 		songList = new ArrayList<Song>();
 		getSongList();
 		Collections.sort(songList, new Comparator<Song>() {
@@ -64,7 +97,7 @@ public class MainActivity extends Activity implements
 			}
 		});
 
-		SongAdapter songAdt = new SongAdapter(this, songList);
+		songAdt = new SongAdapter(this, songList);
 		songView.setAdapter(songAdt);
 		setController();
 	}
