@@ -36,13 +36,13 @@ public class MusicService extends Service implements
 	// song list
 	private ArrayList<Song> songs;
 	// current position
-	private int songPosn;
+	private long songId;
 
 	public void onCreate() {
 		// create the service
 		super.onCreate();
 		// initialize position
-		songPosn = 0;
+		songId = 0;
 		// create player
 		player = new MediaPlayer();
 		initMusicPlayer();
@@ -74,7 +74,7 @@ public class MusicService extends Service implements
 		player.reset();
 
 		// get song
-		Song playSong = songs.get(songPosn);
+		Song playSong = getSongByID(songId);
 
 		songTitle = playSong.getTitle();
 
@@ -94,6 +94,15 @@ public class MusicService extends Service implements
 		player.prepareAsync();
 	}
 
+	private Song getSongByID(long songId) {
+		for (Song song : songs) {
+			if (song.getID() == songId) {
+				return song;
+			}
+		}
+		return null;
+	}
+
 	public void setShuffle() {
 		if (shuffle)
 			shuffle = false;
@@ -108,10 +117,10 @@ public class MusicService extends Service implements
 
 	@Override
 	public void onCompletion(MediaPlayer mp) {
-	  if(player.getCurrentPosition() > 0){
-	    mp.reset();
-	    playNext();
-	  }
+		if (player.getCurrentPosition() > 0) {
+			mp.reset();
+			playNext();
+		}
 	}
 
 	@Override
@@ -138,11 +147,11 @@ public class MusicService extends Service implements
 		Notification not = builder.build();
 
 		startForeground(NOTIFY_ID, not);
-		
+
 		Intent onPreparedIntent = new Intent("MEDIA_PLAYER_PREPARED");
-	    LocalBroadcastManager.getInstance(this).sendBroadcast(onPreparedIntent);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(onPreparedIntent);
 	}
-	
+
 	@Override
 	public boolean onUnbind(Intent intent) {
 		player.stop();
@@ -150,8 +159,8 @@ public class MusicService extends Service implements
 		return false;
 	}
 
-	public void setSong(int songIndex) {
-		songPosn = songIndex;
+	public void setSong(long songId) {
+		this.songId = songId;
 	}
 
 	public int getPosn() {
@@ -179,25 +188,40 @@ public class MusicService extends Service implements
 	}
 
 	public void playPrev() {
-		songPosn--;
-		if (songPosn < 0)
-			songPosn = songs.size() - 1;
+		songId--;
+		if (songId < 0)
+			songId = songs.size() - 1;
 		playSong();
 	}
 
 	public void playNext() {
+
+		Song song = getSongByID(songId);
+		int songIndex = songs.indexOf(song);
+
 		if (shuffle) {
-			int newSong = songPosn;
-			while (newSong == songPosn) {
-				newSong = rand.nextInt(songs.size());
+
+			int newSongIndex;
+			long newSongId = songId;
+
+			while (newSongId == songId) {
+				newSongIndex = rand.nextInt(songs.size());
+				newSongId = songs.get(newSongIndex).getID();
 			}
-			songPosn = newSong;
+
+			songId = newSongId;
+
 		} else {
-			songPosn++;
-			if (songPosn >= songs.size())
-				songPosn = 0;
+
+			if (songIndex >= songs.size() - 1)
+				songId = songs.get(0).getID();
+			else
+				songId = songs.get(songIndex).getID();
+
 		}
+		
 		playSong();
+
 	}
 
 	@Override

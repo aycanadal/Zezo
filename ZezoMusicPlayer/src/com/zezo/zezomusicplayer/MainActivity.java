@@ -179,7 +179,8 @@ public class MainActivity extends Activity implements
 	}
 
 	public void songPicked(View view){
-		  musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
+		long songId = songAdt.getItem(Integer.parseInt(view.getTag().toString())).getID();
+		  musicSrv.setSong(songId);
 		  musicSrv.playSong();
 		  if(playbackPaused){
 		    //setController();

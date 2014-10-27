@@ -82,7 +82,7 @@ public class SongAdapter extends BaseAdapter implements Filterable {
 
 	                    for (Song song : songs) {
 	                    	String songTitle = song.getTitle();
-	                        if (songTitle.toUpperCase().startsWith(charSequence.toString().toUpperCase()))
+	                        if (songTitle.toUpperCase().contains(charSequence.toString().toUpperCase()))
 	                            filteredSongs.add(song);
 	                    }
 
@@ -97,7 +97,7 @@ public class SongAdapter extends BaseAdapter implements Filterable {
 	            @Override
 	            protected void publishResults(CharSequence charSequence, FilterResults filterResults)
 	            {
-	            	filteredSongs = (ArrayList<Song>)filterResults.values;
+	            	filteredSongs = (ArrayList<Song>)filterResults.values;	            	
 	                notifyDataSetChanged();
 	            }
 	        };
