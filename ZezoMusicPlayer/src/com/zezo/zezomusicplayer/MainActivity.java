@@ -143,7 +143,7 @@ public class MainActivity extends Activity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_shuffle:
-			musicSrv.setShuffle();
+			musicSrv.toggleShuffle();
 			break;
 		case R.id.action_end:
 			stopService(playIntent);
@@ -183,7 +183,7 @@ public class MainActivity extends Activity implements
 		  musicSrv.setSong(songId);
 		  musicSrv.playSong();
 		  if(playbackPaused){
-		    //setController();
+		    setController();
 		    playbackPaused=false;
 		  }
 		  controller.show(0);
@@ -273,6 +273,7 @@ public class MainActivity extends Activity implements
 
 	@Override
 	public int getCurrentPosition() {
+		//if (musicSrv != null && musicBound && musicSrv.isPng())
 		if (musicSrv != null && musicBound)
 			return musicSrv.getPosn();
 		else
@@ -281,6 +282,10 @@ public class MainActivity extends Activity implements
 
 	@Override
 	public int getDuration() {
+		
+		//Log.d(musicSrv.);
+		
+		//if (musicSrv != null && musicBound && musicSrv.isPng())
 		if (musicSrv != null && musicBound)
 			return musicSrv.getDur();
 		else

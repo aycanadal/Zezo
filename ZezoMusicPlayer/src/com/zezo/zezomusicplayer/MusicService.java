@@ -1,5 +1,6 @@
 package com.zezo.zezomusicplayer;
 
+import java.io.IOException;
 import java.util.Random;
 
 import android.app.Notification;
@@ -90,8 +91,23 @@ public class MusicService extends Service implements
 		} catch (Exception e) {
 			Log.e("MUSIC SERVICE", "Error setting data source", e);
 		}
+		
+		try {
+			
+			player.prepareAsync();
 
-		player.prepareAsync();
+		} catch (IllegalArgumentException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		} catch (SecurityException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		} catch (IllegalStateException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
+
+		
 	}
 
 	private Song getSongByID(long songId) {
@@ -103,7 +119,7 @@ public class MusicService extends Service implements
 		return null;
 	}
 
-	public void setShuffle() {
+	public void toggleShuffle() {
 		if (shuffle)
 			shuffle = false;
 		else
@@ -117,17 +133,16 @@ public class MusicService extends Service implements
 
 	@Override
 	public void onCompletion(MediaPlayer mp) {
+		
+		int currentPosition = player.getCurrentPosition();
+		
 		if (player.getCurrentPosition() > 0) {
 			mp.reset();
 			playNext();
 		}
 	}
 
-	@Override
-	public boolean onError(MediaPlayer mp, int what, int extra) {
-		mp.reset();
-		return false;
-	}
+	
 
 	@Override
 	public void onPrepared(MediaPlayer mp) {
@@ -156,6 +171,12 @@ public class MusicService extends Service implements
 	public boolean onUnbind(Intent intent) {
 		player.stop();
 		player.release();
+		return false;
+	}
+	
+	@Override
+	public boolean onError(MediaPlayer mp, int what, int extra) {
+		mp.reset();
 		return false;
 	}
 
@@ -212,8 +233,10 @@ public class MusicService extends Service implements
 			songId = newSongId;
 
 		} else {
+			
+			songIndex++;
 
-			if (songIndex >= songs.size() - 1)
+			if (songIndex >= songs.size())
 				songId = songs.get(0).getID();
 			else
 				songId = songs.get(songIndex).getID();
