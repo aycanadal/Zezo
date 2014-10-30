@@ -30,10 +30,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+public class MainActivity extends Activity implements MediaPlayerControl {
 
-public class MainActivity extends Activity implements
-		MediaPlayerControl {
-	
 	private SongAdapter songAdt;
 
 	private boolean paused = false, playbackPaused = false;
@@ -47,48 +45,52 @@ public class MainActivity extends Activity implements
 	private ArrayList<Song> songList;
 	private ListView songView;
 	private EditText inputSearch;
-	
+
 	// Broadcast receiver to determine when music player has been prepared
 	private BroadcastReceiver onPrepareReceiver = new BroadcastReceiver() {
-	@Override
-	public void onReceive(Context c, Intent i) {
-	    // When music player has been prepared, show controller
-	    controller.show(0);
-	    }
-	};
+		@Override
+		public void onReceive(Context c, Intent i) {
+			// When music player has been prepared, show controller
 
-	
+			if (playbackPaused) {
+				setController();
+				playbackPaused = false;
+			}
+			setController();
+			controller.show(0);
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		songView = (ListView) findViewById(R.id.song_list);
-		
+
 		inputSearch = (EditText) findViewById(R.id.inputSearch);
-		
+
 		inputSearch.addTextChangedListener(new TextWatcher() {
-		     
-		    @Override
-		    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-		        // When user changed the Text
-		        MainActivity.this.songAdt.getFilter().filter(cs);   
-		    }
-		     
-		    @Override
-		    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-		            int arg3) {
-		        // TODO Auto-generated method stub
-		         
-		    }
-		     
-		    @Override
-		    public void afterTextChanged(Editable arg0) {
-		        // TODO Auto-generated method stub                          
-		    }
+
+			@Override
+			public void onTextChanged(CharSequence cs, int arg1, int arg2,
+					int arg3) {
+				// When user changed the Text
+				MainActivity.this.songAdt.getFilter().filter(cs);
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				// TODO Auto-generated method stub
+			}
 		});
-		
-		
+
 		songList = new ArrayList<Song>();
 		getSongList();
 		Collections.sort(songList, new Comparator<Song>() {
@@ -178,20 +180,20 @@ public class MainActivity extends Activity implements
 		}
 	}
 
-	public void songPicked(View view){
-		long songId = songAdt.getItem(Integer.parseInt(view.getTag().toString())).getID();
-		  musicSrv.setSong(songId);
-		  musicSrv.playSong();
-		  if(playbackPaused){
-		    setController();
-		    playbackPaused=false;
-		  }
-		  controller.show(0);
-		}
+	public void songPicked(View view) {
+		
+		controller = null;
+		long songId = songAdt.getItem(
+				Integer.parseInt(view.getTag().toString())).getID();
+		musicSrv.setCurrentSongId(songId);
+		musicSrv.playSong();
+
+	}
 
 	private void setController() {
 		// set the controller up
-		if (controller == null) controller = new MusicController(this);
+		if (controller == null)
+			controller = new MusicController(this);
 
 		controller.setPrevNextListeners(new View.OnClickListener() {
 			@Override
@@ -222,13 +224,13 @@ public class MainActivity extends Activity implements
 	protected void onResume() {
 		super.onResume();
 		if (paused) {
-			//setController();
+			// setController();
 			paused = false;
 		}
-		
+
 		// Set up receiver for media player onPrepared broadcast
-		LocalBroadcastManager.getInstance(this).registerReceiver(onPrepareReceiver,
-		        new IntentFilter("MEDIA_PLAYER_PREPARED"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(
+				onPrepareReceiver, new IntentFilter("MEDIA_PLAYER_PREPARED"));
 	}
 
 	@Override
@@ -273,7 +275,7 @@ public class MainActivity extends Activity implements
 
 	@Override
 	public int getCurrentPosition() {
-		//if (musicSrv != null && musicBound && musicSrv.isPng())
+		// if (musicSrv != null && musicBound && musicSrv.isPng())
 		if (musicSrv != null && musicBound)
 			return musicSrv.getPosn();
 		else
@@ -282,10 +284,10 @@ public class MainActivity extends Activity implements
 
 	@Override
 	public int getDuration() {
-		
-		//Log.d(musicSrv.);
-		
-		//if (musicSrv != null && musicBound && musicSrv.isPng())
+
+		// Log.d(musicSrv.);
+
+		// if (musicSrv != null && musicBound && musicSrv.isPng())
 		if (musicSrv != null && musicBound)
 			return musicSrv.getDur();
 		else
@@ -301,8 +303,8 @@ public class MainActivity extends Activity implements
 
 	@Override
 	public void pause() {
-	  playbackPaused=true;
-	  musicSrv.pausePlayer();
+		playbackPaused = true;
+		musicSrv.pausePlayer();
 	}
 
 	@Override
@@ -332,7 +334,5 @@ public class MainActivity extends Activity implements
 		}
 		controller.show(0);
 	}
-
-	
 
 }

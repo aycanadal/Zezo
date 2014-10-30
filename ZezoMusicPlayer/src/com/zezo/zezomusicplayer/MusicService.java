@@ -105,8 +105,11 @@ public class MusicService extends Service implements
 		} catch (IllegalStateException e) {
 		    // TODO Auto-generated catch block
 		    e.printStackTrace();
+		} catch (Exception e) {
+			Log.d("", e.getMessage());
 		}
-
+	
+int a = 0;
 		
 	}
 
@@ -164,7 +167,8 @@ public class MusicService extends Service implements
 		startForeground(NOTIFY_ID, not);
 
 		Intent onPreparedIntent = new Intent("MEDIA_PLAYER_PREPARED");
-		LocalBroadcastManager.getInstance(this).sendBroadcast(onPreparedIntent);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(onPreparedIntent);	
+		
 	}
 
 	@Override
@@ -180,7 +184,7 @@ public class MusicService extends Service implements
 		return false;
 	}
 
-	public void setSong(long songId) {
+	public void setCurrentSongId(long songId) {
 		this.songId = songId;
 	}
 
