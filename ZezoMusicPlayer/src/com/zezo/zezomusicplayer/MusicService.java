@@ -38,6 +38,8 @@ public class MusicService extends Service implements
 	private ArrayList<Song> songs;
 	// current position
 	private long songId;
+	private int pauseDuration = 0;
+	private int pausePosition = 0;
 
 	public void onCreate() {
 		// create the service
@@ -46,12 +48,14 @@ public class MusicService extends Service implements
 		songId = 0;
 		// create player
 		player = new MediaPlayer();
+
 		initMusicPlayer();
 
 		rand = new Random();
 	}
 
 	public void initMusicPlayer() {
+
 		player.setWakeMode(getApplicationContext(),
 				PowerManager.PARTIAL_WAKE_LOCK);
 		player.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -59,6 +63,7 @@ public class MusicService extends Service implements
 		player.setOnPreparedListener(this);
 		player.setOnCompletionListener(this);
 		player.setOnErrorListener(this);
+
 	}
 
 	public void setList(ArrayList<Song> theSongs) {
@@ -72,10 +77,11 @@ public class MusicService extends Service implements
 	}
 
 	public void playSong() {
+
 		player.reset();
 
 		// get song
-		Song playSong = getSongByID(songId);
+		Song playSong = getSongById(songId);
 
 		songTitle = playSong.getTitle();
 
@@ -91,29 +97,29 @@ public class MusicService extends Service implements
 		} catch (Exception e) {
 			Log.e("MUSIC SERVICE", "Error setting data source", e);
 		}
-		
+
 		try {
-			
+
 			player.prepareAsync();
 
 		} catch (IllegalArgumentException e) {
-		    // TODO Auto-generated catch block
-		    e.printStackTrace();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (SecurityException e) {
-		    // TODO Auto-generated catch block
-		    e.printStackTrace();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (IllegalStateException e) {
-		    // TODO Auto-generated catch block
-		    e.printStackTrace();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (Exception e) {
 			Log.d("", e.getMessage());
 		}
-	
-int a = 0;
-		
+
+		int a = 0;
+
 	}
 
-	private Song getSongByID(long songId) {
+	private Song getSongById(long songId) {
 		for (Song song : songs) {
 			if (song.getID() == songId) {
 				return song;
@@ -136,16 +142,14 @@ int a = 0;
 
 	@Override
 	public void onCompletion(MediaPlayer mp) {
-		
+
 		int currentPosition = player.getCurrentPosition();
-		
+
 		if (player.getCurrentPosition() > 0) {
 			mp.reset();
 			playNext();
 		}
 	}
-
-	
 
 	@Override
 	public void onPrepared(MediaPlayer mp) {
@@ -167,8 +171,8 @@ int a = 0;
 		startForeground(NOTIFY_ID, not);
 
 		Intent onPreparedIntent = new Intent("MEDIA_PLAYER_PREPARED");
-		LocalBroadcastManager.getInstance(this).sendBroadcast(onPreparedIntent);	
-		
+		LocalBroadcastManager.getInstance(this).sendBroadcast(onPreparedIntent);
+
 	}
 
 	@Override
@@ -177,7 +181,7 @@ int a = 0;
 		player.release();
 		return false;
 	}
-	
+
 	@Override
 	public boolean onError(MediaPlayer mp, int what, int extra) {
 		mp.reset();
@@ -201,6 +205,8 @@ int a = 0;
 	}
 
 	public void pausePlayer() {
+		pauseDuration = getDur();
+		pausePosition = getPosn();
 		player.pause();
 	}
 
@@ -212,16 +218,21 @@ int a = 0;
 		player.start();
 	}
 
-	public void playPrev() {
-		songId--;
-		if (songId < 0)
-			songId = songs.size() - 1;
+	public void playPrevious() {
+		Song song = getSongById(songId);
+		int songIndex = songs.indexOf(song);
+
+		songIndex--;
+		if (songIndex < 0)
+			songIndex = songs.size() - 1;
+
+		songId = songs.get(songIndex).getID();
 		playSong();
 	}
 
 	public void playNext() {
 
-		Song song = getSongByID(songId);
+		Song song = getSongById(songId);
 		int songIndex = songs.indexOf(song);
 
 		if (shuffle) {
@@ -237,7 +248,7 @@ int a = 0;
 			songId = newSongId;
 
 		} else {
-			
+
 			songIndex++;
 
 			if (songIndex >= songs.size())
@@ -246,7 +257,7 @@ int a = 0;
 				songId = songs.get(songIndex).getID();
 
 		}
-		
+
 		playSong();
 
 	}
@@ -254,6 +265,14 @@ int a = 0;
 	@Override
 	public void onDestroy() {
 		stopForeground(true);
+	}
+
+	public int getPauseDuration() {
+		return pauseDuration;
+	}
+
+	public int getPausePosition() {
+		return pausePosition;
 	}
 
 }

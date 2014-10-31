@@ -32,6 +32,8 @@ import android.view.MenuItem;
 
 public class MainActivity extends Activity implements MediaPlayerControl {
 
+	private boolean processingPick = false;
+
 	private SongAdapter songAdt;
 
 	private boolean paused = false, playbackPaused = false;
@@ -53,11 +55,12 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 			// When music player has been prepared, show controller
 
 			if (playbackPaused) {
-				setController();
+				// setController();
 				playbackPaused = false;
 			}
 			setController();
 			controller.show(0);
+			processingPick = false;
 		}
 	};
 
@@ -181,8 +184,12 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	}
 
 	public void songPicked(View view) {
-		
-		controller = null;
+
+		if (processingPick)
+			return;
+
+		processingPick = true;
+
 		long songId = songAdt.getItem(
 				Integer.parseInt(view.getTag().toString())).getID();
 		musicSrv.setCurrentSongId(songId);
@@ -275,9 +282,11 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 	@Override
 	public int getCurrentPosition() {
-		// if (musicSrv != null && musicBound && musicSrv.isPng())
-		if (musicSrv != null && musicBound)
+		if (musicSrv != null && musicBound && musicSrv.isPng())
+			// if (musicSrv != null && musicBound)
 			return musicSrv.getPosn();
+		else if (musicSrv != null && musicBound)
+			return musicSrv.getPausePosition();
 		else
 			return 0;
 	}
@@ -287,10 +296,13 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 		// Log.d(musicSrv.);
 
-		// if (musicSrv != null && musicBound && musicSrv.isPng())
-		if (musicSrv != null && musicBound)
+		if (musicSrv != null && musicBound && musicSrv.isPng())
+			// if (musicSrv != null && musicBound)
 			return musicSrv.getDur();
-		else
+		else if (musicSrv != null && musicBound) {
+			int pauseDuration = musicSrv.getPauseDuration();
+			return musicSrv.getPauseDuration();
+		} else
 			return 0;
 	}
 
@@ -327,7 +339,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	}
 
 	private void playPrev() {
-		musicSrv.playPrev();
+		musicSrv.playPrevious();
 		if (playbackPaused) {
 			setController();
 			playbackPaused = false;
