@@ -62,7 +62,8 @@ public class MusicService extends Service implements
 
 	public void setSongs(ArrayList<Song> songs) {
 		this.songs = songs;
-		song = songs.get(0);
+		if (songs != null && songs.size() > 0)
+			song = songs.get(0);
 	}
 
 	public class MusicBinder extends Binder {
@@ -74,16 +75,16 @@ public class MusicService extends Service implements
 	public void playSong(Song song) {
 
 		player.reset();
-		this.song = song;	
+		this.song = song;
 
 		Uri trackUri = ContentUris.withAppendedId(
 				android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				song.getId());
 
 		try {
-			
+
 			player.setDataSource(getApplicationContext(), trackUri);
-			
+
 		} catch (Exception e) {
 			Log.e("MUSIC SERVICE", "Error setting data source", e);
 		}
@@ -218,10 +219,10 @@ public class MusicService extends Service implements
 			long newSongId = song.getId();
 
 			while (newSongId == song.getId()) {
-				
+
 				newSongIndex = rand.nextInt(songs.size());
 				newSongId = songs.get(newSongIndex).getId();
-				
+
 			}
 
 			playSong(songs.get(newSongIndex));

@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 
 public class MainActivity extends Activity implements MediaPlayerControl {
 
@@ -71,6 +72,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		songView = (ListView) findViewById(R.id.song_list);
 
 		inputSearch = (EditText) findViewById(R.id.inputSearch);
+		inputSearch.setFocusable(true);
 
 		inputSearch.addTextChangedListener(new TextWatcher() {
 
@@ -184,6 +186,8 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	}
 
 	public void songPicked(View view) {
+		
+		inputSearch.clearFocus();
 
 		if (processingPick)
 			return;
@@ -193,6 +197,16 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		Song song = songAdt.getItem(Integer.parseInt(view.getTag().toString()));
 		musicService.playSong(song);
 
+	}
+	
+	public void onSearchBoxClick(View view) {
+		
+		inputSearch.requestFocus();
+		((InputMethodManager) this
+	            .getSystemService(Context.INPUT_METHOD_SERVICE))
+	            .showSoftInput(inputSearch,
+	                    InputMethodManager.SHOW_FORCED);
+		
 	}
 
 	private void setController() {

@@ -2,25 +2,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#000000"    
+    android:background="#000000"
     android:orientation="vertical"
     tools:context=".MainActivity" >
-    
-    <EditText android:id="@+id/inputSearch"
+
+    <EditText
+        android:id="@+id/inputSearch"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:duplicateParentState="true" 
         android:hint="Search..."
         android:inputType="textVisiblePassword"
+        android:longClickable="true"
         android:textColor="#00FF00"
-        />
- 
-  <ListView
-    android:id="@+id/song_list"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:fastScrollEnabled="true"
-    android:fastScrollAlwaysVisible="true"
-     >
-  </ListView>
- 
+        android:onClick="onSearchBoxClick"
+         >
+
+        <requestFocus />
+    </EditText>
+
+    <ListView
+        android:id="@+id/song_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:fastScrollAlwaysVisible="true"
+        android:fastScrollEnabled="true" >
+    </ListView>
+
 </LinearLayout>
