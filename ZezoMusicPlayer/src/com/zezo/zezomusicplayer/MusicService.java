@@ -40,12 +40,14 @@ public class MusicService extends Service implements
 	private long songId;
 	private int pauseDuration = 0;
 	private int pausePosition = 0;
+	private Song song;
 
 	public void onCreate() {
 		// create the service
 		super.onCreate();
 		// initialize position
-		songId = 0;
+		// songId = 0;
+
 		// create player
 		player = new MediaPlayer();
 
@@ -66,8 +68,9 @@ public class MusicService extends Service implements
 
 	}
 
-	public void setList(ArrayList<Song> theSongs) {
-		songs = theSongs;
+	public void setSongs(ArrayList<Song> songs) {
+		this.songs = songs;
+		song = songs.get(0);
 	}
 
 	public class MusicBinder extends Binder {
@@ -76,17 +79,16 @@ public class MusicService extends Service implements
 		}
 	}
 
-	public void playSong() {
+	public void playSong(Song song) {
+
+		this.song = song;
 
 		player.reset();
 
-		// get song
-		Song playSong = getSongById(songId);
-
-		songTitle = playSong.getTitle();
+		songTitle = song.getTitle();
 
 		// get id
-		long currSong = playSong.getID();
+		long currSong = song.getID();
 		// set uri
 		Uri trackUri = ContentUris.withAppendedId(
 				android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -219,25 +221,25 @@ public class MusicService extends Service implements
 	}
 
 	public void playPrevious() {
-		Song song = getSongById(songId);
+		// Song song = getSongById(songId);
 		int songIndex = songs.indexOf(song);
 
 		songIndex--;
 		if (songIndex < 0)
 			songIndex = songs.size() - 1;
 
-		songId = songs.get(songIndex).getID();
-		playSong();
+		// songId = songs.get(songIndex).getID();
+		playSong(songs.get(songIndex));
 	}
 
 	public void playNext() {
 
-		Song song = getSongById(songId);
+		// Song song = getSongById(songId);
 		int songIndex = songs.indexOf(song);
 
 		if (shuffle) {
 
-			int newSongIndex;
+			int newSongIndex = rand.nextInt(songs.size());
 			long newSongId = songId;
 
 			while (newSongId == songId) {
@@ -245,20 +247,23 @@ public class MusicService extends Service implements
 				newSongId = songs.get(newSongIndex).getID();
 			}
 
-			songId = newSongId;
+			// songId = newSongId;
+			playSong(songs.get(newSongIndex));
 
 		} else {
 
 			songIndex++;
 
 			if (songIndex >= songs.size())
-				songId = songs.get(0).getID();
+				// songId = songs.get(0).getID();
+				playSong(songs.get(0));
 			else
-				songId = songs.get(songIndex).getID();
+				// songId = songs.get(songIndex).getID();
+				playSong(songs.get(songIndex));
 
 		}
 
-		playSong();
+		// playSong();
 
 	}
 

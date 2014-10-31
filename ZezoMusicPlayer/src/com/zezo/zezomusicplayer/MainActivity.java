@@ -40,7 +40,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 	private MusicController controller;
 
-	private MusicService musicSrv;
+	private MusicService musicService;
 	private Intent playIntent;
 	private boolean musicBound = false;
 
@@ -114,9 +114,9 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			MusicBinder binder = (MusicBinder) service;
 			// get service
-			musicSrv = binder.getService();
+			musicService = binder.getService();
 			// pass list
-			musicSrv.setList(songList);
+			musicService.setSongs(songList);
 			musicBound = true;
 		}
 
@@ -148,11 +148,11 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_shuffle:
-			musicSrv.toggleShuffle();
+			musicService.toggleShuffle();
 			break;
 		case R.id.action_end:
 			stopService(playIntent);
-			musicSrv = null;
+			musicService = null;
 			System.exit(0);
 			break;
 		}
@@ -190,10 +190,9 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 		processingPick = true;
 
-		long songId = songAdt.getItem(
-				Integer.parseInt(view.getTag().toString())).getID();
-		musicSrv.setCurrentSongId(songId);
-		musicSrv.playSong();
+		Song song = songAdt.getItem(Integer.parseInt(view.getTag().toString()));
+		// musicSrv.setCurrentSongId(songId);
+		musicService.playSong(song);
 
 	}
 
@@ -249,7 +248,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	@Override
 	protected void onDestroy() {
 		stopService(playIntent);
-		musicSrv = null;
+		musicService = null;
 		super.onDestroy();
 	}
 
@@ -282,11 +281,11 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 	@Override
 	public int getCurrentPosition() {
-		if (musicSrv != null && musicBound && musicSrv.isPng())
+		if (musicService != null && musicBound && musicService.isPng())
 			// if (musicSrv != null && musicBound)
-			return musicSrv.getPosn();
-		else if (musicSrv != null && musicBound)
-			return musicSrv.getPausePosition();
+			return musicService.getPosn();
+		else if (musicService != null && musicBound)
+			return musicService.getPausePosition();
 		else
 			return 0;
 	}
@@ -296,41 +295,41 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 		// Log.d(musicSrv.);
 
-		if (musicSrv != null && musicBound && musicSrv.isPng())
+		if (musicService != null && musicBound && musicService.isPng())
 			// if (musicSrv != null && musicBound)
-			return musicSrv.getDur();
-		else if (musicSrv != null && musicBound) {
-			int pauseDuration = musicSrv.getPauseDuration();
-			return musicSrv.getPauseDuration();
+			return musicService.getDur();
+		else if (musicService != null && musicBound) {
+			int pauseDuration = musicService.getPauseDuration();
+			return musicService.getPauseDuration();
 		} else
 			return 0;
 	}
 
 	@Override
 	public boolean isPlaying() {
-		if (musicSrv != null & musicBound)
-			return musicSrv.isPng();
+		if (musicService != null & musicBound)
+			return musicService.isPng();
 		return false;
 	}
 
 	@Override
 	public void pause() {
 		playbackPaused = true;
-		musicSrv.pausePlayer();
+		musicService.pausePlayer();
 	}
 
 	@Override
 	public void seekTo(int pos) {
-		musicSrv.seek(pos);
+		musicService.seek(pos);
 	}
 
 	@Override
 	public void start() {
-		musicSrv.go();
+		musicService.go();
 	}
 
 	private void playNext() {
-		musicSrv.playNext();
+		musicService.playNext();
 		if (playbackPaused) {
 			setController();
 			playbackPaused = false;
@@ -339,7 +338,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	}
 
 	private void playPrev() {
-		musicSrv.playPrevious();
+		musicService.playPrevious();
 		if (playbackPaused) {
 			setController();
 			playbackPaused = false;
