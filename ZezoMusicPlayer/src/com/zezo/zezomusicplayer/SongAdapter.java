@@ -39,7 +39,7 @@ public class SongAdapter extends BaseAdapter implements Filterable {
 
 	@Override
 	public long getItemId(int arg0) {
-		return filteredSongs.get(arg0).getID();
+		return filteredSongs.get(arg0).getId();
 	}
 
 	@Override

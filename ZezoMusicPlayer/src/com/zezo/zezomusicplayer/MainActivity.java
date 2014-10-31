@@ -191,7 +191,6 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		processingPick = true;
 
 		Song song = songAdt.getItem(Integer.parseInt(view.getTag().toString()));
-		// musicSrv.setCurrentSongId(songId);
 		musicService.playSong(song);
 
 	}
