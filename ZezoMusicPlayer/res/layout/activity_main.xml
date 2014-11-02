@@ -4,7 +4,8 @@
     android:layout_height="fill_parent"
     android:background="#000000"
     android:orientation="vertical"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity"
+    android:windowSoftInputMode="adjustPan" >
 
     <EditText
         android:id="@+id/inputSearch"
@@ -22,7 +23,7 @@
     <ListView
         android:id="@+id/song_list"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:fastScrollAlwaysVisible="true"
         android:fastScrollEnabled="true" >
     </ListView>

@@ -49,6 +49,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	private ArrayList<Song> songList;
 	private ListView songView;
 	private EditText searchBox;
+	private boolean searchEnabled;
 
 	// Broadcast receiver to determine when music player has been prepared
 	private BroadcastReceiver onPrepareReceiver = new BroadcastReceiver() {
@@ -60,7 +61,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 				// setController();
 				playbackPaused = false;
 			}
-			setController();
+			initController();
 			controller.show(0);
 			processingPick = false;
 		}
@@ -68,14 +69,14 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.activity_main);
 		songView = (ListView) findViewById(R.id.song_list);
 		songList = new ArrayList<Song>();
 		getSongList();
-		
+
 		Collections.sort(songList, new Comparator<Song>() {
 			public int compare(Song a, Song b) {
 				return a.getTitle().compareTo(b.getTitle());
@@ -84,15 +85,17 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 		songAdt = new SongAdapter(this, songList);
 		songView.setAdapter(songAdt);
-		
-		setController();
-		setSearchBox();
+
+		initController();
+		initSearch();
 	}
 
-	private void setSearchBox() {
+	private void initSearch() {
+		
 		searchBox = (EditText) findViewById(R.id.inputSearch);
-		searchBox.setVisibility(View.INVISIBLE);
-		searchBox.setEnabled(false);
+		searchBox.setVisibility(View.GONE);
+		//searchBox.setEnabled(false);
+		searchEnabled = false;
 
 		searchBox.addTextChangedListener(new TextWatcher() {
 
@@ -115,10 +118,10 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 				// TODO Auto-generated method stub
 			}
 		});
-		
-		//searchBox.setText("a");
-		//searchBox.setText("");
-		
+
+		// searchBox.setText("a");
+		// searchBox.setText("");
+
 	}
 
 	// connect to the service
@@ -160,43 +163,74 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		
 		switch (item.getItemId()) {
+		
 		case R.id.action_shuffle:
+			
 			musicService.toggleShuffle();
 			break;
+			
 		case R.id.action_end:
-			hideKeyboard();
-			stopService(playIntent);
-			musicService = null;
-			System.exit(0);
+			
+			exit();
 			break;
+			
 		case R.id.action_search:
 
-			if (searchBox.isEnabled()) {
-				searchBox.setEnabled(false);
-				searchBox.setText("");
-				hideKeyboard();
-				searchBox.setVisibility(View.INVISIBLE);
-			} else{
-				searchBox.setEnabled(true);
-				searchBox.setVisibility(View.VISIBLE);
-				boolean tookFocus = searchBox.requestFocus();
-				showKeyboard();
-			}
+			if (searchEnabled)
+				disableSearch();
+			else
+				enableSearch();
 
 			break;
+			
 		}
+		
 		return super.onOptionsItemSelected(item);
+		
+	}
+
+	private void exit() {
+		hideKeyboard();
+		stopService(playIntent);
+		musicService = null;
+		System.exit(0);
+	}
+
+	private void enableSearch() {
+		//searchBox.setEnabled(true);
+		searchEnabled = true;
+		searchBox.setVisibility(View.VISIBLE);
+		boolean tookFocus = searchBox.requestFocus();
+		showKeyboard();
+		controller.setVisibility(View.GONE);
+
+		// int controllerHeight = controller.getHeight();
+		// Double controllerPadding = controllerHeight * 2.35;
+		// controller.setPadding(0, 0, 0, controllerPadding.intValue());
+	}
+
+	private void disableSearch() {
+		controller.setVisibility(View.VISIBLE);
+		searchEnabled = false;
+		searchBox.setText("");
+		hideKeyboard();
+		searchBox.setVisibility(View.GONE);
 	}
 
 	private void showKeyboard() {
-		/*((InputMethodManager) this
-				.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(
-				searchBox, InputMethodManager.SHOW_FORCED);*/
-		
-		InputMethodManager imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-		imm.toggleSoftInput(0, 0);
+		/*
+		 * ((InputMethodManager) this
+		 * .getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(
+		 * searchBox, InputMethodManager.SHOW_FORCED);
+		 */
+
+		((InputMethodManager) this
+				.getSystemService(Context.INPUT_METHOD_SERVICE))
+				.toggleSoftInput(0, 0);
+
 	}
 
 	public void getSongList() {
@@ -225,7 +259,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 	public void songPicked(View view) {
 
-		//searchBox.clearFocus();
+		// searchBox.clearFocus();
 
 		if (processingPick)
 			return;
@@ -234,6 +268,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 		Song song = songAdt.getItem(Integer.parseInt(view.getTag().toString()));
 		musicService.playSong(song);
+		controller.setPadding(0, 0, 0, controller.getHeight());
 
 	}
 
@@ -265,8 +300,8 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 	}
 
-	private void setController() {
-		// set the controller up
+	private void initController() {
+		
 		if (controller == null)
 			controller = new MusicController(this);
 
@@ -283,20 +318,27 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		});
 
 		controller.setMediaPlayer(this);
-		controller.setAnchorView(findViewById(R.id.song_list));
-		controller.setEnabled(true);
+		controller.setEnabled(true);		
 		controller.setAnchorView(songView);
+		
+		// controller.setAnchorView(findViewById(android.R.id.content).getRootView());
+		// controller.setAnchorView(findViewById(android.R.id.song_list));
+		
+		//controller.setPadding(0, 0, 0, controller.getHeight());
 
 	}
 
 	@Override
 	protected void onPause() {
+		
 		super.onPause();
 		paused = true;
+		
 	}
 
 	@Override
 	protected void onResume() {
+		
 		super.onResume();
 		if (paused) {
 			// setController();
@@ -304,8 +346,10 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		}
 
 		// Set up receiver for media player onPrepared broadcast
+		
 		LocalBroadcastManager.getInstance(this).registerReceiver(
 				onPrepareReceiver, new IntentFilter("MEDIA_PLAYER_PREPARED"));
+		
 	}
 
 	@Override
@@ -400,7 +444,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	private void playNext() {
 		musicService.playNext();
 		if (playbackPaused) {
-			setController();
+			initController();
 			playbackPaused = false;
 		}
 		controller.show(0);
@@ -409,7 +453,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	private void playPrev() {
 		musicService.playPrevious();
 		if (playbackPaused) {
-			setController();
+			initController();
 			playbackPaused = false;
 		}
 		controller.show(0);
