@@ -15,9 +15,7 @@
         android:inputType="textVisiblePassword"
         android:longClickable="true"
         android:textColor="#00FF00"
-        android:onClick="onSearchBoxClick"
-         >
-
+        android:onClick="onSearchBoxClick">
         <requestFocus />
     </EditText>
 

@@ -13,6 +13,7 @@ import android.content.ServiceConnection;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -47,7 +48,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 	private ArrayList<Song> songList;
 	private ListView songView;
-	private EditText inputSearch;
+	private EditText searchBox;
 
 	// Broadcast receiver to determine when music player has been prepared
 	private BroadcastReceiver onPrepareReceiver = new BroadcastReceiver() {
@@ -67,14 +68,33 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_main);
 		songView = (ListView) findViewById(R.id.song_list);
+		songList = new ArrayList<Song>();
+		getSongList();
+		
+		Collections.sort(songList, new Comparator<Song>() {
+			public int compare(Song a, Song b) {
+				return a.getTitle().compareTo(b.getTitle());
+			}
+		});
 
-		inputSearch = (EditText) findViewById(R.id.inputSearch);
-		inputSearch.setFocusable(true);
+		songAdt = new SongAdapter(this, songList);
+		songView.setAdapter(songAdt);
+		
+		setController();
+		setSearchBox();
+	}
 
-		inputSearch.addTextChangedListener(new TextWatcher() {
+	private void setSearchBox() {
+		searchBox = (EditText) findViewById(R.id.inputSearch);
+		searchBox.setVisibility(View.INVISIBLE);
+		searchBox.setEnabled(false);
+
+		searchBox.addTextChangedListener(new TextWatcher() {
 
 			@Override
 			public void onTextChanged(CharSequence cs, int arg1, int arg2,
@@ -95,18 +115,10 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 				// TODO Auto-generated method stub
 			}
 		});
-
-		songList = new ArrayList<Song>();
-		getSongList();
-		Collections.sort(songList, new Comparator<Song>() {
-			public int compare(Song a, Song b) {
-				return a.getTitle().compareTo(b.getTitle());
-			}
-		});
-
-		songAdt = new SongAdapter(this, songList);
-		songView.setAdapter(songAdt);
-		setController();
+		
+		//searchBox.setText("a");
+		//searchBox.setText("");
+		
 	}
 
 	// connect to the service
@@ -153,12 +165,38 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 			musicService.toggleShuffle();
 			break;
 		case R.id.action_end:
+			hideKeyboard();
 			stopService(playIntent);
 			musicService = null;
 			System.exit(0);
 			break;
+		case R.id.action_search:
+
+			if (searchBox.isEnabled()) {
+				searchBox.setEnabled(false);
+				searchBox.setText("");
+				hideKeyboard();
+				searchBox.setVisibility(View.INVISIBLE);
+			} else{
+				searchBox.setEnabled(true);
+				searchBox.setVisibility(View.VISIBLE);
+				boolean tookFocus = searchBox.requestFocus();
+				showKeyboard();
+			}
+
+			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void showKeyboard() {
+		/*((InputMethodManager) this
+				.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(
+				searchBox, InputMethodManager.SHOW_FORCED);*/
+		
+		InputMethodManager imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+		imm.toggleSoftInput(0, 0);
 	}
 
 	public void getSongList() {
@@ -186,8 +224,8 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	}
 
 	public void songPicked(View view) {
-		
-		inputSearch.clearFocus();
+
+		//searchBox.clearFocus();
 
 		if (processingPick)
 			return;
@@ -198,15 +236,33 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		musicService.playSong(song);
 
 	}
-	
+
 	public void onSearchBoxClick(View view) {
-		
-		inputSearch.requestFocus();
-		((InputMethodManager) this
-	            .getSystemService(Context.INPUT_METHOD_SERVICE))
-	            .showSoftInput(inputSearch,
-	                    InputMethodManager.SHOW_FORCED);
-		
+
+		searchBox.requestFocus();
+
+		showKeyboard();
+
+	}
+
+	/*
+	 * @Override public void onBackPressed() { hideKeyboard();
+	 * super.onBackPressed(); }
+	 */
+	/*
+	 * @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+	 * 
+	 * if (keyCode == KeyEvent.KEYCODE_BACK) { hideKeyboard();
+	 * super.onKeyDown(keyCode, event); } return true;
+	 * 
+	 * }
+	 */
+	private void hideKeyboard() {
+
+		// searchBox.requestFocus();
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
+
 	}
 
 	private void setController() {
