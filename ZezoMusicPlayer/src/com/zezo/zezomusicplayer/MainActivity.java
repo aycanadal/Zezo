@@ -1,36 +1,35 @@
 package com.zezo.zezomusicplayer;
 
-import android.widget.EditText;
-import android.widget.MediaController.MediaPlayerControl;
-import android.app.Activity;
-import android.os.IBinder;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
-import android.view.MenuItem;
-import android.view.View;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import com.zezo.zezomusicplayer.MusicService.MusicBinder;
-
-import android.net.Uri;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.database.Cursor;
-import android.widget.ListView;
+import android.media.AudioManager;
+import android.media.AudioManager.OnAudioFocusChangeListener;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.MediaController.MediaPlayerControl;
+
+import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 
 public class MainActivity extends Activity implements MediaPlayerControl {
 
@@ -50,6 +49,26 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	private ListView songView;
 	private EditText searchBox;
 	private boolean searchEnabled;
+
+	OnAudioFocusChangeListener afChangeListener = new OnAudioFocusChangeListener() {
+
+		public void onAudioFocusChange(int focusChange) {
+
+			AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+			if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+				pause();
+			} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+				onResume();
+			} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+				ComponentName mRemoteControlResponder = new ComponentName(
+						getPackageName(), RemoteControlReceiver.class.getName());
+				am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
+				am.abandonAudioFocus(afChangeListener);
+				// Stop playback
+			}
+		}
+	};
 
 	// Broadcast receiver to determine when music player has been prepared
 	private BroadcastReceiver onPrepareReceiver = new BroadcastReceiver() {
@@ -91,10 +110,10 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	}
 
 	private void initSearch() {
-		
+
 		searchBox = (EditText) findViewById(R.id.inputSearch);
 		searchBox.setVisibility(View.GONE);
-		//searchBox.setEnabled(false);
+		// searchBox.setEnabled(false);
 		searchEnabled = false;
 
 		searchBox.addTextChangedListener(new TextWatcher() {
@@ -163,19 +182,19 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		
+
 		switch (item.getItemId()) {
-		
+
 		case R.id.action_shuffle:
-			
+
 			musicService.toggleShuffle();
 			break;
-			
+
 		case R.id.action_end:
-			
+
 			exit();
 			break;
-			
+
 		case R.id.action_search:
 
 			if (searchEnabled)
@@ -184,48 +203,43 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 				enableSearch();
 
 			break;
-			
+
 		}
-		
+
 		return super.onOptionsItemSelected(item);
-		
+
 	}
 
 	private void exit() {
+
 		hideKeyboard();
 		stopService(playIntent);
 		musicService = null;
 		System.exit(0);
+
 	}
 
 	private void enableSearch() {
-		//searchBox.setEnabled(true);
+
 		searchEnabled = true;
 		searchBox.setVisibility(View.VISIBLE);
 		boolean tookFocus = searchBox.requestFocus();
 		showKeyboard();
 		controller.setVisibility(View.GONE);
 
-		// int controllerHeight = controller.getHeight();
-		// Double controllerPadding = controllerHeight * 2.35;
-		// controller.setPadding(0, 0, 0, controllerPadding.intValue());
 	}
 
 	private void disableSearch() {
-		controller.setVisibility(View.VISIBLE);
+
 		searchEnabled = false;
 		searchBox.setText("");
-		hideKeyboard();
 		searchBox.setVisibility(View.GONE);
+		hideKeyboard();
+		controller.setVisibility(View.VISIBLE);
+
 	}
 
 	private void showKeyboard() {
-
-		/*
-		 * ((InputMethodManager) this
-		 * .getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(
-		 * searchBox, InputMethodManager.SHOW_FORCED);
-		 */
 
 		((InputMethodManager) this
 				.getSystemService(Context.INPUT_METHOD_SERVICE))
@@ -234,6 +248,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	}
 
 	public void getSongList() {
+
 		// retrieve song info
 		ContentResolver musicResolver = getContentResolver();
 		Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -267,8 +282,25 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		processingPick = true;
 
 		Song song = songAdt.getItem(Integer.parseInt(view.getTag().toString()));
-		musicService.playSong(song);
-		controller.setPadding(0, 0, 0, controller.getHeight());
+
+		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+		// Request audio focus for playback
+		int result = am.requestAudioFocus(afChangeListener,
+		// Use the music stream.
+				AudioManager.STREAM_MUSIC,
+				// Request permanent focus.
+				AudioManager.AUDIOFOCUS_GAIN);
+
+		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+
+			ComponentName mRemoteControlResponder = new ComponentName(
+					getPackageName(), RemoteControlReceiver.class.getName());
+			am.registerMediaButtonEventReceiver(mRemoteControlResponder);
+			// Start playback.
+			musicService.playSong(song);
+
+		}
 
 	}
 
@@ -280,10 +312,16 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 	}
 
-	/*
-	 * @Override public void onBackPressed() { hideKeyboard();
-	 * super.onBackPressed(); }
-	 */
+	@Override
+	public void onBackPressed() {
+
+		if (searchEnabled)
+			disableSearch();
+
+		super.onBackPressed();
+
+	}
+
 	/*
 	 * @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
 	 * 
@@ -301,7 +339,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	}
 
 	private void initController() {
-		
+
 		if (controller == null)
 			controller = new MusicController(this);
 
@@ -318,38 +356,55 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		});
 
 		controller.setMediaPlayer(this);
-		controller.setEnabled(true);		
+		controller.setEnabled(true);
 		controller.setAnchorView(songView);
-		
+
 		// controller.setAnchorView(findViewById(android.R.id.content).getRootView());
 		// controller.setAnchorView(findViewById(android.R.id.song_list));
-		
-		//controller.setPadding(0, 0, 0, controller.getHeight());
+
+		// controller.setPadding(0, 0, 0, controller.getHeight());
 
 	}
 
 	@Override
 	protected void onPause() {
-		
+
 		super.onPause();
 		paused = true;
-		
+
 	}
 
 	@Override
 	protected void onResume() {
-		
-		super.onResume();
-		if (paused) {
-			// setController();
-			paused = false;
+
+		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+		// Request audio focus for playback
+		int result = am.requestAudioFocus(afChangeListener,
+		// Use the music stream.
+				AudioManager.STREAM_MUSIC,
+				// Request permanent focus.
+				AudioManager.AUDIOFOCUS_GAIN);
+
+		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+			ComponentName mRemoteControlResponder = new ComponentName(
+					getPackageName(), RemoteControlReceiver.class.getName());
+			am.registerMediaButtonEventReceiver(mRemoteControlResponder);
+			// Start playback.
+
+			super.onResume();
+			if (paused) {
+				// setController();
+				paused = false;
+			}
+
+			// Set up receiver for media player onPrepared broadcast
+
+			LocalBroadcastManager.getInstance(this).registerReceiver(
+					onPrepareReceiver,
+					new IntentFilter("MEDIA_PLAYER_PREPARED"));
 		}
 
-		// Set up receiver for media player onPrepared broadcast
-		
-		LocalBroadcastManager.getInstance(this).registerReceiver(
-				onPrepareReceiver, new IntentFilter("MEDIA_PLAYER_PREPARED"));
-		
 	}
 
 	@Override

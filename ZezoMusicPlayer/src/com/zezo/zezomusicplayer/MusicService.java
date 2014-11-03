@@ -8,8 +8,11 @@ import android.app.PendingIntent;
 
 import java.util.ArrayList;
 
+import android.content.ComponentName;
 import android.content.ContentUris;
+import android.content.Context;
 import android.media.AudioManager;
+import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
@@ -136,7 +139,7 @@ public class MusicService extends Service implements
 
 	@Override
 	public void onPrepared(MediaPlayer mp) {
-		// start playback
+
 		mp.start();
 
 		Intent notIntent = new Intent(this, MainActivity.class);
@@ -155,6 +158,7 @@ public class MusicService extends Service implements
 
 		Intent onPreparedIntent = new Intent("MEDIA_PLAYER_PREPARED");
 		LocalBroadcastManager.getInstance(this).sendBroadcast(onPreparedIntent);
+		
 
 	}
 
