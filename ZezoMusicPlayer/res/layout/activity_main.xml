@@ -7,25 +7,45 @@
     tools:context=".MainActivity"
     android:windowSoftInputMode="adjustPan" >
 
+    <LinearLayout 
+    android:id="@+id/searchPane"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="#000000"
+    android:orientation="horizontal"
+    tools:context=".MainActivity"
+    android:windowSoftInputMode="adjustPan"
+    android:weightSum="1.0" >
+    
     <EditText
         android:id="@+id/inputSearch"
-        android:layout_width="fill_parent"
+        android:layout_width="0dp"
+        android:layout_weight="0.8"
         android:layout_height="wrap_content"
         android:duplicateParentState="true" 
         android:hint="Search..."
         android:inputType="textVisiblePassword"
         android:longClickable="true"
         android:textColor="#00FF00"
-        android:onClick="onSearchBoxClick">
+        >
         <requestFocus />
     </EditText>
+    
+ 	<Button android:id="@+id/speakButton"
+ 	    android:layout_width="0dp"
+        android:layout_weight="0.2"        
+        android:layout_height="wrap_content"
+        android:text="Talk"
+        android:onClick="onTalkButtonClick" />
 
-    <ListView
+ 	</LinearLayout> 
+ 	
+    <com.zezo.zezomusicplayer.DragNDropListView
         android:id="@+id/song_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:fastScrollAlwaysVisible="true"
         android:fastScrollEnabled="true" >
-    </ListView>
+    </com.zezo.zezomusicplayer.DragNDropListView>
 
 </LinearLayout>

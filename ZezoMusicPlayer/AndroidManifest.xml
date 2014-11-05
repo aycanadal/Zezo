@@ -20,20 +20,22 @@
             android:name=".MainActivity"
             android:label="@string/app_name" 
             android:launchMode="singleTop"
-  			android:screenOrientation="portrait"
+  			android:screenOrientation="fullSensor"
   			android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
+                
             </intent-filter>
         </activity>
-        <service android:name="com.zezo.zezomusicplayer.MusicService" />
         
+        <service android:name="com.zezo.zezomusicplayer.MusicService" />
         <receiver android:name="RemoteControlReceiver">
-    <intent-filter>
         <action android:name="android.intent.action.MEDIA_BUTTON" />
-    </intent-filter>
+         <action android:name="android.intent.action.RECOGNIZE_SPEECH" /> 
+        
 </receiver>
 
     </application>

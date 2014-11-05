@@ -1,20 +1,20 @@
 package com.zezo.zezomusicplayer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
-public class SongAdapter extends BaseAdapter implements Filterable {
+public class SongAdapter extends BaseAdapter implements Filterable,
+		RemoveListener, DropListener {
 
 	private ArrayList<Song> songs;
 	private ArrayList<Song> filteredSongs;
@@ -59,49 +59,55 @@ public class SongAdapter extends BaseAdapter implements Filterable {
 		songLay.setTag(position);
 		return songLay;
 	}
-	
-	 @Override
-	    public Filter getFilter()
-	    {
-	       return new Filter()
-	       {
-	            @Override
-	            protected FilterResults performFiltering(CharSequence charSequence)
-	            {
-	                FilterResults results = new FilterResults();
 
-	                //If there's nothing to filter on, return the original data for your list
-	                if(charSequence == null || charSequence.length() == 0)
-	                {
-	                    results.values = songs;
-	                    results.count = songs.size();
-	                }
-	                else
-	                {
-	                	List<Song> filteredSongs = new ArrayList<Song>();
+	@Override
+	public Filter getFilter() {
+		return new Filter() {
+			@Override
+			protected FilterResults performFiltering(CharSequence charSequence) {
+				FilterResults results = new FilterResults();
 
-	                    for (Song song : songs) {
-	                    	String songTitle = song.getTitle();
-	                        if (songTitle.toUpperCase().contains(charSequence.toString().toUpperCase()))
-	                            filteredSongs.add(song);
-	                    }
+				// If there's nothing to filter on, return the original data for
+				// your list
+				if (charSequence == null || charSequence.length() == 0) {
+					results.values = songs;
+					results.count = songs.size();
+				} else {
+					List<Song> filteredSongs = new ArrayList<Song>();
 
-	                    results.values = filteredSongs;
-	                    results.count = filteredSongs.size();
+					for (Song song : songs) {
+						String songTitle = song.getTitle();
+						if (songTitle.toUpperCase().contains(
+								charSequence.toString().toUpperCase()))
+							filteredSongs.add(song);
+					}
 
-	                }
+					results.values = filteredSongs;
+					results.count = filteredSongs.size();
 
-	                return results;
-	            }
+				}
 
-	            @Override
-	            protected void publishResults(CharSequence charSequence, FilterResults filterResults)
-	            {
-	            	filteredSongs = (ArrayList<Song>)filterResults.values;	            	
-	                notifyDataSetChanged();
-	            }
-	        };
-	    }
+				return results;
+			}
+
+			@Override
+			protected void publishResults(CharSequence charSequence,
+					FilterResults filterResults) {
+				filteredSongs = (ArrayList<Song>) filterResults.values;
+				notifyDataSetChanged();
+			}
+		};
 	}
 
+	public void onRemove(int which) {
+		if (which < 0 || which > songs.size())
+			return;
+		songs.remove(which);
+	}
 
+	public void onDrop(int from, int to) {
+		Song temp = songs.get(from);
+		songs.remove(from);
+		songs.add(to, temp);
+	}
+}

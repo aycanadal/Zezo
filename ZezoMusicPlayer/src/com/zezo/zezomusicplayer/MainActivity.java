@@ -18,14 +18,21 @@ import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.speech.RecognizerIntent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
+import android.text.Layout;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.MediaController.MediaPlayerControl;
 
@@ -33,22 +40,25 @@ import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 
 public class MainActivity extends Activity implements MediaPlayerControl {
 
-	private boolean processingPick = false;
+	private ArrayList<Song> songList;
+	private SongAdapter songAdapter;
+	private ListView songView;
 
-	private SongAdapter songAdt;
-
-	private boolean paused = false, playbackPaused = false;
+	private boolean searchEnabled;
+	private LinearLayout searchPane;
+	private EditText searchBox;
+	private Button speakButton;
 
 	private MusicController controller;
 
 	private MusicService musicService;
-	private Intent playIntent;
 	private boolean musicBound = false;
+	private Intent playIntent;
 
-	private ArrayList<Song> songList;
-	private ListView songView;
-	private EditText searchBox;
-	private boolean searchEnabled;
+	private boolean paused = false, playbackPaused = false;
+	private boolean processingPick = false;
+
+	private static final int REQUEST_CODE = 1234;
 
 	OnAudioFocusChangeListener afChangeListener = new OnAudioFocusChangeListener() {
 
@@ -59,7 +69,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 			if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
 				pause();
 			} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-				onResume();
+				//onResume();
 			} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
 				ComponentName mRemoteControlResponder = new ComponentName(
 						getPackageName(), RemoteControlReceiver.class.getName());
@@ -75,6 +85,9 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		@Override
 		public void onReceive(Context c, Intent i) {
 			// When music player has been prepared, show controller
+			
+			if(i.getAction() != "MEDIA_PLAYER_PREPARED")
+				return;
 
 			if (playbackPaused) {
 				// setController();
@@ -102,18 +115,70 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 			}
 		});
 
-		songAdt = new SongAdapter(this, songList);
-		songView.setAdapter(songAdt);
+		songAdapter = new SongAdapter(this, songList);
+		songView.setAdapter(songAdapter);
+
+		if (songView instanceof DragNDropListView) {
+			((DragNDropListView) songView).setDropListener(mDropListener);
+			((DragNDropListView) songView).setRemoveListener(mRemoveListener);
+			((DragNDropListView) songView).setDragListener(mDragListener);
+		}
 
 		initController();
 		initSearch();
+
 	}
+
+	private DropListener mDropListener = new DropListener() {
+		public void onDrop(int from, int to) {
+
+			songAdapter.onDrop(from, to);
+			songView.invalidateViews();
+		}
+	};
+
+	private RemoveListener mRemoveListener = new RemoveListener() {
+		public void onRemove(int which) {
+			songAdapter.onRemove(which);
+			songView.invalidateViews();
+		}
+	};
+
+	private DragListener mDragListener = new DragListener() {
+
+		int backgroundColor = 0xe0103010;
+		int defaultBackgroundColor;
+
+		public void onDrag(int x, int y, ListView listView) {
+			// TODO Auto-generated method stub
+		}
+
+		public void onStartDrag(View itemView) {
+			itemView.setVisibility(View.INVISIBLE);
+			defaultBackgroundColor = itemView.getDrawingCacheBackgroundColor();
+			itemView.setBackgroundColor(backgroundColor);
+			ImageView iv = (ImageView) itemView.findViewById(R.id.ImageView01);
+			if (iv != null)
+				iv.setVisibility(View.INVISIBLE);
+		}
+
+		public void onStopDrag(View itemView) {
+			itemView.setVisibility(View.VISIBLE);
+			itemView.setBackgroundColor(defaultBackgroundColor);
+			ImageView iv = (ImageView) itemView.findViewById(R.id.ImageView01);
+			if (iv != null)
+				iv.setVisibility(View.VISIBLE);
+		}
+
+	};
 
 	private void initSearch() {
 
+		searchPane = (LinearLayout) findViewById(R.id.searchPane);
 		searchBox = (EditText) findViewById(R.id.inputSearch);
-		searchBox.setVisibility(View.GONE);
-		// searchBox.setEnabled(false);
+		speakButton = (Button) findViewById(R.id.speakButton);
+		searchPane.setVisibility(View.GONE);
+		// searchBox.setVisibility(View.GONE);
 		searchEnabled = false;
 
 		searchBox.addTextChangedListener(new TextWatcher() {
@@ -122,7 +187,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 			public void onTextChanged(CharSequence cs, int arg1, int arg2,
 					int arg3) {
 				// When user changed the Text
-				MainActivity.this.songAdt.getFilter().filter(cs);
+				MainActivity.this.songAdapter.getFilter().filter(cs);
 			}
 
 			@Override
@@ -222,7 +287,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	private void enableSearch() {
 
 		searchEnabled = true;
-		searchBox.setVisibility(View.VISIBLE);
+		searchPane.setVisibility(View.VISIBLE);
 		boolean tookFocus = searchBox.requestFocus();
 		showKeyboard();
 		controller.setVisibility(View.GONE);
@@ -233,7 +298,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 		searchEnabled = false;
 		searchBox.setText("");
-		searchBox.setVisibility(View.GONE);
+		searchPane.setVisibility(View.GONE);
 		hideKeyboard();
 		controller.setVisibility(View.VISIBLE);
 
@@ -281,7 +346,8 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 		processingPick = true;
 
-		Song song = songAdt.getItem(Integer.parseInt(view.getTag().toString()));
+		Song song = songAdapter.getItem(Integer.parseInt(((View) view
+				.getParent()).getTag().toString()));
 
 		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
@@ -304,14 +370,44 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 	}
 
-	public void onSearchBoxClick(View view) {
-
-		searchBox.requestFocus();
-
-		showKeyboard();
-
+	public void onTalkButtonClick(View view) {
+		startVoiceRecognitionActivity();
 	}
 
+	private void startVoiceRecognitionActivity() {
+		
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Listening...");
+		startActivityForResult(intent, REQUEST_CODE);
+		
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+			// Populate the wordsList with the String values the recognition
+			// engine thought it heard
+			ArrayList<String> matches = data
+					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+			// wordsList.setAdapter(new ArrayAdapter<String>(this,
+			// android.R.layout.simple_list_item_1,
+			// matches));
+
+			searchBox.setText(matches.get(0));
+
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	/*public void onSearchBoxClick(View view) {
+
+		searchBox.requestFocus();
+		//showKeyboard();
+
+	}
+*/
 	@Override
 	public void onBackPressed() {
 

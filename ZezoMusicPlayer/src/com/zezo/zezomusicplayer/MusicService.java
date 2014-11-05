@@ -158,7 +158,6 @@ public class MusicService extends Service implements
 
 		Intent onPreparedIntent = new Intent("MEDIA_PLAYER_PREPARED");
 		LocalBroadcastManager.getInstance(this).sendBroadcast(onPreparedIntent);
-		
 
 	}
 
