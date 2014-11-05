@@ -23,6 +23,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.Layout;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,6 +60,8 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	private boolean processingPick = false;
 
 	private static final int REQUEST_CODE = 1234;
+	
+	HeadsetStateReceiver headsetStateReceiver;
 
 	OnAudioFocusChangeListener afChangeListener = new OnAudioFocusChangeListener() {
 
@@ -126,7 +129,31 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 		initController();
 		initSearch();
+		
+		 IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+		    headsetStateReceiver = new HeadsetStateReceiver();
+		    registerReceiver( headsetStateReceiver, receiverFilter );
+		    
+		    LocalBroadcastManager.getInstance(this).registerReceiver(
+					onPrepareReceiver,
+					new IntentFilter("MEDIA_PLAYER_PREPARED"));
 
+	}
+	
+	private class HeadsetStateReceiver extends BroadcastReceiver {
+	    @Override public void onReceive(Context context, Intent intent) {
+	        if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+	            int state = intent.getIntExtra("state", -1);
+	            switch (state) {
+	            case 0:
+	            	if(isPlaying())
+	                onPause();
+	                break;
+	            case 1:
+	                break;
+	            }
+	        }
+	    }
 	}
 
 	private DropListener mDropListener = new DropListener() {
@@ -348,6 +375,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 		Song song = songAdapter.getItem(Integer.parseInt(((View) view
 				.getParent()).getTag().toString()));
+		//view.sette
 
 		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
@@ -473,7 +501,9 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	@Override
 	protected void onResume() {
 
-		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		super.onResume();
+		
+		/*AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
 		// Request audio focus for playback
 		int result = am.requestAudioFocus(afChangeListener,
@@ -485,27 +515,32 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 			ComponentName mRemoteControlResponder = new ComponentName(
 					getPackageName(), RemoteControlReceiver.class.getName());
-			am.registerMediaButtonEventReceiver(mRemoteControlResponder);
+			am.registerMediaButtonEventReceiver(mRemoteControlResponder);*/
+			
+			
 			// Start playback.
 
-			super.onResume();
-			if (paused) {
+			
+			//if (paused) {
 				// setController();
-				paused = false;
-			}
+				//paused = false;
+			//}
 
 			// Set up receiver for media player onPrepared broadcast
 
-			LocalBroadcastManager.getInstance(this).registerReceiver(
+			/*LocalBroadcastManager.getInstance(this).registerReceiver(
 					onPrepareReceiver,
-					new IntentFilter("MEDIA_PLAYER_PREPARED"));
-		}
+					new IntentFilter("MEDIA_PLAYER_PREPARED"));*/
+		//}
+		
+		 IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+		    registerReceiver(headsetStateReceiver, filter);
 
 	}
 
 	@Override
 	protected void onStop() {
-		controller.hide();
+		//controller.hide();
 		super.onStop();
 	}
 
@@ -513,6 +548,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	protected void onDestroy() {
 		stopService(playIntent);
 		musicService = null;
+		hideKeyboard();
 		super.onDestroy();
 	}
 
