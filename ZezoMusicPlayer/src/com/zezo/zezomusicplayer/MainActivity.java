@@ -1,66 +1,68 @@
 package com.zezo.zezomusicplayer;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
+import java.util.Collections;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.database.Cursor;
+import android.content.Context;
+import android.media.AudioManager;
+import android.content.IntentFilter;
 import android.content.ComponentName;
 import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.media.AudioManager;
-import android.media.AudioManager.OnAudioFocusChangeListener;
+import android.content.BroadcastReceiver;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.speech.RecognizerIntent;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.Editable;
-import android.text.Layout;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.MediaController.MediaPlayerControl;
 
+import android.view.Menu;
+import android.view.View;
+import android.text.Editable;
+import android.widget.Button;
+import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.ImageView;
+import android.text.TextWatcher;
+import android.widget.LinearLayout;
+import android.view.inputmethod.InputMethodManager;
+import android.support.v4.content.LocalBroadcastManager;
+import android.widget.MediaController.MediaPlayerControl;
+import android.media.AudioManager.OnAudioFocusChangeListener;
+
+import com.zezo.dragndroplistview.DragListener;
+import com.zezo.dragndroplistview.DropListener;
+import com.zezo.dragndroplistview.RemoveListener;
+import com.zezo.dragndroplistview.DragNDropListView;
 import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 
 public class MainActivity extends Activity implements MediaPlayerControl {
 
 	private ArrayList<Song> songList;
-	private SongAdapter songAdapter;
 	private ListView songView;
 
-	private boolean searchEnabled;
 	private LinearLayout searchPane;
 	private EditText searchBox;
 	private Button speakButton;
 
+	private boolean searchEnabled;
 	private MusicController controller;
 
 	private MusicService musicService;
 	private boolean musicBound = false;
-	private Intent playIntent;
 
+	private Intent playIntent;
+	private SongAdapter songAdapter;
 	private boolean paused = false, playbackPaused = false;
 	private boolean processingPick = false;
 
 	private static final int REQUEST_CODE = 1234;
-	
+
 	HeadsetStateReceiver headsetStateReceiver;
 
 	OnAudioFocusChangeListener afChangeListener = new OnAudioFocusChangeListener() {
@@ -72,7 +74,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 			if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
 				pause();
 			} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-				//onResume();
+				// onResume();
 			} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
 				ComponentName mRemoteControlResponder = new ComponentName(
 						getPackageName(), RemoteControlReceiver.class.getName());
@@ -88,8 +90,8 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		@Override
 		public void onReceive(Context c, Intent i) {
 			// When music player has been prepared, show controller
-			
-			if(i.getAction() != "MEDIA_PLAYER_PREPARED")
+
+			if (i.getAction() != "MEDIA_PLAYER_PREPARED")
 				return;
 
 			if (playbackPaused) {
@@ -108,7 +110,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
-		songView = (ListView) findViewById(R.id.song_list);
+		songView = (SongListView) findViewById(R.id.song_list);
 		songList = new ArrayList<Song>();
 		getSongList();
 
@@ -119,86 +121,141 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		});
 
 		songAdapter = new SongAdapter(this, songList);
-		songView.setAdapter(songAdapter);
-
-		if (songView instanceof DragNDropListView) {
-			((DragNDropListView) songView).setDropListener(mDropListener);
-			((DragNDropListView) songView).setRemoveListener(mRemoveListener);
-			((DragNDropListView) songView).setDragListener(mDragListener);
-		}
+		songView.setAdapter(songAdapter);		
 
 		initController();
 		initSearch();
-		
-		 IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-		    headsetStateReceiver = new HeadsetStateReceiver();
-		    registerReceiver( headsetStateReceiver, receiverFilter );
-		    
-		    LocalBroadcastManager.getInstance(this).registerReceiver(
-					onPrepareReceiver,
-					new IntentFilter("MEDIA_PLAYER_PREPARED"));
+
+		IntentFilter receiverFilter = new IntentFilter(
+				Intent.ACTION_HEADSET_PLUG);
+		headsetStateReceiver = new HeadsetStateReceiver();
+		registerReceiver(headsetStateReceiver, receiverFilter);
+
+		LocalBroadcastManager.getInstance(this).registerReceiver(
+				onPrepareReceiver, new IntentFilter("MEDIA_PLAYER_PREPARED"));
 
 	}
 	
 	private class HeadsetStateReceiver extends BroadcastReceiver {
-	    @Override public void onReceive(Context context, Intent intent) {
-	        if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
-	            int state = intent.getIntExtra("state", -1);
-	            switch (state) {
-	            case 0:
-	            	//if(isPlaying())
-	                pause();
-	                break;
-	            case 1:
-	                break;
-	            }
-	        }
-	    }
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+				int state = intent.getIntExtra("state", -1);
+				switch (state) {
+				case 0:
+					// if(isPlaying())
+					pause();
+					break;
+				case 1:
+					break;
+				}
+			}
+		}
 	}
 
-	private DropListener mDropListener = new DropListener() {
-		public void onDrop(int from, int to) {
+	@Override
+	protected void onStart() {
 
-			songAdapter.onDrop(from, to);
-			songView.invalidateViews();
+		super.onStart();
+		if (playIntent == null) {
+			playIntent = new Intent(this, MusicService.class);
+			boolean bound = bindService(playIntent, musicConnection,
+					Context.BIND_AUTO_CREATE);
+			startService(playIntent);
+		}
+
+	}
+
+	private ServiceConnection musicConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+
+			MusicBinder binder = (MusicBinder) service;
+			musicService = binder.getService();
+			musicService.setSongs(songList);
+			musicBound = true;
+
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+
+			musicBound = false;
+
 		}
 	};
+	
 
-	private RemoveListener mRemoveListener = new RemoveListener() {
-		public void onRemove(int which) {
-			songAdapter.onRemove(which);
-			songView.invalidateViews();
-		}
-	};
+	@Override
+	protected void onRestart() {
+		
+	}
 
-	private DragListener mDragListener = new DragListener() {
+	@Override
+	protected void onResume() {
 
-		int backgroundColor = 0xe0103010;
-		int defaultBackgroundColor;
+		super.onResume();
 
-		public void onDrag(int x, int y, ListView listView) {
-			// TODO Auto-generated method stub
-		}
+		/*
+		 * AudioManager am = (AudioManager)
+		 * getSystemService(Context.AUDIO_SERVICE);
+		 * 
+		 * // Request audio focus for playback int result =
+		 * am.requestAudioFocus(afChangeListener, // Use the music stream.
+		 * AudioManager.STREAM_MUSIC, // Request permanent focus.
+		 * AudioManager.AUDIOFOCUS_GAIN);
+		 * 
+		 * if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+		 * ComponentName mRemoteControlResponder = new ComponentName(
+		 * getPackageName(), RemoteControlReceiver.class.getName());
+		 * am.registerMediaButtonEventReceiver(mRemoteControlResponder);
+		 */
 
-		public void onStartDrag(View itemView) {
-			itemView.setVisibility(View.INVISIBLE);
-			defaultBackgroundColor = itemView.getDrawingCacheBackgroundColor();
-			itemView.setBackgroundColor(backgroundColor);
-			ImageView iv = (ImageView) itemView.findViewById(R.id.ImageView01);
-			if (iv != null)
-				iv.setVisibility(View.INVISIBLE);
-		}
+		// Start playback.
 
-		public void onStopDrag(View itemView) {
-			itemView.setVisibility(View.VISIBLE);
-			itemView.setBackgroundColor(defaultBackgroundColor);
-			ImageView iv = (ImageView) itemView.findViewById(R.id.ImageView01);
-			if (iv != null)
-				iv.setVisibility(View.VISIBLE);
-		}
+		// if (paused) {
+		// setController();
+		// paused = false;
+		// }
 
-	};
+		// Set up receiver for media player onPrepared broadcast
 
+		/*
+		 * LocalBroadcastManager.getInstance(this).registerReceiver(
+		 * onPrepareReceiver, new IntentFilter("MEDIA_PLAYER_PREPARED"));
+		 */
+		// }
+
+		IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+		registerReceiver(headsetStateReceiver, filter);
+
+	}
+
+	@Override
+	protected void onPause() {
+
+		super.onPause();
+		paused = true;
+
+	}
+
+	@Override
+	protected void onStop() {
+		
+		super.onStop();
+		
+	}
+
+	@Override
+	protected void onDestroy() {
+		stopService(playIntent);
+		musicService = null;
+		hideKeyboard();
+		super.onDestroy();
+	}
+
+	
 	private void initSearch() {
 
 		searchPane = (LinearLayout) findViewById(R.id.searchPane);
@@ -233,36 +290,6 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		// searchBox.setText("a");
 		// searchBox.setText("");
 
-	}
-
-	// connect to the service
-	private ServiceConnection musicConnection = new ServiceConnection() {
-
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			MusicBinder binder = (MusicBinder) service;
-			// get service
-			musicService = binder.getService();
-			// pass list
-			musicService.setSongs(songList);
-			musicBound = true;
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			musicBound = false;
-		}
-	};
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		if (playIntent == null) {
-			playIntent = new Intent(this, MusicService.class);
-			boolean bound = bindService(playIntent, musicConnection,
-					Context.BIND_AUTO_CREATE);
-			startService(playIntent);
-		}
 	}
 
 	@Override
@@ -375,7 +402,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 		Song song = songAdapter.getItem(Integer.parseInt(((View) view
 				.getParent()).getTag().toString()));
-		//view.sette
+		// view.sette
 
 		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
@@ -403,13 +430,13 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	}
 
 	private void startVoiceRecognitionActivity() {
-		
+
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
 				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Listening...");
 		startActivityForResult(intent, REQUEST_CODE);
-		
+
 	}
 
 	@Override
@@ -429,13 +456,13 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	/*public void onSearchBoxClick(View view) {
-
-		searchBox.requestFocus();
-		//showKeyboard();
-
-	}
-*/
+	/*
+	 * public void onSearchBoxClick(View view) {
+	 * 
+	 * searchBox.requestFocus(); //showKeyboard();
+	 * 
+	 * }
+	 */
 	@Override
 	public void onBackPressed() {
 
@@ -488,68 +515,6 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 		// controller.setPadding(0, 0, 0, controller.getHeight());
 
-	}
-
-	@Override
-	protected void onPause() {
-
-		super.onPause();
-		paused = true;
-
-	}
-
-	@Override
-	protected void onResume() {
-
-		super.onResume();
-		
-		/*AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
-		// Request audio focus for playback
-		int result = am.requestAudioFocus(afChangeListener,
-		// Use the music stream.
-				AudioManager.STREAM_MUSIC,
-				// Request permanent focus.
-				AudioManager.AUDIOFOCUS_GAIN);
-
-		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-			ComponentName mRemoteControlResponder = new ComponentName(
-					getPackageName(), RemoteControlReceiver.class.getName());
-			am.registerMediaButtonEventReceiver(mRemoteControlResponder);*/
-			
-			
-			// Start playback.
-
-			
-			//if (paused) {
-				// setController();
-				//paused = false;
-			//}
-
-			// Set up receiver for media player onPrepared broadcast
-
-			/*LocalBroadcastManager.getInstance(this).registerReceiver(
-					onPrepareReceiver,
-					new IntentFilter("MEDIA_PLAYER_PREPARED"));*/
-		//}
-		
-		 IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-		    registerReceiver(headsetStateReceiver, filter);
-
-	}
-
-	@Override
-	protected void onStop() {
-		//controller.hide();
-		super.onStop();
-	}
-
-	@Override
-	protected void onDestroy() {
-		stopService(playIntent);
-		musicService = null;
-		hideKeyboard();
-		super.onDestroy();
 	}
 
 	@Override
@@ -615,7 +580,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	@Override
 	public void pause() {
 		playbackPaused = true;
-		musicService.pausePlayer();	
+		musicService.pausePlayer();
 		initController();
 		controller.show(0);
 	}

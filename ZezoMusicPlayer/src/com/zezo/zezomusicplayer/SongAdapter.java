@@ -3,6 +3,9 @@ package com.zezo.zezomusicplayer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zezo.dragndroplistview.DropListener;
+import com.zezo.dragndroplistview.RemoveListener;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,20 +47,28 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+
 		// map to song layout
-		LinearLayout songLay = (LinearLayout) songInf.inflate(R.layout.song,
+		LinearLayout songLayout = (LinearLayout) songInf.inflate(R.layout.song,
 				parent, false);
+
 		// get title and artist views
-		TextView songView = (TextView) songLay.findViewById(R.id.song_title);
-		TextView artistView = (TextView) songLay.findViewById(R.id.song_artist);
+		TextView songView = (TextView) songLayout.findViewById(R.id.song_title);
+		TextView artistView = (TextView) songLayout
+				.findViewById(R.id.song_artist);
+
 		// get song using position
 		Song currSong = filteredSongs.get(position);
+
 		// get title and artist strings
 		songView.setText(currSong.getTitle());
 		artistView.setText(currSong.getArtist());
+
 		// set position as tag
-		songLay.setTag(position);
-		return songLay;
+		songLayout.setTag(position);
+
+		return songLayout;
+
 	}
 
 	@Override
@@ -67,19 +78,23 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 			protected FilterResults performFiltering(CharSequence charSequence) {
 				FilterResults results = new FilterResults();
 
-				// If there's nothing to filter on, return the original data for
-				// your list
 				if (charSequence == null || charSequence.length() == 0) {
+
 					results.values = songs;
 					results.count = songs.size();
+
 				} else {
+
 					List<Song> filteredSongs = new ArrayList<Song>();
 
 					for (Song song : songs) {
+
 						String songTitle = song.getTitle();
+
 						if (songTitle.toUpperCase().contains(
 								charSequence.toString().toUpperCase()))
 							filteredSongs.add(song);
+
 					}
 
 					results.values = filteredSongs;
@@ -93,21 +108,28 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 			@Override
 			protected void publishResults(CharSequence charSequence,
 					FilterResults filterResults) {
+
 				filteredSongs = (ArrayList<Song>) filterResults.values;
 				notifyDataSetChanged();
+
 			}
 		};
 	}
 
-	public void onRemove(int which) {
-		if (which < 0 || which > songs.size())
+	public void onRemove(int songIndex) {
+
+		if (songIndex < 0 || songIndex > songs.size())
 			return;
-		songs.remove(which);
+
+		songs.remove(songIndex);
+
 	}
 
 	public void onDrop(int from, int to) {
+
 		Song temp = songs.get(from);
 		songs.remove(from);
 		songs.add(to, temp);
+
 	}
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zezo.zezomusicplayer;
+package com.zezo.dragndroplistview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
