@@ -146,8 +146,8 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	            int state = intent.getIntExtra("state", -1);
 	            switch (state) {
 	            case 0:
-	            	if(isPlaying())
-	                onPause();
+	            	//if(isPlaying())
+	                pause();
 	                break;
 	            case 1:
 	                break;
@@ -615,7 +615,9 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	@Override
 	public void pause() {
 		playbackPaused = true;
-		musicService.pausePlayer();
+		musicService.pausePlayer();	
+		initController();
+		controller.show(0);
 	}
 
 	@Override
