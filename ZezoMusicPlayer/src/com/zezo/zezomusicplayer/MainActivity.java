@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -47,7 +46,7 @@ public class MainActivity extends Activity {
 	private VoiceRecognitionHelper voiceRecognitionHelper;
 
 	private MusicService musicService;
-	
+
 	private Intent playIntent;
 	private SongAdapter songAdapter;
 	private boolean processingPick = false;
@@ -88,7 +87,7 @@ public class MainActivity extends Activity {
 
 		}
 	};
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -119,9 +118,9 @@ public class MainActivity extends Activity {
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(
 				onPrepareReceiver, new IntentFilter("MEDIA_PLAYER_PREPARED"));
-		
+
 		voiceRecognitionHelper = new VoiceRecognitionHelper(searchBox);
-		
+
 		if (playIntent == null) {
 
 			playIntent = new Intent(this, MusicService.class);
@@ -147,8 +146,6 @@ public class MainActivity extends Activity {
 			}
 		}
 	}
-	
-	
 
 	private ServiceConnection musicConnection = new ServiceConnection() {
 
@@ -207,7 +204,7 @@ public class MainActivity extends Activity {
 		// }
 
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 
@@ -258,10 +255,10 @@ public class MainActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 
+		super.onBackPressed();
+		
 		if (searchEnabled)
 			disableSearch();
-
-		super.onBackPressed();
 
 	}
 
@@ -308,27 +305,27 @@ public class MainActivity extends Activity {
 	}
 
 	public void onTalkButtonClick(View view) {
-		
+
 		startActivityForResult(voiceRecognitionHelper.getIntent(),
 				voiceRecognitionHelper.getRequestCode());
-		
+
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
+
 		if (requestCode == voiceRecognitionHelper.getRequestCode()
 				&& resultCode == RESULT_OK) {
-			
+
 			ArrayList<String> matches = data
 					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
 			searchBox.setText(matches.get(0));
 
 		}
-		
+
 		super.onActivityResult(requestCode, resultCode, data);
-		
+
 	}
 
 	private void initSearch() {
