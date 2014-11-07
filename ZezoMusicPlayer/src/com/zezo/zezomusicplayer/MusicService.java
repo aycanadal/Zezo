@@ -1,27 +1,25 @@
 package com.zezo.zezomusicplayer;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import android.app.Notification;
 import android.app.PendingIntent;
-
-import java.util.ArrayList;
-
-import android.content.ComponentName;
+import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
-import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
 
 public class MusicService extends Service implements
 		MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
@@ -128,8 +126,6 @@ public class MusicService extends Service implements
 
 	@Override
 	public void onCompletion(MediaPlayer mp) {
-
-		int currentPosition = player.getCurrentPosition();
 
 		if (player.getCurrentPosition() > 0) {
 			mp.reset();
@@ -253,6 +249,27 @@ public class MusicService extends Service implements
 
 	public int getPausePosition() {
 		return pausePosition;
+	}	
+	
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+		registerReceiver(bluetoothTurnedOnOff, filter);
+		return START_STICKY;
 	}
+
+	private final BroadcastReceiver bluetoothTurnedOnOff = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1) == BluetoothAdapter.STATE_OFF) {
+				
+				pausePlayer();
+				
+			}
+		}
+	};
 
 }

@@ -32,8 +32,8 @@ public class SongListView extends DragNDropListView {
 	};
 
 	private RemoveListener mRemoveListener = new RemoveListener() {
-		public void onRemove(int which) {
-			((SongAdapter) getAdapter()).onRemove(which);
+		public void onDrag(int which) {
+			((SongAdapter) getAdapter()).onDrag(which);
 			invalidateViews();
 		}
 	};
