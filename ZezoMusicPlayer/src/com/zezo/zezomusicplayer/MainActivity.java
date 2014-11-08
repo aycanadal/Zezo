@@ -25,6 +25,7 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -146,6 +147,25 @@ public class MainActivity extends Activity {
 		}
 
 	}
+	
+	@Override
+	protected void onResume() {
+		
+		findViewById(R.id.song_list).postDelayed(
+		        new Runnable() {
+		            public void run() {
+		                 searchBox.requestFocus();
+		                InputMethodManager inputMethodManager =  (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+		                inputMethodManager.showSoftInput(searchBox,InputMethodManager.SHOW_IMPLICIT);
+		                
+		                hideKeyboard();
+		            }
+		        },100);
+		
+		        super.onResume();
+		super.onResume();
+		
+	};
 
 	@Override
 	protected void onDestroy() {
@@ -315,8 +335,8 @@ public class MainActivity extends Activity {
 		searchEnabled = true;
 		searchPane.setVisibility(View.VISIBLE);
 		boolean focused = searchBox.requestFocus();
-		showKeyboard();
 		getController().setVisibility(View.GONE);
+		showKeyboard();
 
 	}
 
