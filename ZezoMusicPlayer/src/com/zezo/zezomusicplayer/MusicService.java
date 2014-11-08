@@ -34,7 +34,25 @@ public class MusicService extends Service implements
 	private int pauseDuration = 0;
 	private int pausePosition = 0;
 	private Song song;
-
+	
+	private HeadsetStateReceiver headsetStateReceiver;
+	
+	private class HeadsetStateReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+				int state = intent.getIntExtra("state", -1);
+				switch (state) {
+				case 0:
+					player.pause();
+					break;
+				case 1:
+					break;
+				}
+			}
+		}
+	}
+	
 	public void onCreate() {
 		// create the service
 		super.onCreate();
@@ -47,6 +65,7 @@ public class MusicService extends Service implements
 		initMusicPlayer();
 
 		rand = new Random();
+		
 	}
 
 	public void initMusicPlayer() {
@@ -58,6 +77,12 @@ public class MusicService extends Service implements
 		player.setOnPreparedListener(this);
 		player.setOnCompletionListener(this);
 		player.setOnErrorListener(this);
+		
+
+		IntentFilter receiverFilter = new IntentFilter(
+				Intent.ACTION_HEADSET_PLUG);
+		headsetStateReceiver = new HeadsetStateReceiver();
+		registerReceiver(headsetStateReceiver, receiverFilter);
 
 	}
 
@@ -140,6 +165,7 @@ public class MusicService extends Service implements
 
 		Intent notIntent = new Intent(this, MainActivity.class);
 		notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		
 		PendingIntent pendInt = PendingIntent.getActivity(this, 0, notIntent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -148,6 +174,7 @@ public class MusicService extends Service implements
 		builder.setContentIntent(pendInt).setSmallIcon(R.drawable.play)
 				.setTicker(song.getTitle()).setOngoing(true)
 				.setContentTitle("Playing").setContentText(song.getTitle());
+		
 		Notification not = builder.build();
 
 		startForeground(NOTIFY_ID, not);

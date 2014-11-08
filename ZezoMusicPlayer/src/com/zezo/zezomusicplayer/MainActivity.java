@@ -51,8 +51,6 @@ public class MainActivity extends Activity {
 	private SongAdapter songAdapter;
 	private boolean processingPick = false;
 
-	private HeadsetStateReceiver headsetStateReceiver;
-
 	private OnAudioFocusChangeListener afChangeListener = new OnAudioFocusChangeListener() {
 
 		public void onAudioFocusChange(int focusChange) {
@@ -88,65 +86,6 @@ public class MainActivity extends Activity {
 		}
 	};
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-
-		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.activity_main);
-		songView = (SongListView) findViewById(R.id.song_list);
-		songList = getAllSongsOnDevice();
-
-		Collections.sort(songList, new Comparator<Song>() {
-			public int compare(Song a, Song b) {
-				return a.getTitle().compareTo(b.getTitle());
-			}
-		});
-
-		songAdapter = new SongAdapter(this, songList);
-		songView.setAdapter(songAdapter);
-
-		setController(new MusicController(this));
-		getController().setAnchorView(songView);
-
-		initSearch();
-
-		IntentFilter receiverFilter = new IntentFilter(
-				Intent.ACTION_HEADSET_PLUG);
-		headsetStateReceiver = new HeadsetStateReceiver();
-		registerReceiver(headsetStateReceiver, receiverFilter);
-
-		LocalBroadcastManager.getInstance(this).registerReceiver(
-				onPrepareReceiver, new IntentFilter("MEDIA_PLAYER_PREPARED"));
-
-		voiceRecognitionHelper = new VoiceRecognitionHelper(searchBox);
-
-		if (playIntent == null) {
-
-			playIntent = new Intent(this, MusicService.class);
-			bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-			startService(playIntent);
-
-		}
-
-	}
-
-	private class HeadsetStateReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
-				int state = intent.getIntExtra("state", -1);
-				switch (state) {
-				case 0:
-					getController().pause();
-					break;
-				case 1:
-					break;
-				}
-			}
-		}
-	}
-
 	private ServiceConnection musicConnection = new ServiceConnection() {
 
 		@Override
@@ -169,49 +108,60 @@ public class MainActivity extends Activity {
 	};
 
 	@Override
-	protected void onResume() {
+	protected void onCreate(Bundle savedInstanceState) {
 
-		super.onResume();
+		super.onCreate(savedInstanceState);
 
-		/*
-		 * AudioManager am = (AudioManager)
-		 * getSystemService(Context.AUDIO_SERVICE);
-		 * 
-		 * // Request audio focus for playback int result =
-		 * am.requestAudioFocus(afChangeListener, // Use the music stream.
-		 * AudioManager.STREAM_MUSIC, // Request permanent focus.
-		 * AudioManager.AUDIOFOCUS_GAIN);
-		 * 
-		 * if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-		 * ComponentName mRemoteControlResponder = new ComponentName(
-		 * getPackageName(), RemoteControlReceiver.class.getName());
-		 * am.registerMediaButtonEventReceiver(mRemoteControlResponder);
-		 */
+		setContentView(R.layout.activity_main);
+		songView = (SongListView) findViewById(R.id.song_list);
 
-		// Start playback.
+		if (songList == null || songList.size() == 0)
+			songList = getAllSongsOnDevice();
 
-		// if (paused) {
-		// setController();
-		// paused = false;
-		// }
+		Collections.sort(songList, new Comparator<Song>() {
+			public int compare(Song a, Song b) {
+				return a.getTitle().compareTo(b.getTitle());
+			}
+		});
 
-		// Set up receiver for media player onPrepared broadcast
+		songAdapter = new SongAdapter(this, songList);
+		songView.setAdapter(songAdapter);
 
-		/*
-		 * LocalBroadcastManager.getInstance(this).registerReceiver(
-		 * onPrepareReceiver, new IntentFilter("MEDIA_PLAYER_PREPARED"));
-		 */
-		// }
+		setController(new MusicController(this));
+		getController().setAnchorView(songView);
+
+		initSearch();
+
+		LocalBroadcastManager.getInstance(this).registerReceiver(
+				onPrepareReceiver, new IntentFilter("MEDIA_PLAYER_PREPARED"));
+
+		voiceRecognitionHelper = new VoiceRecognitionHelper(searchBox);
+
+		if (playIntent == null) {
+
+			playIntent = new Intent(this, MusicService.class);
+			bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+			startService(playIntent);
+
+		}
 
 	}
 
 	@Override
 	protected void onDestroy() {
 
-		stopService(playIntent);
-		musicService = null;
+		// stopService(playIntent);
+		// musicService = null;
 		hideKeyboard();
+		//unregisterReceiver(onPrepareReceiver);
 		super.onDestroy();
+
+		/*
+		 * Intent startMain = new Intent(Intent.ACTION_MAIN);
+		 * startMain.addCategory(Intent.CATEGORY_HOME);
+		 * startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		 * startActivity(startMain);
+		 */
 
 	}
 
@@ -252,15 +202,15 @@ public class MainActivity extends Activity {
 
 	}
 
-	@Override
-	public void onBackPressed() {
-
-		super.onBackPressed();
-		
-		if (searchEnabled)
-			disableSearch();
-
-	}
+	/*
+	 * @Override public void onBackPressed() {
+	 * 
+	 * super.onBackPressed();
+	 * 
+	 * if (searchEnabled) disableSearch();
+	 * 
+	 * }
+	 */
 
 	/*
 	 * @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -331,7 +281,7 @@ public class MainActivity extends Activity {
 	private void initSearch() {
 
 		searchPane = (LinearLayout) findViewById(R.id.searchPane);
-		searchBox = (EditText) findViewById(R.id.inputSearch);
+		searchBox = (EditText) findViewById(R.id.searchBox);
 		searchPane.setVisibility(View.GONE);
 		// searchBox.setVisibility(View.GONE);
 		searchEnabled = false;
@@ -358,16 +308,13 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		// searchBox.setText("a");
-		// searchBox.setText("");
-
 	}
 
 	private void enableSearch() {
 
 		searchEnabled = true;
 		searchPane.setVisibility(View.VISIBLE);
-		searchBox.requestFocus();
+		boolean focused = searchBox.requestFocus();
 		showKeyboard();
 		getController().setVisibility(View.GONE);
 
@@ -387,7 +334,13 @@ public class MainActivity extends Activity {
 
 		((InputMethodManager) this
 				.getSystemService(Context.INPUT_METHOD_SERVICE))
-				.toggleSoftInput(0, 0);
+				.toggleSoftInputFromWindow(searchBox.getWindowToken(), 0, 0);
+
+		/*
+		 * InputMethodManager imm = (InputMethodManager)
+		 * getSystemService(Context.INPUT_METHOD_SERVICE);
+		 * imm.showSoftInput(searchBox, InputMethodManager.SHOW_FORCED);
+		 */
 
 	}
 
