@@ -64,9 +64,9 @@ public class MainActivity extends Activity {
 				// onResume();
 			} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
 
-				ComponentName mRemoteControlResponder = new ComponentName(
-						getPackageName(), RemoteControlReceiver.class.getName());
-				am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
+				// ComponentName mRemoteControlResponder = new ComponentName(
+				// getPackageName(), RemoteControlReceiver.class.getName());
+				// am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
 				am.abandonAudioFocus(afChangeListener);
 
 				getController().pause();
@@ -246,8 +246,6 @@ public class MainActivity extends Activity {
 
 	public void onSongPicked(View view) {
 
-		// searchBox.clearFocus();
-
 		if (processingPick)
 			return;
 
@@ -256,24 +254,27 @@ public class MainActivity extends Activity {
 		Song song = songAdapter.getItem(Integer.parseInt(((View) view
 				.getParent()).getTag().toString()));
 
-		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		if (audioFocusGranted()) {
 
-		// Request audio focus for playback
-		int result = am.requestAudioFocus(afChangeListener,
-		// Use the music stream.
-				AudioManager.STREAM_MUSIC,
-				// Request permanent focus.
-				AudioManager.AUDIOFOCUS_GAIN);
-
-		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-
-			ComponentName mRemoteControlResponder = new ComponentName(
-					getPackageName(), RemoteControlReceiver.class.getName());
-			am.registerMediaButtonEventReceiver(mRemoteControlResponder);
+			// ComponentName mRemoteControlResponder = new ComponentName(
+			// getPackageName(), RemoteControlReceiver.class.getName());
+			// am.registerMediaButtonEventReceiver(mRemoteControlResponder);
 			// Start playback.
+			
 			musicService.playSong(song);
 
 		}
+
+	}
+
+	private boolean audioFocusGranted() {
+
+		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+		int result = am.requestAudioFocus(afChangeListener,
+				AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+
+		return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
 
 	}
 
@@ -391,7 +392,7 @@ public class MainActivity extends Activity {
 		Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 		Cursor musicCursor = musicResolver.query(musicUri, null, null, null,
 				null);
-		
+
 		if (musicCursor != null && musicCursor.moveToFirst()) {
 
 			int titleColumn = musicCursor
@@ -411,7 +412,7 @@ public class MainActivity extends Activity {
 			} while (musicCursor.moveToNext());
 
 		}
-		
+
 		musicCursor.close();
 
 		return songs;
