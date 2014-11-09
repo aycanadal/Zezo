@@ -63,11 +63,14 @@ public class MainActivity extends Activity {
 			} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
 				// onResume();
 			} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+
 				ComponentName mRemoteControlResponder = new ComponentName(
 						getPackageName(), RemoteControlReceiver.class.getName());
 				am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
 				am.abandonAudioFocus(afChangeListener);
-				// Stop playback
+
+				controller.pause();
+
 			}
 		}
 	};
@@ -147,24 +150,24 @@ public class MainActivity extends Activity {
 		}
 
 	}
-	
+
 	@Override
 	protected void onResume() {
-		
-		findViewById(R.id.song_list).postDelayed(
-		        new Runnable() {
-		            public void run() {
-		                 searchBox.requestFocus();
-		                InputMethodManager inputMethodManager =  (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-		                inputMethodManager.showSoftInput(searchBox,InputMethodManager.SHOW_IMPLICIT);
-		                
-		                hideKeyboard();
-		            }
-		        },100);
-		
-		        super.onResume();
+
+		findViewById(R.id.song_list).postDelayed(new Runnable() {
+			public void run() {
+				searchBox.requestFocus();
+				InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+				inputMethodManager.showSoftInput(searchBox,
+						InputMethodManager.SHOW_IMPLICIT);
+
+				hideKeyboard();
+			}
+		}, 100);
+
 		super.onResume();
-		
+		super.onResume();
+
 	};
 
 	@Override
@@ -173,7 +176,7 @@ public class MainActivity extends Activity {
 		// stopService(playIntent);
 		// musicService = null;
 		hideKeyboard();
-		//unregisterReceiver(onPrepareReceiver);
+		// unregisterReceiver(onPrepareReceiver);
 		super.onDestroy();
 
 		/*
