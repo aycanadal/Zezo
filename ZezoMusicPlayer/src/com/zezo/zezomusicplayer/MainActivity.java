@@ -53,8 +53,6 @@ public class MainActivity extends Activity {
 	private SongAdapter songAdapter;
 	private boolean processingPick = false;
 
-	
-
 	// Broadcast receiver to determine when music player has been prepared
 	private BroadcastReceiver onPrepareReceiver = new BroadcastReceiver() {
 
@@ -159,13 +157,6 @@ public class MainActivity extends Activity {
 		// unregisterReceiver(onPrepareReceiver);
 		super.onDestroy();
 
-		/*
-		 * Intent startMain = new Intent(Intent.ACTION_MAIN);
-		 * startMain.addCategory(Intent.CATEGORY_HOME);
-		 * startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		 * startActivity(startMain);
-		 */
-
 	}
 
 	@Override
@@ -233,26 +224,17 @@ public class MainActivity extends Activity {
 
 		Song song = songAdapter.getItem(Integer.parseInt(((View) view
 				.getParent()).getTag().toString()));
-		
+
 		TextView currentTitle = (TextView) findViewById(R.id.currentTitle);
 		TextView currentArtist = (TextView) findViewById(R.id.currentArtist);
-		
+
 		currentTitle.setText(song.getTitle());
 		currentArtist.setText(song.getArtist());
 
-		if (musicService.audioFocusGranted()) {
-
-			// ComponentName mRemoteControlResponder = new ComponentName(
-			// getPackageName(), RemoteControlReceiver.class.getName());
-			// am.registerMediaButtonEventReceiver(mRemoteControlResponder);
-			// Start playback.
-			
+		if (musicService.audioFocusGranted())
 			musicService.playSong(song);
 
-		}
-
 	}
-	
 
 	public void onTalkButtonClick(View view) {
 
@@ -344,17 +326,8 @@ public class MainActivity extends Activity {
 
 	}
 
-	/*
-	 * public void onSearchBoxClick(View view) {
-	 * 
-	 * searchBox.requestFocus(); //showKeyboard();
-	 * 
-	 * }
-	 */
-
 	private void hideKeyboard() {
 
-		// searchBox.requestFocus();
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
 
