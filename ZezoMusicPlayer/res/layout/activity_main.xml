@@ -39,13 +39,30 @@
             android:onClick="onTalkButtonClick"
             android:text="Talk" />
     </LinearLayout>
+    
+    <TextView
+        android:id="@+id/currentTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/currentArtist"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#AAAAAA"
+        android:textSize="18sp" />
 
     <com.zezo.zezomusicplayer.SongListView
         android:id="@+id/song_list"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:fastScrollAlwaysVisible="true"
         android:fastScrollEnabled="true" >
     </com.zezo.zezomusicplayer.SongListView>
+
+    
 
 </LinearLayout>

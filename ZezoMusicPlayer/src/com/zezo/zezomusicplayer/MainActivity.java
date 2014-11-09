@@ -30,6 +30,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 
@@ -232,6 +233,12 @@ public class MainActivity extends Activity {
 
 		Song song = songAdapter.getItem(Integer.parseInt(((View) view
 				.getParent()).getTag().toString()));
+		
+		TextView currentTitle = (TextView) findViewById(R.id.currentTitle);
+		TextView currentArtist = (TextView) findViewById(R.id.currentArtist);
+		
+		currentTitle.setText(song.getTitle());
+		currentArtist.setText(song.getArtist());
 
 		if (musicService.audioFocusGranted()) {
 
