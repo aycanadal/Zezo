@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
@@ -53,6 +54,29 @@ public class MusicService extends Service implements
 			}
 		}
 	}
+
+	private OnAudioFocusChangeListener afChangeListener = new OnAudioFocusChangeListener() {
+
+		public void onAudioFocusChange(int focusChange) {
+
+			AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+			if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+				pause();
+			} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+				// onResume();
+			} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+
+				// ComponentName mRemoteControlResponder = new ComponentName(
+				// getPackageName(), RemoteControlReceiver.class.getName());
+				// am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
+				am.abandonAudioFocus(afChangeListener);
+
+				pause();
+
+			}
+		}
+	};
 
 	public void onCreate() {
 
@@ -204,7 +228,7 @@ public class MusicService extends Service implements
 		return player.isPlaying();
 	}
 
-	public void pausePlayer() {
+	public void pause() {
 
 		pauseDuration = getDur();
 		pausePosition = getPosn();
@@ -217,7 +241,21 @@ public class MusicService extends Service implements
 	}
 
 	public void go() {
-		player.start();
+
+		if (audioFocusGranted())
+			player.start();
+
+	}
+
+	public boolean audioFocusGranted() {
+
+		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+		int result = am.requestAudioFocus(afChangeListener,
+				AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+
+		return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
+
 	}
 
 	public void playPrevious() {
@@ -293,7 +331,7 @@ public class MusicService extends Service implements
 
 			if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1) == BluetoothAdapter.STATE_OFF) {
 
-				pausePlayer();
+				pause();
 
 			}
 			if (action.equals("android.bluetooth.device.action.ACL_CONNECTED")) {
@@ -306,7 +344,7 @@ public class MusicService extends Service implements
 					|| action
 							.equals("android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED")) {
 
-				pausePlayer();
+				pause();
 				Log.d("Z", "Received: Bluetooth Disconnected");
 
 			}

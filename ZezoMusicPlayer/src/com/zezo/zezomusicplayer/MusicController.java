@@ -107,7 +107,7 @@ public class MusicController extends MediaController implements
 	public void pause() {
 		
 		if (musicService != null && musicService.isPng())
-			musicService.pausePlayer();
+			musicService.pause();
 		
 		// initController();
 		// show(0);
@@ -120,7 +120,9 @@ public class MusicController extends MediaController implements
 
 	@Override
 	public void start() {
+		
 		musicService.go();
+		
 	}
 
 	public boolean isMusicBound() {

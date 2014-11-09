@@ -52,28 +52,7 @@ public class MainActivity extends Activity {
 	private SongAdapter songAdapter;
 	private boolean processingPick = false;
 
-	private OnAudioFocusChangeListener afChangeListener = new OnAudioFocusChangeListener() {
-
-		public void onAudioFocusChange(int focusChange) {
-
-			AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
-			if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
-				getController().pause();
-			} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-				// onResume();
-			} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-
-				// ComponentName mRemoteControlResponder = new ComponentName(
-				// getPackageName(), RemoteControlReceiver.class.getName());
-				// am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
-				am.abandonAudioFocus(afChangeListener);
-
-				getController().pause();
-
-			}
-		}
-	};
+	
 
 	// Broadcast receiver to determine when music player has been prepared
 	private BroadcastReceiver onPrepareReceiver = new BroadcastReceiver() {
@@ -254,7 +233,7 @@ public class MainActivity extends Activity {
 		Song song = songAdapter.getItem(Integer.parseInt(((View) view
 				.getParent()).getTag().toString()));
 
-		if (audioFocusGranted()) {
+		if (musicService.audioFocusGranted()) {
 
 			// ComponentName mRemoteControlResponder = new ComponentName(
 			// getPackageName(), RemoteControlReceiver.class.getName());
@@ -266,17 +245,7 @@ public class MainActivity extends Activity {
 		}
 
 	}
-
-	private boolean audioFocusGranted() {
-
-		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
-		int result = am.requestAudioFocus(afChangeListener,
-				AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-
-		return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
-
-	}
+	
 
 	public void onTalkButtonClick(View view) {
 
