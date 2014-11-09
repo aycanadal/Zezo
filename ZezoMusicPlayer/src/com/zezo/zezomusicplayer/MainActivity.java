@@ -69,7 +69,7 @@ public class MainActivity extends Activity {
 				am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
 				am.abandonAudioFocus(afChangeListener);
 
-				controller.pause();
+				getController().pause();
 
 			}
 		}
@@ -119,7 +119,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		songView = (SongListView) findViewById(R.id.song_list);
 
-		if (songList == null || songList.size() == 0)
+		if (songList == null || songList.size() < 1)
 			songList = getAllSongsOnDevice();
 
 		Collections.sort(songList, new Comparator<Song>() {
@@ -205,7 +205,7 @@ public class MainActivity extends Activity {
 			musicService.toggleShuffle();
 			break;
 
-		case R.id.action_end:
+		case R.id.action_exit:
 
 			exit();
 			break;
@@ -391,7 +391,7 @@ public class MainActivity extends Activity {
 		Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 		Cursor musicCursor = musicResolver.query(musicUri, null, null, null,
 				null);
-
+		
 		if (musicCursor != null && musicCursor.moveToFirst()) {
 
 			int titleColumn = musicCursor
@@ -411,6 +411,8 @@ public class MainActivity extends Activity {
 			} while (musicCursor.moveToNext());
 
 		}
+		
+		musicCursor.close();
 
 		return songs;
 

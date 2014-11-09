@@ -34,13 +34,14 @@ public class MusicService extends Service implements
 	private int pauseDuration = 0;
 	private int pausePosition = 0;
 	private Song song;
-	
+
 	private HeadsetStateReceiver headsetStateReceiver;
-	
+
 	private class HeadsetStateReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+			if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)
+					&& !isInitialStickyBroadcast()) {
 				int state = intent.getIntExtra("state", -1);
 				switch (state) {
 				case 0:
@@ -52,20 +53,15 @@ public class MusicService extends Service implements
 			}
 		}
 	}
-	
+
 	public void onCreate() {
-		// create the service
+
 		super.onCreate();
-		// initialize position
-		// songId = 0;
 
-		// create player
 		player = new MediaPlayer();
-
 		initMusicPlayer();
-
 		rand = new Random();
-		
+
 	}
 
 	public void initMusicPlayer() {
@@ -77,7 +73,6 @@ public class MusicService extends Service implements
 		player.setOnPreparedListener(this);
 		player.setOnCompletionListener(this);
 		player.setOnErrorListener(this);
-		
 
 		IntentFilter receiverFilter = new IntentFilter(
 				Intent.ACTION_HEADSET_PLUG);
@@ -165,7 +160,7 @@ public class MusicService extends Service implements
 
 		Intent notIntent = new Intent(this, MainActivity.class);
 		notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		
+
 		PendingIntent pendInt = PendingIntent.getActivity(this, 0, notIntent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -174,7 +169,7 @@ public class MusicService extends Service implements
 		builder.setContentIntent(pendInt).setSmallIcon(R.drawable.play)
 				.setTicker(song.getTitle()).setOngoing(true)
 				.setContentTitle("Playing").setContentText(song.getTitle());
-		
+
 		Notification not = builder.build();
 
 		startForeground(NOTIFY_ID, not);
@@ -194,7 +189,7 @@ public class MusicService extends Service implements
 	@Override
 	public boolean onError(MediaPlayer mp, int what, int extra) {
 		mp.reset();
-		return false;
+		return true;
 	}
 
 	public int getPosn() {
@@ -210,9 +205,11 @@ public class MusicService extends Service implements
 	}
 
 	public void pausePlayer() {
+
 		pauseDuration = getDur();
 		pausePosition = getPosn();
 		player.pause();
+
 	}
 
 	public void seek(int posn) {
@@ -276,8 +273,8 @@ public class MusicService extends Service implements
 
 	public int getPausePosition() {
 		return pausePosition;
-	}	
-	
+	}
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -291,11 +288,29 @@ public class MusicService extends Service implements
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+
+			String action = intent.getAction();
+
 			if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1) == BluetoothAdapter.STATE_OFF) {
-				
+
 				pausePlayer();
-				
+
 			}
+			if (action.equals("android.bluetooth.device.action.ACL_CONNECTED")) {
+
+				Log.d("Z", "Received: Bluetooth Connected");
+
+			}
+			if (action
+					.equals("android.bluetooth.device.action.ACL_DISCONNECTED")
+					|| action
+							.equals("android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED")) {
+
+				pausePlayer();
+				Log.d("Z", "Received: Bluetooth Disconnected");
+
+			}
+
 		}
 	};
 

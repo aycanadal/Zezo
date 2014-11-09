@@ -106,7 +106,7 @@ public class MusicController extends MediaController implements
 	@Override
 	public void pause() {
 		
-		if (musicService != null)
+		if (musicService != null && musicService.isPng())
 			musicService.pausePlayer();
 		
 		// initController();

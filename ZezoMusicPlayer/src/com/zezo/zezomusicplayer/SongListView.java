@@ -1,6 +1,7 @@
 package com.zezo.zezomusicplayer;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -40,7 +41,7 @@ public class SongListView extends DragNDropListView {
 
 	private DragListener mDragListener = new DragListener() {
 
-		int backgroundColor = 0xe0103010;
+		int backgroundColor = Color.GRAY;
 		int defaultBackgroundColor;
 
 		public void onDrag(int x, int y, ListView listView) {
