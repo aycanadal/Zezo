@@ -37,7 +37,7 @@ import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 public class MainActivity extends Activity {
 
 	private ArrayList<Song> songList;
-	private ListView songView;
+	private ListView songListView;
 	
 	private TextView currentTitle;
 	private TextView currentArtist;
@@ -71,9 +71,8 @@ public class MainActivity extends Activity {
 			currentTitle.setText(song.getTitle());
 			currentArtist.setText(song.getArtist());
 			
-			
-			
-			//songView.getItemAtPosition(position);
+			//View songView = songAdapter.getView(songAdapter.getSongs().indexOf(song), null, songListView);
+			//songView.
 			
 			processingPick = false;
 
@@ -108,7 +107,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
-		songView = (SongListView) findViewById(R.id.song_list);
+		songListView = (SongListView) findViewById(R.id.song_list);
 		
 		currentTitle = (TextView) findViewById(R.id.currentTitle);
 		currentArtist = (TextView) findViewById(R.id.currentArtist);
@@ -123,10 +122,10 @@ public class MainActivity extends Activity {
 		});
 
 		songAdapter = new SongAdapter(this, songList);
-		songView.setAdapter(songAdapter);
+		songListView.setAdapter(songAdapter);
 
 		setController(new MusicController(this));
-		getController().setAnchorView(songView);
+		getController().setAnchorView(songListView);
 
 		initSearch();
 
