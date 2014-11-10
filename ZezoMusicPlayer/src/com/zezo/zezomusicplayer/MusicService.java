@@ -108,7 +108,7 @@ public class MusicService extends Service implements
 	public void setSongs(ArrayList<Song> songs) {
 		this.songs = songs;
 		if (songs != null && songs.size() > 0)
-			song = songs.get(0);
+			setSong(songs.get(0));
 	}
 
 	public class MusicBinder extends Binder {
@@ -120,7 +120,7 @@ public class MusicService extends Service implements
 	public void playSong(Song song) {
 
 		player.reset();
-		this.song = song;
+		this.setSong(song);
 
 		Uri trackUri = ContentUris.withAppendedId(
 				android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -191,8 +191,8 @@ public class MusicService extends Service implements
 		Notification.Builder builder = new Notification.Builder(this);
 
 		builder.setContentIntent(pendInt).setSmallIcon(R.drawable.play)
-				.setTicker(song.getTitle()).setOngoing(true)
-				.setContentTitle("Playing").setContentText(song.getTitle());
+				.setTicker(getSong().getTitle()).setOngoing(true)
+				.setContentTitle("Playing").setContentText(getSong().getTitle());
 
 		Notification not = builder.build();
 
@@ -260,7 +260,7 @@ public class MusicService extends Service implements
 
 	public void playPrevious() {
 		// Song song = getSongById(songId);
-		int songIndex = songs.indexOf(song);
+		int songIndex = songs.indexOf(getSong());
 
 		songIndex--;
 		if (songIndex < 0)
@@ -272,14 +272,14 @@ public class MusicService extends Service implements
 
 	public void playNext() {
 
-		int songIndex = songs.indexOf(song);
+		int songIndex = songs.indexOf(getSong());
 
 		if (shuffle) {
 
 			int newSongIndex = rand.nextInt(songs.size());
-			long newSongId = song.getId();
+			long newSongId = getSong().getId();
 
-			while (newSongId == song.getId()) {
+			while (newSongId == getSong().getId()) {
 
 				newSongIndex = rand.nextInt(songs.size());
 				newSongId = songs.get(newSongIndex).getId();
@@ -320,6 +320,14 @@ public class MusicService extends Service implements
 		filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
 		registerReceiver(bluetoothTurnedOnOff, filter);
 		return START_STICKY;
+	}
+
+	public Song getSong() {
+		return song;
+	}
+
+	public void setSong(Song song) {
+		this.song = song;
 	}
 
 	private final BroadcastReceiver bluetoothTurnedOnOff = new BroadcastReceiver() {

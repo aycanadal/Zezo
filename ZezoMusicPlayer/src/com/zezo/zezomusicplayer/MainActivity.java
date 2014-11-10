@@ -38,6 +38,9 @@ public class MainActivity extends Activity {
 
 	private ArrayList<Song> songList;
 	private ListView songView;
+	
+	private TextView currentTitle;
+	private TextView currentArtist;
 
 	private LinearLayout searchPane;
 	private EditText searchBox;
@@ -63,6 +66,15 @@ public class MainActivity extends Activity {
 				return;
 
 			getController().show(0);
+			
+			Song song = musicService.getSong();
+			currentTitle.setText(song.getTitle());
+			currentArtist.setText(song.getArtist());
+			
+			
+			
+			//songView.getItemAtPosition(position);
+			
 			processingPick = false;
 
 		}
@@ -88,6 +100,7 @@ public class MainActivity extends Activity {
 
 		}
 	};
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +109,9 @@ public class MainActivity extends Activity {
 
 		setContentView(R.layout.activity_main);
 		songView = (SongListView) findViewById(R.id.song_list);
+		
+		currentTitle = (TextView) findViewById(R.id.currentTitle);
+		currentArtist = (TextView) findViewById(R.id.currentArtist);
 
 		if (songList == null || songList.size() < 1)
 			songList = getAllSongsOnDevice();
@@ -224,12 +240,6 @@ public class MainActivity extends Activity {
 
 		Song song = songAdapter.getItem(Integer.parseInt(((View) view
 				.getParent()).getTag().toString()));
-
-		TextView currentTitle = (TextView) findViewById(R.id.currentTitle);
-		TextView currentArtist = (TextView) findViewById(R.id.currentArtist);
-
-		currentTitle.setText(song.getTitle());
-		currentArtist.setText(song.getArtist());
 
 		if (musicService.audioFocusGranted())
 			musicService.playSong(song);
