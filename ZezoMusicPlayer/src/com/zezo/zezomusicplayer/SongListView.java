@@ -25,9 +25,29 @@ public class SongListView extends DragNDropListView {
 	}
 
 	private DropListener mDropListener = new DropListener() {
-		public void onDrop(int from, int to) {
+		public void onDrop(int firstItemIndex, int secondItemIndex) {
 
-			((SongAdapter) getAdapter()).onDrop(from, to);
+			((SongAdapter) getAdapter())
+					.onDrop(firstItemIndex, secondItemIndex);
+
+			int checkedItemIndex = getCheckedItemPosition();
+
+			if (firstItemIndex < checkedItemIndex
+					&& secondItemIndex >= checkedItemIndex)
+				setItemChecked(checkedItemIndex - 1, true);
+			
+			else if (firstItemIndex > checkedItemIndex
+					&& secondItemIndex <= checkedItemIndex)
+				setItemChecked(checkedItemIndex + 1, true);
+			
+			else {
+				
+				boolean isSecondChecked = isItemChecked(secondItemIndex);
+				setItemChecked(secondItemIndex, isItemChecked(firstItemIndex));
+				setItemChecked(firstItemIndex, isSecondChecked);
+				
+			}
+
 			invalidateViews();
 		}
 	};
