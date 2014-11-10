@@ -72,7 +72,7 @@ public class MainActivity extends Activity {
 			currentArtist.setText(song.getArtist());
 			
 			//View songView = songAdapter.getView(songAdapter.getSongs().indexOf(song), null, songListView);
-			//songView.
+			songListView.setItemChecked(songAdapter.getSongs().indexOf(song), true);
 			
 			processingPick = false;
 
