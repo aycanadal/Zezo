@@ -12,7 +12,15 @@ public class Song {
 		artist = songArtist;
 	}
 
-	public long getId(){return id;}
-	public String getTitle(){return title;}
-	public String getArtist(){return artist;}
+	public long getId() {
+		return id;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public String getArtist() {
+		return artist;
+	}
 }

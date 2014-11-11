@@ -79,34 +79,35 @@ public class MusicService extends Service implements
 			}
 		}
 	};
-	
-	private class RemoteControlReceiver extends BroadcastReceiver {
-	    @Override
-	    public void onReceive(Context context, Intent intent) {
-	        if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
-	            KeyEvent event = (KeyEvent)intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
 
-	            	switch (event.getKeyCode()) {
-	                case KeyEvent.KEYCODE_MEDIA_STOP:
-	                    pause();
-	                    break;
-	                case KeyEvent.KEYCODE_HEADSETHOOK:
-	                case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-	                    if (isPng())
-	                    	pause();
-	                    else
-	                    	go();
-	                    break;
-	                case KeyEvent.KEYCODE_MEDIA_NEXT:
-	                    playNext();
-	                    break;
-	                case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-	                    playPrevious();
-	                    break;
-	            	
-	            }
-	        }
-	    }
+	private class RemoteControlReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
+				KeyEvent event = (KeyEvent) intent
+						.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+
+				switch (event.getKeyCode()) {
+				case KeyEvent.KEYCODE_MEDIA_STOP:
+					pause();
+					break;
+				case KeyEvent.KEYCODE_HEADSETHOOK:
+				case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+					if (isPng())
+						pause();
+					else
+						go();
+					break;
+				case KeyEvent.KEYCODE_MEDIA_NEXT:
+					playNext();
+					break;
+				case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+					playPrevious();
+					break;
+
+				}
+			}
+		}
 	}
 
 	public void onCreate() {

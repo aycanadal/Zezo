@@ -216,16 +216,18 @@ public class MainActivity extends Activity {
 	private void showExitDialog() {
 
 		new AlertDialog.Builder(this)
-		.setTitle("Exit")
-		.setMessage("Do you really wish to end the application?")
-		.setIcon(android.R.drawable.ic_dialog_alert)
-		.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				.setTitle("Exit")
+				.setMessage("Do you really wish to end the application?")
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setPositiveButton(android.R.string.yes,
+						new DialogInterface.OnClickListener() {
 
-		    public void onClick(DialogInterface dialog, int whichButton) {
-		        exit();
-		    }})
-		 .setNegativeButton(android.R.string.no, null).show();
-		
+							public void onClick(DialogInterface dialog,
+									int whichButton) {
+								exit();
+							}
+						}).setNegativeButton(android.R.string.no, null).show();
+
 	}
 
 	/*

@@ -26,9 +26,9 @@ public class VoiceRecognitionHelper {
 	}
 
 	public int getRequestCode() {
-		
+
 		return REQUEST_CODE;
-		
+
 	}
 
 }

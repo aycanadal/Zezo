@@ -23,15 +23,14 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 	private ArrayList<Song> filteredSongs;
 	private LayoutInflater songInflater;
 	private Filter filter;
-	
 
 	public SongAdapter(Context c, ArrayList<Song> theSongs) {
-		
+
 		setSongs(theSongs);
 		setFilteredSongs(theSongs);
 		songInflater = LayoutInflater.from(c);
 		filter = new SongFilter(this);
-		
+
 	}
 
 	@Override
@@ -54,8 +53,8 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		// map to song layout
-		LinearLayout songLayout = (LinearLayout) songInflater.inflate(R.layout.song,
-				parent, false);
+		LinearLayout songLayout = (LinearLayout) songInflater.inflate(
+				R.layout.song, parent, false);
 
 		// get title and artist views
 		TextView songView = (TextView) songLayout.findViewById(R.id.song_title);
@@ -71,14 +70,14 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 
 		// set position as tag
 		songLayout.setTag(position);
-		
+
 		return songLayout;
 
 	}
 
 	@Override
 	public Filter getFilter() {
-		
+
 		return filter;
 	}
 
@@ -113,5 +112,5 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 
 	public void setFilteredSongs(ArrayList<Song> filteredSongs) {
 		this.filteredSongs = filteredSongs;
-	}	
+	}
 }

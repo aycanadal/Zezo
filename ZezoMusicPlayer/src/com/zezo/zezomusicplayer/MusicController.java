@@ -10,13 +10,13 @@ public class MusicController extends MediaController implements
 
 	private MusicService musicService;
 	private boolean musicBound = false;
-	
+
 	public MusicController(Context context) {
-		
+
 		super(context);
-		
+
 	}
-	
+
 	public void init(MusicService musicService) {
 
 		this.musicService = musicService;
@@ -105,10 +105,10 @@ public class MusicController extends MediaController implements
 
 	@Override
 	public void pause() {
-		
+
 		if (musicService != null && musicService.isPng())
 			musicService.pause();
-		
+
 		// initController();
 		// show(0);
 	}
@@ -120,9 +120,9 @@ public class MusicController extends MediaController implements
 
 	@Override
 	public void start() {
-		
+
 		musicService.go();
-		
+
 	}
 
 	public boolean isMusicBound() {
