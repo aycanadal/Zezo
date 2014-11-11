@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -67,9 +68,9 @@ public class MusicService extends Service implements
 				// onResume();
 			} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
 
-				// ComponentName mRemoteControlResponder = new ComponentName(
-				// getPackageName(), RemoteControlReceiver.class.getName());
-				// am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
+				ComponentName mRemoteControlResponder = new ComponentName(
+						getPackageName(), RemoteControlReceiver.class.getName());
+				am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
 				am.abandonAudioFocus(afChangeListener);
 
 				pause();
@@ -102,6 +103,18 @@ public class MusicService extends Service implements
 				Intent.ACTION_HEADSET_PLUG);
 		headsetStateReceiver = new HeadsetStateReceiver();
 		registerReceiver(headsetStateReceiver, receiverFilter);
+
+		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+		// Request audio focus for playback
+		int result = am.requestAudioFocus(afChangeListener,
+				AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+
+		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+			ComponentName mRemoteControlResponder = new ComponentName(
+					getPackageName(), RemoteControlReceiver.class.getName());
+			am.registerMediaButtonEventReceiver(mRemoteControlResponder);
+		}
 
 	}
 
@@ -192,7 +205,8 @@ public class MusicService extends Service implements
 
 		builder.setContentIntent(pendInt).setSmallIcon(R.drawable.play)
 				.setTicker(getSong().getTitle()).setOngoing(true)
-				.setContentTitle("Playing").setContentText(getSong().getTitle());
+				.setContentTitle("Playing")
+				.setContentText(getSong().getTitle());
 
 		Notification not = builder.build();
 
