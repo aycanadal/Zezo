@@ -2,13 +2,13 @@
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
+            backward-compatibility can go here.
         -->
     </style>
 
@@ -16,18 +16,18 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-    
-    <style name="MyTheme" parent="Theme.AppCompat.Light">
-         <item name="actionBarStyle">@style/MyActionBar</item>
 
-</style>
-<style name="MyActionBar" parent="style/Widget.AppCompat.Light.ActionBar">
-         <item name="android:background">#FF9D21</item>
-         <item name="titleTextStyle">@style/MyActionBarTitleText</item>
-</style> 
-<style name="MyActionBarTitleText"
-           parent="style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+    <style name="MyTheme" parent="Theme.AppCompat.Light">
+        <item name="actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+    <style name="MyActionBar" parent="style/Widget.AppCompat.Light.ActionBar">
+        <item name="android:background">@color/DarkGray</item>
+        <item name="titleTextStyle">@style/MyActionBarTitleText</item>
+    </style>
+
+    <style name="MyActionBarTitleText" parent="style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/lime</item>
-</style>
+    </style>
 
 </resources>

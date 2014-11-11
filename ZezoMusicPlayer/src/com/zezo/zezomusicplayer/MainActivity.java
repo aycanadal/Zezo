@@ -5,10 +5,12 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -31,6 +33,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 
@@ -38,7 +41,7 @@ public class MainActivity extends Activity {
 
 	private ArrayList<Song> songList;
 	private ListView songListView;
-	
+
 	private TextView currentTitle;
 	private TextView currentArtist;
 
@@ -66,14 +69,14 @@ public class MainActivity extends Activity {
 				return;
 
 			getController().show(0);
-			
+
 			Song song = musicService.getSong();
 			currentTitle.setText(song.getTitle());
 			currentArtist.setText(song.getArtist());
-			
-			//View songView = songAdapter.getView(songAdapter.getSongs().indexOf(song), null, songListView);
-			songListView.setItemChecked(songAdapter.getSongs().indexOf(song), true);
-			
+
+			songListView.setItemChecked(songAdapter.getSongs().indexOf(song),
+					true);
+
 			processingPick = false;
 
 		}
@@ -99,7 +102,6 @@ public class MainActivity extends Activity {
 
 		}
 	};
-	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +110,7 @@ public class MainActivity extends Activity {
 
 		setContentView(R.layout.activity_main);
 		songListView = (SongListView) findViewById(R.id.song_list);
-		
+
 		currentTitle = (TextView) findViewById(R.id.currentTitle);
 		currentArtist = (TextView) findViewById(R.id.currentArtist);
 
@@ -193,7 +195,7 @@ public class MainActivity extends Activity {
 
 		case R.id.action_exit:
 
-			exit();
+			showExitDialog();
 			break;
 
 		case R.id.action_search:
@@ -209,6 +211,21 @@ public class MainActivity extends Activity {
 
 		return super.onOptionsItemSelected(item);
 
+	}
+
+	private void showExitDialog() {
+
+		new AlertDialog.Builder(this)
+		.setTitle("Exit")
+		.setMessage("Do you really wish to end the application?")
+		.setIcon(android.R.drawable.ic_dialog_alert)
+		.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+		    public void onClick(DialogInterface dialog, int whichButton) {
+		        exit();
+		    }})
+		 .setNegativeButton(android.R.string.no, null).show();
+		
 	}
 
 	/*
