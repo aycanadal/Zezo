@@ -2,25 +2,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#000000"    
+    android:background="#000000"
     android:orientation="vertical"
+    android:windowSoftInputMode="adjustPan"
     tools:context=".MainActivity" >
-    
-    <EditText android:id="@+id/inputSearch"
+
+    <LinearLayout
+        android:id="@+id/searchPane"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="Search..."
-        android:inputType="textVisiblePassword"
-        android:textColor="#00FF00"
-        />
- 
-  <ListView
-    android:id="@+id/song_list"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:fastScrollEnabled="true"
-    android:fastScrollAlwaysVisible="true"
-     >
-  </ListView>
- 
+        android:background="#000000"
+        android:orientation="horizontal"
+        android:weightSum="1.0"
+        android:windowSoftInputMode="adjustPan"
+        tools:context=".MainActivity" >
+
+        <EditText
+            android:id="@+id/searchBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:duplicateParentState="true"
+            android:hint="Search..."
+            android:inputType="textVisiblePassword"
+            android:longClickable="true"
+            android:textColor="#00FF00" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/speakButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="onTalkButtonClick"
+            android:text="Talk" />
+    </LinearLayout>
+    
+    <TextView
+        android:id="@+id/currentTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/currentArtist"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#AAAAAA"
+        android:textSize="18sp" />
+
+    <com.zezo.zezomusicplayer.SongListView
+        android:id="@+id/song_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:fastScrollAlwaysVisible="true"
+        android:fastScrollEnabled="true"
+        android:choiceMode="singleChoice"
+        android:listSelector="#660000" >
+    </com.zezo.zezomusicplayer.SongListView>
+
+    
+
 </LinearLayout>

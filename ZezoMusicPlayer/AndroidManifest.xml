@@ -4,6 +4,15 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="15" />
+
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
@@ -15,20 +24,39 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/MyTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" 
+            android:label="@string/app_name"
             android:launchMode="singleTop"
-  			android:screenOrientation="portrait"
-  			android:windowSoftInputMode="stateHidden">
+            android:screenOrientation="fullSensor"
+            android:windowSoftInputMode="stateHidden"
+            android:configChanges="orientation|screenSize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
+                <!--
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+                -->
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <service android:name="com.zezo.zezomusicplayer.MusicService" />
+
+        <receiver android:name="RemoteControlReceiver" >
+            <action android:name="android.intent.action.MEDIA_BUTTON" />
+            <action android:name="android.intent.action.RECOGNIZE_SPEECH" />
+        </receiver>
+
+        <intent-filter>
+            <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+            <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+            <action android:name="android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED" />
+        </intent-filter>
     </application>
 
 </manifest>

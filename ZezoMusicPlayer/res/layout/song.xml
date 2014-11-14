@@ -1,24 +1,40 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:layout_width="fill_parent"
-  android:layout_height="wrap_content"
-  android:onClick="songPicked"
-  android:orientation="vertical"
-  android:padding="5dp" >
- 
-  <TextView
-    android:id="@+id/song_title"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:textColor="#00FF00"
-    android:textSize="20sp"
-    android:textStyle="bold" />
- 
-  <TextView
-    android:id="@+id/song_artist"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:textColor="#00FF00"
-    android:textSize="18sp" />
- 
+    android:orientation="horizontal"
+    android:padding="5dp"
+    android:background="#FFFFFF" >
+
+    <ImageView
+        android:id="@+id/ImageView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/icmpmove" >
+    </ImageView>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onSongPicked"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/song_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@drawable/list_item_text_selector" 
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/song_artist"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@drawable/list_item_text_selector"
+            android:textSize="18sp" />
+    </LinearLayout>
+
 </LinearLayout>

@@ -1,135 +1,179 @@
 package com.zezo.zezomusicplayer;
 
-import android.widget.EditText;
-import android.widget.MediaController.MediaPlayerControl;
-import android.app.Activity;
-import android.os.IBinder;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.MenuItem;
-import android.view.View;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import com.zezo.zezomusicplayer.MusicService.MusicBinder;
-
-import android.net.Uri;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.database.Cursor;
-import android.widget.ListView;
+import android.media.AudioManager;
+import android.media.AudioManager.OnAudioFocusChangeListener;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.speech.RecognizerIntent;
+import android.support.v4.content.LocalBroadcastManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 
-public class MainActivity extends Activity implements
-		MediaPlayerControl {
-	
-	private SongAdapter songAdt;
-
-	private boolean paused = false, playbackPaused = false;
-
-	private MusicController controller;
-
-	private MusicService musicSrv;
-	private Intent playIntent;
-	private boolean musicBound = false;
+public class MainActivity extends Activity {
 
 	private ArrayList<Song> songList;
-	private ListView songView;
-	private EditText inputSearch;
-	
+	private ListView songListView;
+
+	private TextView currentTitle;
+	private TextView currentArtist;
+
+	private LinearLayout searchPane;
+	private EditText searchBox;
+
+	private boolean searchEnabled;
+	private MusicController controller;
+
+	private VoiceRecognitionHelper voiceRecognitionHelper;
+
+	private MusicService musicService;
+
+	private Intent playIntent;
+	private SongAdapter songAdapter;
+	private boolean processingPick = false;
+
 	// Broadcast receiver to determine when music player has been prepared
 	private BroadcastReceiver onPrepareReceiver = new BroadcastReceiver() {
-	@Override
-	public void onReceive(Context c, Intent i) {
-	    // When music player has been prepared, show controller
-	    controller.show(0);
-	    }
+
+		@Override
+		public void onReceive(Context c, Intent i) {
+
+			if (i.getAction() != "MEDIA_PLAYER_PREPARED")
+				return;
+
+			getController().show(0);
+
+			Song song = musicService.getSong();
+			currentTitle.setText(song.getTitle());
+			currentArtist.setText(song.getArtist());
+
+			songListView.setItemChecked(songAdapter.getSongs().indexOf(song),
+					true);
+
+			processingPick = false;
+
+		}
 	};
 
-	
+	private ServiceConnection musicConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+
+			MusicBinder binder = (MusicBinder) service;
+			musicService = binder.getService();
+			musicService.setSongs(songList);
+			getController().init(musicService);
+			getController().setMusicBound(true);
+
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+
+			getController().setMusicBound(false);
+
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_main);
-		songView = (ListView) findViewById(R.id.song_list);
-		
-		inputSearch = (EditText) findViewById(R.id.inputSearch);
-		
-		inputSearch.addTextChangedListener(new TextWatcher() {
-		     
-		    @Override
-		    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-		        // When user changed the Text
-		        MainActivity.this.songAdt.getFilter().filter(cs);   
-		    }
-		     
-		    @Override
-		    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-		            int arg3) {
-		        // TODO Auto-generated method stub
-		         
-		    }
-		     
-		    @Override
-		    public void afterTextChanged(Editable arg0) {
-		        // TODO Auto-generated method stub                          
-		    }
-		});
-		
-		
-		songList = new ArrayList<Song>();
-		getSongList();
+		songListView = (SongListView) findViewById(R.id.song_list);
+
+		currentTitle = (TextView) findViewById(R.id.currentTitle);
+		currentArtist = (TextView) findViewById(R.id.currentArtist);
+
+		if (songList == null || songList.size() < 1)
+			songList = getAllSongsOnDevice();
+
 		Collections.sort(songList, new Comparator<Song>() {
 			public int compare(Song a, Song b) {
 				return a.getTitle().compareTo(b.getTitle());
 			}
 		});
 
-		songAdt = new SongAdapter(this, songList);
-		songView.setAdapter(songAdt);
-		setController();
+		songAdapter = new SongAdapter(this, songList);
+		songListView.setAdapter(songAdapter);
+
+		setController(new MusicController(this));
+		getController().setAnchorView(songListView);
+
+		initSearch();
+
+		LocalBroadcastManager.getInstance(this).registerReceiver(
+				onPrepareReceiver, new IntentFilter("MEDIA_PLAYER_PREPARED"));
+
+		voiceRecognitionHelper = new VoiceRecognitionHelper(searchBox);
+
+		if (playIntent == null) {
+
+			playIntent = new Intent(this, MusicService.class);
+			bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+			startService(playIntent);
+
+		}
+
 	}
 
-	// connect to the service
-	private ServiceConnection musicConnection = new ServiceConnection() {
+	@Override
+	protected void onResume() {
 
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			MusicBinder binder = (MusicBinder) service;
-			// get service
-			musicSrv = binder.getService();
-			// pass list
-			musicSrv.setList(songList);
-			musicBound = true;
-		}
+		findViewById(R.id.song_list).postDelayed(new Runnable() {
+			public void run() {
+				searchBox.requestFocus();
+				InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+				inputMethodManager.showSoftInput(searchBox,
+						InputMethodManager.SHOW_IMPLICIT);
 
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			musicBound = false;
-		}
+				hideKeyboard();
+			}
+		}, 100);
+
+		super.onResume();
+		super.onResume();
+
 	};
 
 	@Override
-	protected void onStart() {
-		super.onStart();
-		if (playIntent == null) {
-			playIntent = new Intent(this, MusicService.class);
-			boolean bound = bindService(playIntent, musicConnection,
-					Context.BIND_AUTO_CREATE);
-			startService(playIntent);
-		}
+	protected void onDestroy() {
+
+		// stopService(playIntent);
+		// musicService = null;
+		hideKeyboard();
+		// unregisterReceiver(onPrepareReceiver);
+		super.onDestroy();
+
 	}
 
 	@Override
@@ -141,198 +185,232 @@ public class MainActivity extends Activity implements
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+
 		switch (item.getItemId()) {
+
 		case R.id.action_shuffle:
-			musicSrv.toggleShuffle();
+
+			musicService.toggleShuffle();
 			break;
-		case R.id.action_end:
-			stopService(playIntent);
-			musicSrv = null;
-			System.exit(0);
+
+		case R.id.action_exit:
+
+			showExitDialog();
 			break;
+
+		case R.id.action_search:
+
+			if (searchEnabled)
+				disableSearch();
+			else
+				enableSearch();
+
+			break;
+
 		}
+
 		return super.onOptionsItemSelected(item);
+
 	}
 
-	public void getSongList() {
-		// retrieve song info
+	private void showExitDialog() {
+
+		new AlertDialog.Builder(this)
+				.setTitle("Exit")
+				.setMessage("Do you really wish to end the application?")
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setPositiveButton(android.R.string.yes,
+						new DialogInterface.OnClickListener() {
+
+							public void onClick(DialogInterface dialog,
+									int whichButton) {
+								exit();
+							}
+						}).setNegativeButton(android.R.string.no, null).show();
+
+	}
+
+	/*
+	 * @Override public void onBackPressed() {
+	 * 
+	 * super.onBackPressed();
+	 * 
+	 * if (searchEnabled) disableSearch();
+	 * 
+	 * }
+	 */
+
+	/*
+	 * @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+	 * 
+	 * if (keyCode == KeyEvent.KEYCODE_BACK) { hideKeyboard();
+	 * super.onKeyDown(keyCode, event); } return true;
+	 * 
+	 * }
+	 */
+
+	public void onSongPicked(View view) {
+
+		if (processingPick)
+			return;
+
+		processingPick = true;
+
+		Song song = songAdapter.getItem(Integer.parseInt(((View) view
+				.getParent()).getTag().toString()));
+
+		if (musicService.audioFocusGranted())
+			musicService.playSong(song);
+
+	}
+
+	public void onTalkButtonClick(View view) {
+
+		startActivityForResult(voiceRecognitionHelper.getIntent(),
+				voiceRecognitionHelper.getRequestCode());
+
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		if (requestCode == voiceRecognitionHelper.getRequestCode()
+				&& resultCode == RESULT_OK) {
+
+			ArrayList<String> matches = data
+					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+			searchBox.setText(matches.get(0));
+
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
+
+	}
+
+	private void initSearch() {
+
+		searchPane = (LinearLayout) findViewById(R.id.searchPane);
+		searchBox = (EditText) findViewById(R.id.searchBox);
+		searchPane.setVisibility(View.GONE);
+		// searchBox.setVisibility(View.GONE);
+		searchEnabled = false;
+
+		searchBox.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence cs, int arg1, int arg2,
+					int arg3) {
+				// When user changed the Text
+				MainActivity.this.songAdapter.getFilter().filter(cs);
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				// TODO Auto-generated method stub
+			}
+		});
+
+	}
+
+	private void enableSearch() {
+
+		searchEnabled = true;
+		searchPane.setVisibility(View.VISIBLE);
+		boolean focused = searchBox.requestFocus();
+		getController().setVisibility(View.GONE);
+		showKeyboard();
+
+	}
+
+	private void disableSearch() {
+
+		searchEnabled = false;
+		searchBox.setText("");
+		searchPane.setVisibility(View.GONE);
+		hideKeyboard();
+		getController().setVisibility(View.VISIBLE);
+
+	}
+
+	private void showKeyboard() {
+
+		((InputMethodManager) this
+				.getSystemService(Context.INPUT_METHOD_SERVICE))
+				.toggleSoftInputFromWindow(searchBox.getWindowToken(), 0, 0);
+
+		/*
+		 * InputMethodManager imm = (InputMethodManager)
+		 * getSystemService(Context.INPUT_METHOD_SERVICE);
+		 * imm.showSoftInput(searchBox, InputMethodManager.SHOW_FORCED);
+		 */
+
+	}
+
+	private void hideKeyboard() {
+
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
+
+	}
+
+	private ArrayList<Song> getAllSongsOnDevice() {
+
+		ArrayList<Song> songs = new ArrayList<Song>();
+
 		ContentResolver musicResolver = getContentResolver();
 		Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 		Cursor musicCursor = musicResolver.query(musicUri, null, null, null,
 				null);
+
 		if (musicCursor != null && musicCursor.moveToFirst()) {
-			// get columns
+
 			int titleColumn = musicCursor
 					.getColumnIndex(android.provider.MediaStore.Audio.Media.TITLE);
 			int idColumn = musicCursor
 					.getColumnIndex(android.provider.MediaStore.Audio.Media._ID);
 			int artistColumn = musicCursor
 					.getColumnIndex(android.provider.MediaStore.Audio.Media.ARTIST);
-			// add songs to list
+
 			do {
+
 				long thisId = musicCursor.getLong(idColumn);
 				String thisTitle = musicCursor.getString(titleColumn);
 				String thisArtist = musicCursor.getString(artistColumn);
-				songList.add(new Song(thisId, thisTitle, thisArtist));
+				songs.add(new Song(thisId, thisTitle, thisArtist));
+
 			} while (musicCursor.moveToNext());
-		}
-	}
 
-	public void songPicked(View view){
-		long songId = songAdt.getItem(Integer.parseInt(view.getTag().toString())).getID();
-		  musicSrv.setSong(songId);
-		  musicSrv.playSong();
-		  if(playbackPaused){
-		    setController();
-		    playbackPaused=false;
-		  }
-		  controller.show(0);
 		}
 
-	private void setController() {
-		// set the controller up
-		if (controller == null) controller = new MusicController(this);
+		musicCursor.close();
 
-		controller.setPrevNextListeners(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				playNext();
-			}
-		}, new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				playPrev();
-			}
-		});
-
-		controller.setMediaPlayer(this);
-		controller.setAnchorView(findViewById(R.id.song_list));
-		controller.setEnabled(true);
-		controller.setAnchorView(songView);
+		return songs;
 
 	}
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		paused = true;
-	}
+	private void exit() {
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (paused) {
-			//setController();
-			paused = false;
-		}
-		
-		// Set up receiver for media player onPrepared broadcast
-		LocalBroadcastManager.getInstance(this).registerReceiver(onPrepareReceiver,
-		        new IntentFilter("MEDIA_PLAYER_PREPARED"));
-	}
-
-	@Override
-	protected void onStop() {
-		controller.hide();
-		super.onStop();
-	}
-
-	@Override
-	protected void onDestroy() {
+		hideKeyboard();
 		stopService(playIntent);
-		musicSrv = null;
-		super.onDestroy();
+		musicService = null;
+		System.exit(0);
+
 	}
 
-	@Override
-	public boolean canPause() {
-		return true;
+	public MusicController getController() {
+		return controller;
 	}
 
-	@Override
-	public boolean canSeekBackward() {
-		return true;
+	public void setController(MusicController controller) {
+		this.controller = controller;
 	}
-
-	@Override
-	public boolean canSeekForward() {
-		return true;
-	}
-
-	@Override
-	public int getAudioSessionId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getBufferPercentage() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getCurrentPosition() {
-		//if (musicSrv != null && musicBound && musicSrv.isPng())
-		if (musicSrv != null && musicBound)
-			return musicSrv.getPosn();
-		else
-			return 0;
-	}
-
-	@Override
-	public int getDuration() {
-		
-		//Log.d(musicSrv.);
-		
-		//if (musicSrv != null && musicBound && musicSrv.isPng())
-		if (musicSrv != null && musicBound)
-			return musicSrv.getDur();
-		else
-			return 0;
-	}
-
-	@Override
-	public boolean isPlaying() {
-		if (musicSrv != null & musicBound)
-			return musicSrv.isPng();
-		return false;
-	}
-
-	@Override
-	public void pause() {
-	  playbackPaused=true;
-	  musicSrv.pausePlayer();
-	}
-
-	@Override
-	public void seekTo(int pos) {
-		musicSrv.seek(pos);
-	}
-
-	@Override
-	public void start() {
-		musicSrv.go();
-	}
-
-	private void playNext() {
-		musicSrv.playNext();
-		if (playbackPaused) {
-			setController();
-			playbackPaused = false;
-		}
-		controller.show(0);
-	}
-
-	private void playPrev() {
-		musicSrv.playPrev();
-		if (playbackPaused) {
-			setController();
-			playbackPaused = false;
-		}
-		controller.show(0);
-	}
-
-	
 
 }

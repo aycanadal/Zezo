@@ -1,107 +1,116 @@
 package com.zezo.zezomusicplayer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+
+import com.zezo.dragndroplistview.DropListener;
+import com.zezo.dragndroplistview.RemoveListener;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
-public class SongAdapter extends BaseAdapter implements Filterable {
+public class SongAdapter extends BaseAdapter implements Filterable,
+		RemoveListener, DropListener {
 
 	private ArrayList<Song> songs;
 	private ArrayList<Song> filteredSongs;
-	private LayoutInflater songInf;
+	private LayoutInflater songInflater;
+	private Filter filter;
 
 	public SongAdapter(Context c, ArrayList<Song> theSongs) {
-		songs = theSongs;
-		filteredSongs = theSongs;
-		songInf = LayoutInflater.from(c);
+
+		setSongs(theSongs);
+		setFilteredSongs(theSongs);
+		songInflater = LayoutInflater.from(c);
+		filter = new SongFilter(this);
+
 	}
 
 	@Override
 	public int getCount() {
 
-		return filteredSongs.size();
+		return getFilteredSongs().size();
 	}
 
 	@Override
 	public Song getItem(int arg0) {
-		return filteredSongs.get(arg0);
+		return getFilteredSongs().get(arg0);
 	}
 
 	@Override
 	public long getItemId(int arg0) {
-		return filteredSongs.get(arg0).getID();
+		return getFilteredSongs().get(arg0).getId();
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+
 		// map to song layout
-		LinearLayout songLay = (LinearLayout) songInf.inflate(R.layout.song,
-				parent, false);
+		LinearLayout songLayout = (LinearLayout) songInflater.inflate(
+				R.layout.song, parent, false);
+
 		// get title and artist views
-		TextView songView = (TextView) songLay.findViewById(R.id.song_title);
-		TextView artistView = (TextView) songLay.findViewById(R.id.song_artist);
+		TextView songView = (TextView) songLayout.findViewById(R.id.song_title);
+		TextView artistView = (TextView) songLayout
+				.findViewById(R.id.song_artist);
+
 		// get song using position
-		Song currSong = filteredSongs.get(position);
+		Song currentSong = getFilteredSongs().get(position);
+
 		// get title and artist strings
-		songView.setText(currSong.getTitle());
-		artistView.setText(currSong.getArtist());
+		songView.setText(currentSong.getTitle());
+		artistView.setText(currentSong.getArtist());
+
 		// set position as tag
-		songLay.setTag(position);
-		return songLay;
-	}
-	
-	 @Override
-	    public Filter getFilter()
-	    {
-	       return new Filter()
-	       {
-	            @Override
-	            protected FilterResults performFiltering(CharSequence charSequence)
-	            {
-	                FilterResults results = new FilterResults();
+		songLayout.setTag(position);
 
-	                //If there's nothing to filter on, return the original data for your list
-	                if(charSequence == null || charSequence.length() == 0)
-	                {
-	                    results.values = songs;
-	                    results.count = songs.size();
-	                }
-	                else
-	                {
-	                	List<Song> filteredSongs = new ArrayList<Song>();
+		return songLayout;
 
-	                    for (Song song : songs) {
-	                    	String songTitle = song.getTitle();
-	                        if (songTitle.toUpperCase().contains(charSequence.toString().toUpperCase()))
-	                            filteredSongs.add(song);
-	                    }
-
-	                    results.values = filteredSongs;
-	                    results.count = filteredSongs.size();
-
-	                }
-
-	                return results;
-	            }
-
-	            @Override
-	            protected void publishResults(CharSequence charSequence, FilterResults filterResults)
-	            {
-	            	filteredSongs = (ArrayList<Song>)filterResults.values;	            	
-	                notifyDataSetChanged();
-	            }
-	        };
-	    }
 	}
 
+	@Override
+	public Filter getFilter() {
 
+		return filter;
+	}
+
+	public void onDrag(int songIndex) {
+
+		if (songIndex < 0 || songIndex > getSongs().size())
+			return;
+
+		getSongs().remove(songIndex);
+
+	}
+
+	public void onDrop(int from, int to) {
+
+		Song temp = getSongs().get(from);
+		getSongs().remove(from);
+		getSongs().add(to, temp);
+
+	}
+
+	public ArrayList<Song> getSongs() {
+		return songs;
+	}
+
+	public void setSongs(ArrayList<Song> songs) {
+		this.songs = songs;
+	}
+
+	public ArrayList<Song> getFilteredSongs() {
+		return filteredSongs;
+	}
+
+	public void setFilteredSongs(ArrayList<Song> filteredSongs) {
+		this.filteredSongs = filteredSongs;
+	}
+}
