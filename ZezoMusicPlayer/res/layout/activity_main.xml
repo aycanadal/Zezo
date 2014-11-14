@@ -6,6 +6,21 @@
     android:orientation="vertical"
     android:windowSoftInputMode="adjustPan"
     tools:context=".MainActivity" >
+    
+    <TextView
+        android:id="@+id/currentTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/currentArtist"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#AAAAAA"
+        android:textSize="18sp" />
 
     <LinearLayout
         android:id="@+id/searchPane"
@@ -39,21 +54,6 @@
             android:onClick="onTalkButtonClick"
             android:text="Talk" />
     </LinearLayout>
-    
-    <TextView
-        android:id="@+id/currentTitle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/currentArtist"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#AAAAAA"
-        android:textSize="18sp" />
 
     <com.zezo.zezomusicplayer.SongListView
         android:id="@+id/song_list"
@@ -64,7 +64,5 @@
         android:choiceMode="singleChoice"
         android:listSelector="#660000" >
     </com.zezo.zezomusicplayer.SongListView>
-
-    
 
 </LinearLayout>
