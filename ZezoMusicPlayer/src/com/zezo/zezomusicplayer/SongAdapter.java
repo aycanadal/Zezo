@@ -113,4 +113,8 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 	public void setFilteredSongs(ArrayList<Song> filteredSongs) {
 		this.filteredSongs = filteredSongs;
 	}
+
+	/*
+	 * @Override public boolean isEnabled(int position) { return true; }
+	 */
 }

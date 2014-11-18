@@ -151,15 +151,15 @@ public class MainActivity extends Activity {
 			startService(playIntent);
 
 		}
-		
-		registerForContextMenu(songListView);
 
-		songListView.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View v,
-					int position, long id) {
-				onSongPicked(v);
-			}
-		});
+		// registerForContextMenu(songListView);
+
+		// songListView.setOnItemClickListener(new OnItemClickListener() {
+		// public void onItemClick(AdapterView<?> parent, View v,
+		// int position, long id) {
+		// onSongPicked(v);
+		// }
+		// });
 
 	}
 
@@ -176,7 +176,7 @@ public class MainActivity extends Activity {
 				hideKeyboard();
 			}
 		}, 100);
-		
+
 		super.onResume();
 
 	};
@@ -305,11 +305,20 @@ public class MainActivity extends Activity {
 
 		processingPick = true;
 
-		Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
-				.toString()));
+		Song song = songAdapter.getItem(Integer.parseInt(((View) view
+				.getParent()).getTag().toString()));
+
+		// Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
+		// .toString()));
 
 		if (musicService.audioFocusGranted())
 			musicService.playSong(song);
+
+		/*
+		 * songListView.setOnItemClickListener(new OnItemClickListener() {
+		 * public void onItemClick(AdapterView<?> parent, View v, int position,
+		 * long id) { onSongPicked(v); } });
+		 */
 
 	}
 

@@ -62,7 +62,9 @@
         android:fastScrollAlwaysVisible="true"
         android:fastScrollEnabled="true"
         android:choiceMode="singleChoice"
-        android:listSelector="#660000" >
+        android:listSelector="#660000"
+        
+         >
     </com.zezo.zezomusicplayer.SongListView>
 
 </LinearLayout>
