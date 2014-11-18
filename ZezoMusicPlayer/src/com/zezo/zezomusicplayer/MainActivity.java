@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,15 +21,22 @@ import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -40,7 +48,7 @@ import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 public class MainActivity extends Activity {
 
 	private ArrayList<Song> songList;
-	private ListView songListView;
+	private SongListView songListView;
 
 	private TextView currentTitle;
 	private TextView currentArtist;
@@ -143,6 +151,15 @@ public class MainActivity extends Activity {
 			startService(playIntent);
 
 		}
+		
+		registerForContextMenu(songListView);
+
+		songListView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View v,
+					int position, long id) {
+				onSongPicked(v);
+			}
+		});
 
 	}
 
@@ -159,8 +176,7 @@ public class MainActivity extends Activity {
 				hideKeyboard();
 			}
 		}, 100);
-
-		super.onResume();
+		
 		super.onResume();
 
 	};
@@ -207,10 +223,43 @@ public class MainActivity extends Activity {
 
 			break;
 
+		case R.id.action_delete:
+
+			Song song = musicService.getSong();
+
+			if (song == null)
+				break;
+
+			Uri uri = ContentUris.withAppendedId(
+					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.getId());
+
+			// getContentResolver().delete(uri, null, null);
+
 		}
 
 		return super.onOptionsItemSelected(item);
 
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.context, menu);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
+		switch (item.getItemId()) {
+		case R.id.action_delete:
+			// deleteNote(info.id);
+			return true;
+		default:
+			return super.onContextItemSelected(item);
+		}
 	}
 
 	private void showExitDialog() {
@@ -256,8 +305,8 @@ public class MainActivity extends Activity {
 
 		processingPick = true;
 
-		Song song = songAdapter.getItem(Integer.parseInt(((View) view
-				.getParent()).getTag().toString()));
+		Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
+				.toString()));
 
 		if (musicService.audioFocusGranted())
 			musicService.playSong(song);

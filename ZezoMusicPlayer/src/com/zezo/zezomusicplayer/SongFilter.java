@@ -35,11 +35,9 @@ public class SongFilter extends Filter {
 				String songArtist = song.getArtist();
 
 				if (songTitle.toUpperCase().contains(
-						charSequence.toString().toUpperCase()))
-					filteredSongs.add(song);
-				
-				if (songArtist.toUpperCase().contains(
-						charSequence.toString().toUpperCase()))
+						charSequence.toString().toUpperCase())
+						|| songArtist.toUpperCase().contains(
+								charSequence.toString().toUpperCase()))
 					filteredSongs.add(song);
 
 			}
