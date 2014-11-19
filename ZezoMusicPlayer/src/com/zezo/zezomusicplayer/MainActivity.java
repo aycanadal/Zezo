@@ -319,6 +319,7 @@ public class MainActivity extends Activity {
 
 		initSongAdapter();
 		initViews();
+		controller = new MusicController(this);
 		controller.setAnchorView(songListView);
 		initSearch();
 		initMusicService();
