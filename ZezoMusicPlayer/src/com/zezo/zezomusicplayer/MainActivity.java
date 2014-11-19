@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -264,12 +265,9 @@ public class MainActivity extends Activity {
 		songListView = (SongListView) findViewById(R.id.song_list);
 		currentTitle = (TextView) findViewById(R.id.currentTitle);
 		currentArtist = (TextView) findViewById(R.id.currentArtist);
-
 		songListView.setAdapter(songAdapter);
-
 		registerForContextMenu(songListView);
 		songListView.setOnItemClickListener(itemClickListener);
-		// songListView.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
 
 	}
 
