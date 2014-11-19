@@ -72,10 +72,12 @@ public class MainActivity extends Activity {
 			songListView.setItemChecked(songs.indexOf(song), true);
 			currentArtist.setText(song.getArtist());
 			currentTitle.setText(song.getTitle());
-			getController().show(0);
+			controller.show(0);
 			processingPick = false;
+
 		}
 	};
+
 	private ServiceConnection musicConnection = new ServiceConnection() {
 
 		@Override
@@ -84,15 +86,15 @@ public class MainActivity extends Activity {
 			MusicBinder binder = (MusicBinder) service;
 			musicService = binder.getService();
 			musicService.setSongs(songList);
-			getController().init(musicService);
-			getController().setMusicBound(true);
+			controller.init(musicService);
+			controller.setMusicBound(true);
 
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 
-			getController().setMusicBound(false);
+			controller.setMusicBound(false);
 
 		}
 	};
@@ -120,7 +122,7 @@ public class MainActivity extends Activity {
 		searchBox.setText("");
 		searchPane.setVisibility(View.GONE);
 		hideKeyboard();
-		getController().setVisibility(View.VISIBLE);
+		controller.setVisibility(View.VISIBLE);
 
 	}
 
@@ -129,7 +131,7 @@ public class MainActivity extends Activity {
 		searchEnabled = true;
 		searchPane.setVisibility(View.VISIBLE);
 		boolean focused = searchBox.requestFocus();
-		getController().setVisibility(View.GONE);
+		controller.setVisibility(View.GONE);
 		showKeyboard();
 
 	}
@@ -175,10 +177,6 @@ public class MainActivity extends Activity {
 
 	}
 
-	public MusicController getController() {
-		return controller;
-	}
-
 	private void hideKeyboard() {
 
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -189,7 +187,7 @@ public class MainActivity extends Activity {
 	private void initMediaController() {
 
 		setController(new MusicController(this));
-		getController().setAnchorView(songListView);
+		controller.setAnchorView(songListView);
 
 	};
 
@@ -265,12 +263,13 @@ public class MainActivity extends Activity {
 		songListView = (SongListView) findViewById(R.id.song_list);
 		currentTitle = (TextView) findViewById(R.id.currentTitle);
 		currentArtist = (TextView) findViewById(R.id.currentArtist);
+		songListView.setOnItemClickListener(itemClickListener);
 		songListView.setAdapter(songAdapter);
 		registerForContextMenu(songListView);
-		songListView.setOnItemClickListener(itemClickListener);
 
 	}
 
+	// Put voice recognition result to searchBox.
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
