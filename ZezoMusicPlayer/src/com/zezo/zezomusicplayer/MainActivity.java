@@ -184,13 +184,6 @@ public class MainActivity extends Activity {
 
 	}
 
-	private void initMediaController() {
-
-		setController(new MusicController(this));
-		controller.setAnchorView(songListView);
-
-	};
-
 	private void initMusicService() {
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -326,7 +319,7 @@ public class MainActivity extends Activity {
 
 		initSongAdapter();
 		initViews();
-		initMediaController();
+		controller.setAnchorView(songListView);
 		initSearch();
 		initMusicService();
 
@@ -450,9 +443,7 @@ public class MainActivity extends Activity {
 
 	}
 
-	public void setController(MusicController controller) {
-		this.controller = controller;
-	}
+	
 
 	private void showExitDialog() {
 
