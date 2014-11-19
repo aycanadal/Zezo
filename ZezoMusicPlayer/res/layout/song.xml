@@ -28,7 +28,7 @@
         android:focusableInTouchMode="false"
         android:orientation="vertical"
         android:padding="5dp"
-        android:onClick="onSongPicked" >
+        >
 
         <TextView
             android:id="@+id/song_title"

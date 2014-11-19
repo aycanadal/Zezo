@@ -68,7 +68,7 @@ public class MainActivity extends Activity {
 	private boolean processingPick = false;
 
 	// Broadcast receiver to determine when music player has been prepared
-	private BroadcastReceiver onPrepareReceiver = new BroadcastReceiver() {
+	private BroadcastReceiver mediaPlayerPreparedReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context c, Intent i) {
@@ -76,17 +76,13 @@ public class MainActivity extends Activity {
 			if (i.getAction() != "MEDIA_PLAYER_PREPARED")
 				return;
 
-			getController().show(0);
-
 			Song song = musicService.getSong();
-			currentTitle.setText(song.getTitle());
+			ArrayList<Song> songs = songAdapter.getSongs();
+			songListView.setItemChecked(songs.indexOf(song), true);
 			currentArtist.setText(song.getArtist());
-
-			songListView.setItemChecked(songAdapter.getSongs().indexOf(song),
-					true);
-
+			currentTitle.setText(song.getTitle());
+			getController().show(0);
 			processingPick = false;
-
 		}
 	};
 
@@ -108,6 +104,13 @@ public class MainActivity extends Activity {
 
 			getController().setMusicBound(false);
 
+		}
+	};
+
+	private OnItemClickListener itemClickListener = new OnItemClickListener() {
+		public void onItemClick(AdapterView<?> parent, View v, int position,
+				long id) {
+			onSongPicked(v);
 		}
 	};
 
@@ -140,7 +143,8 @@ public class MainActivity extends Activity {
 		initSearch();
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(
-				onPrepareReceiver, new IntentFilter("MEDIA_PLAYER_PREPARED"));
+				mediaPlayerPreparedReceiver,
+				new IntentFilter("MEDIA_PLAYER_PREPARED"));
 
 		voiceRecognitionHelper = new VoiceRecognitionHelper(searchBox);
 
@@ -152,15 +156,17 @@ public class MainActivity extends Activity {
 
 		}
 
-		// registerForContextMenu(songListView);
+		registerForContextMenu(songListView);
+		songListView.setOnItemClickListener(itemClickListener);
 
-		// songListView.setOnItemClickListener(new OnItemClickListener() {
-		// public void onItemClick(AdapterView<?> parent, View v,
-		// int position, long id) {
-		// onSongPicked(v);
-		// }
-		// });
+	}
 
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.context, menu);
 	}
 
 	@Override
@@ -242,14 +248,6 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.context, menu);
-	}
-
-	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
@@ -305,11 +303,11 @@ public class MainActivity extends Activity {
 
 		processingPick = true;
 
-		Song song = songAdapter.getItem(Integer.parseInt(((View) view
-				.getParent()).getTag().toString()));
+		// Song song = songAdapter.getItem(Integer.parseInt(((View) view
+		// .getParent()).getTag().toString()));
 
-		// Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
-		// .toString()));
+		Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
+				.toString()));
 
 		if (musicService.audioFocusGranted())
 			musicService.playSong(song);
