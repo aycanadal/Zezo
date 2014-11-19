@@ -63,7 +63,6 @@
         android:fastScrollEnabled="true"
         android:choiceMode="singleChoice"
         android:listSelector="#660000"        
-        android:descendantFocusability="blocksDescendants"        
          >
     </com.zezo.zezomusicplayer.SongListView>
 
