@@ -63,7 +63,7 @@ public class MainActivity extends Activity {
 
 	private MusicService musicService;
 
-	private Intent playIntent;
+	private Intent musicServiceIntent;
 	private SongAdapter songAdapter;
 	private boolean processingPick = false;
 
@@ -119,11 +119,54 @@ public class MainActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 
+		initSongAdapter();
+		initViews();
+		initMediaController();
+		initSearch();
+		initMusicService();
+
+	}
+
+	private void initMusicService() {
+		
+		LocalBroadcastManager.getInstance(this).registerReceiver(
+				mediaPlayerPreparedReceiver,
+				new IntentFilter("MEDIA_PLAYER_PREPARED"));
+
+		if (musicServiceIntent == null) {
+
+			musicServiceIntent = new Intent(this, MusicService.class);
+			bindService(musicServiceIntent, musicConnection,
+					Context.BIND_AUTO_CREATE);
+			startService(musicServiceIntent);
+
+		}
+		
+	}
+
+	private void initMediaController() {
+
+		setController(new MusicController(this));
+		getController().setAnchorView(songListView);
+
+	}
+
+	private void initViews() {
+
 		setContentView(R.layout.activity_main);
 		songListView = (SongListView) findViewById(R.id.song_list);
-
 		currentTitle = (TextView) findViewById(R.id.currentTitle);
 		currentArtist = (TextView) findViewById(R.id.currentArtist);
+
+		songListView.setAdapter(songAdapter);
+
+		registerForContextMenu(songListView);
+		songListView.setOnItemClickListener(itemClickListener);
+		// songListView.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+
+	}
+
+	private void initSongAdapter() {
 
 		if (songList == null || songList.size() < 1)
 			songList = getAllSongsOnDevice();
@@ -135,29 +178,6 @@ public class MainActivity extends Activity {
 		});
 
 		songAdapter = new SongAdapter(this, songList);
-		songListView.setAdapter(songAdapter);
-
-		setController(new MusicController(this));
-		getController().setAnchorView(songListView);
-
-		initSearch();
-
-		LocalBroadcastManager.getInstance(this).registerReceiver(
-				mediaPlayerPreparedReceiver,
-				new IntentFilter("MEDIA_PLAYER_PREPARED"));
-
-		voiceRecognitionHelper = new VoiceRecognitionHelper(searchBox);
-
-		if (playIntent == null) {
-
-			playIntent = new Intent(this, MusicService.class);
-			bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-			startService(playIntent);
-
-		}
-
-		registerForContextMenu(songListView);
-		songListView.setOnItemClickListener(itemClickListener);
 
 	}
 
@@ -351,6 +371,7 @@ public class MainActivity extends Activity {
 		searchPane.setVisibility(View.GONE);
 		// searchBox.setVisibility(View.GONE);
 		searchEnabled = false;
+		voiceRecognitionHelper = new VoiceRecognitionHelper(searchBox);
 
 		searchBox.addTextChangedListener(new TextWatcher() {
 
@@ -455,7 +476,7 @@ public class MainActivity extends Activity {
 	private void exit() {
 
 		hideKeyboard();
-		stopService(playIntent);
+		stopService(musicServiceIntent);
 		musicService = null;
 		System.exit(0);
 
