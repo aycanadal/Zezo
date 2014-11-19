@@ -14,18 +14,40 @@ import com.zezo.dragndroplistview.RemoveListener;
 
 public class SongListView extends DragNDropListView {
 
-	public SongListView(Context context, AttributeSet attrs) {
+	private DragListener mDragListener = new DragListener() {
 
-		super(context, attrs);
+		int backgroundColor = Color.GRAY;
+		int defaultBackgroundColor;
 
-		setDropListener(mDropListener);
-		setRemoveListener(mRemoveListener);
-		setDragListener(mDragListener);
+		@Override
+		public void onDrag(int x, int y, ListView listView) {
+			// TODO Auto-generated method stub
+		}
 
-	}
+		@Override
+		public void onStartDrag(View itemView) {
+			itemView.setVisibility(View.INVISIBLE);
+			defaultBackgroundColor = itemView.getDrawingCacheBackgroundColor();
+			itemView.setBackgroundColor(backgroundColor);
+			ImageView iv = (ImageView) itemView.findViewById(R.id.ImageView01);
+			if (iv != null)
+				iv.setVisibility(View.INVISIBLE);
+		}
+
+		@Override
+		public void onStopDrag(View itemView) {
+			itemView.setVisibility(View.VISIBLE);
+			itemView.setBackgroundColor(defaultBackgroundColor);
+			ImageView iv = (ImageView) itemView.findViewById(R.id.ImageView01);
+			if (iv != null)
+				iv.setVisibility(View.VISIBLE);
+		}
+
+	};
 
 	private DropListener mDropListener = new DropListener() {
 
+		@Override
 		public void onDrop(int firstItemIndex, int secondItemIndex) {
 
 			((SongAdapter) getAdapter())
@@ -55,38 +77,21 @@ public class SongListView extends DragNDropListView {
 	};
 
 	private RemoveListener mRemoveListener = new RemoveListener() {
+		@Override
 		public void onDrag(int which) {
 			((SongAdapter) getAdapter()).onDrag(which);
 			invalidateViews();
 		}
 	};
 
-	private DragListener mDragListener = new DragListener() {
+	public SongListView(Context context, AttributeSet attrs) {
 
-		int backgroundColor = Color.GRAY;
-		int defaultBackgroundColor;
+		super(context, attrs);
 
-		public void onDrag(int x, int y, ListView listView) {
-			// TODO Auto-generated method stub
-		}
+		setDropListener(mDropListener);
+		setRemoveListener(mRemoveListener);
+		setDragListener(mDragListener);
 
-		public void onStartDrag(View itemView) {
-			itemView.setVisibility(View.INVISIBLE);
-			defaultBackgroundColor = itemView.getDrawingCacheBackgroundColor();
-			itemView.setBackgroundColor(backgroundColor);
-			ImageView iv = (ImageView) itemView.findViewById(R.id.ImageView01);
-			if (iv != null)
-				iv.setVisibility(View.INVISIBLE);
-		}
-
-		public void onStopDrag(View itemView) {
-			itemView.setVisibility(View.VISIBLE);
-			itemView.setBackgroundColor(defaultBackgroundColor);
-			ImageView iv = (ImageView) itemView.findViewById(R.id.ImageView01);
-			if (iv != null)
-				iv.setVisibility(View.VISIBLE);
-		}
-
-	};
+	}
 
 }

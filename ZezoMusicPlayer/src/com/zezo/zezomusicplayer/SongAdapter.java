@@ -1,10 +1,6 @@
 package com.zezo.zezomusicplayer;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import com.zezo.dragndroplistview.DropListener;
-import com.zezo.dragndroplistview.RemoveListener;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,13 +12,16 @@ import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.zezo.dragndroplistview.DropListener;
+import com.zezo.dragndroplistview.RemoveListener;
+
 public class SongAdapter extends BaseAdapter implements Filterable,
 		RemoveListener, DropListener {
 
-	private ArrayList<Song> songs;
+	private Filter filter;
 	private ArrayList<Song> filteredSongs;
 	private LayoutInflater songInflater;
-	private Filter filter;
+	private ArrayList<Song> songs;
 
 	public SongAdapter(Context c, ArrayList<Song> theSongs) {
 
@@ -40,6 +39,16 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 	}
 
 	@Override
+	public Filter getFilter() {
+
+		return filter;
+	}
+
+	public ArrayList<Song> getFilteredSongs() {
+		return filteredSongs;
+	}
+
+	@Override
 	public Song getItem(int arg0) {
 		return getFilteredSongs().get(arg0);
 	}
@@ -47,6 +56,10 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 	@Override
 	public long getItemId(int arg0) {
 		return getFilteredSongs().get(arg0).getId();
+	}
+
+	public ArrayList<Song> getSongs() {
+		return songs;
 	}
 
 	@Override
@@ -76,11 +89,6 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 	}
 
 	@Override
-	public Filter getFilter() {
-
-		return filter;
-	}
-
 	public void onDrag(int songIndex) {
 
 		if (songIndex < 0 || songIndex > getSongs().size())
@@ -90,6 +98,7 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 
 	}
 
+	@Override
 	public void onDrop(int from, int to) {
 
 		Song temp = getSongs().get(from);
@@ -98,20 +107,12 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 
 	}
 
-	public ArrayList<Song> getSongs() {
-		return songs;
+	public void setFilteredSongs(ArrayList<Song> filteredSongs) {
+		this.filteredSongs = filteredSongs;
 	}
 
 	public void setSongs(ArrayList<Song> songs) {
 		this.songs = songs;
-	}
-
-	public ArrayList<Song> getFilteredSongs() {
-		return filteredSongs;
-	}
-
-	public void setFilteredSongs(ArrayList<Song> filteredSongs) {
-		this.filteredSongs = filteredSongs;
 	}
 
 	/*

@@ -6,8 +6,8 @@ import android.widget.EditText;
 
 public class VoiceRecognitionHelper {
 
-	private EditText searchBox;
 	private static final int REQUEST_CODE = 1234;
+	private EditText searchBox;
 
 	public VoiceRecognitionHelper(EditText searchBox) {
 

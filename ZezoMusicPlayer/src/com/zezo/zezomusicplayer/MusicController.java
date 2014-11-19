@@ -8,39 +8,13 @@ import android.widget.MediaController.MediaPlayerControl;
 public class MusicController extends MediaController implements
 		MediaPlayerControl {
 
-	private MusicService musicService;
 	private boolean musicBound = false;
+	private MusicService musicService;
 
 	public MusicController(Context context) {
 
 		super(context);
 
-	}
-
-	public void init(MusicService musicService) {
-
-		this.musicService = musicService;
-
-		setPrevNextListeners(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				playNext();
-			}
-		}, new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				playPrev();
-			}
-		});
-
-		setMediaPlayer(this);
-		setEnabled(true);
-
-	}
-
-	@Override
-	public void hide() {
 	}
 
 	@Override
@@ -97,6 +71,36 @@ public class MusicController extends MediaController implements
 	}
 
 	@Override
+	public void hide() {
+	}
+
+	public void init(MusicService musicService) {
+
+		this.musicService = musicService;
+
+		setPrevNextListeners(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				playNext();
+			}
+		}, new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				playPrev();
+			}
+		});
+
+		setMediaPlayer(this);
+		setEnabled(true);
+
+	}
+
+	public boolean isMusicBound() {
+		return musicBound;
+	}
+
+	@Override
 	public boolean isPlaying() {
 		if (musicService != null & isMusicBound())
 			return musicService.isPng();
@@ -113,26 +117,6 @@ public class MusicController extends MediaController implements
 		// show(0);
 	}
 
-	@Override
-	public void seekTo(int pos) {
-		musicService.seek(pos);
-	}
-
-	@Override
-	public void start() {
-
-		musicService.go();
-
-	}
-
-	public boolean isMusicBound() {
-		return musicBound;
-	}
-
-	public void setMusicBound(boolean musicBound) {
-		this.musicBound = musicBound;
-	}
-
 	private void playNext() {
 		musicService.playNext();
 		show(0);
@@ -141,6 +125,22 @@ public class MusicController extends MediaController implements
 	private void playPrev() {
 		musicService.playPrevious();
 		show(0);
+	}
+
+	@Override
+	public void seekTo(int pos) {
+		musicService.seek(pos);
+	}
+
+	public void setMusicBound(boolean musicBound) {
+		this.musicBound = musicBound;
+	}
+
+	@Override
+	public void start() {
+
+		musicService.go();
+
 	}
 
 }
