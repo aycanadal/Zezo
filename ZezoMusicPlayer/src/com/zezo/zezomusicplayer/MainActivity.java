@@ -47,43 +47,51 @@ import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 public class MainActivity extends Activity {
 
 	private static final int DEFAULT_MUSIC_CONTROLLER_TIMEOUT = 3000;
-	private MusicController controller;
-	private TextView currentArtist;
-	private TextView currentTitle;
+	private MusicController musicController;
+	private TextView currentArtistView;
+	private TextView currentTitleView;
 
-	private OnItemClickListener itemClickListener = new OnItemClickListener() {
+	private OnItemClickListener onSongClickListener = new OnItemClickListener() {
 		@Override
-		public void onItemClick(AdapterView<?> parent, View v, int position,
+		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			onSongPicked(v);
+			if (processingPick)
+				return;
+
+			processingPick = true;
+
+			// Song song = songAdapter.getItem(Integer.parseInt(((View) view
+			// .getParent()).getTag().toString()));
+
+			Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
+					.toString()));
+
+			if (song != null && musicService.audioFocusGranted())
+				musicService.playSong(song);
 		}
 	};
 
 	// Broadcast receiver to determine when music player has been prepared
-	private BroadcastReceiver mediaPlayerPreparedReceiver = new BroadcastReceiver() {
+	private BroadcastReceiver onMediaPlayerPlayingReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context c, Intent i) {
 
-			if (i.getAction() != "MEDIA_PLAYER_PREPARED")
+			if (i.getAction() != "MEDIA_PLAYER_PLAYING")
 				return;
 
 			Song song = musicService.getCurrentSong();
 			ArrayList<Song> songs = songAdapter.getSongs();
 			songListView.setItemChecked(songs.indexOf(song), true);
-			currentArtist.setText(song.getArtist());
-			currentTitle.setText(song.getTitle());
-			// controller.setFocusable(false);
-			// controller.setFocusableInTouchMode(false);
-			// controller.setClickable(false);
-			// controller.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-			controller.show(DEFAULT_MUSIC_CONTROLLER_TIMEOUT);
+			currentArtistView.setText(song.getArtist());
+			currentTitleView.setText(song.getTitle());
+			musicController.show(DEFAULT_MUSIC_CONTROLLER_TIMEOUT);
 			processingPick = false;
 
 		}
 	};
 
-	private ServiceConnection musicConnection = new ServiceConnection() {
+	private ServiceConnection musicServiceConnection = new ServiceConnection() {
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
@@ -91,15 +99,15 @@ public class MainActivity extends Activity {
 			MusicBinder binder = (MusicBinder) service;
 			musicService = binder.getService();
 			musicService.setSongs(songList);
-			controller.init(musicService);
-			controller.setMusicBound(true);
+			musicController.init(musicService);
+			musicController.setMusicBound(true);
 
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 
-			controller.setMusicBound(false);
+			musicController.setMusicBound(false);
 
 		}
 	};
@@ -148,7 +156,7 @@ public class MainActivity extends Activity {
 		searchBox.setText("");
 		searchPane.setVisibility(View.GONE);
 		hideKeyboard();
-		controller.setVisibility(View.VISIBLE);
+		musicController.setVisibility(View.VISIBLE);
 
 	}
 
@@ -157,7 +165,7 @@ public class MainActivity extends Activity {
 		searchEnabled = true;
 		searchPane.setVisibility(View.VISIBLE);
 		boolean focused = searchBox.requestFocus();
-		controller.setVisibility(View.GONE);
+		musicController.setVisibility(View.GONE);
 		showKeyboard();
 
 	}
@@ -213,13 +221,13 @@ public class MainActivity extends Activity {
 	private void initMusicService() {
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(
-				mediaPlayerPreparedReceiver,
-				new IntentFilter("MEDIA_PLAYER_PREPARED"));
+				onMediaPlayerPlayingReceiver,
+				new IntentFilter("MEDIA_PLAYER_PLAYING"));
 
 		if (musicServiceIntent == null) {
 
 			musicServiceIntent = new Intent(this, MusicService.class);
-			bindService(musicServiceIntent, musicConnection,
+			bindService(musicServiceIntent, musicServiceConnection,
 					Context.BIND_AUTO_CREATE);
 			startService(musicServiceIntent);
 
@@ -280,10 +288,10 @@ public class MainActivity extends Activity {
 
 		setContentView(R.layout.activity_main);
 		songListView = (SongListView) findViewById(R.id.song_list);
-		currentTitle = (TextView) findViewById(R.id.currentTitle);
-		currentArtist = (TextView) findViewById(R.id.currentArtist);
+		currentTitleView = (TextView) findViewById(R.id.currentTitle);
+		currentArtistView = (TextView) findViewById(R.id.currentArtist);
 		registerForContextMenu(songListView);
-		songListView.setOnItemClickListener(itemClickListener);
+		songListView.setOnItemClickListener(onSongClickListener);
 		songListView.setAdapter(songAdapter);
 
 	}
@@ -332,8 +340,8 @@ public class MainActivity extends Activity {
 
 		initSongAdapter();
 		initViews();
-		controller = new MusicController(this);
-		controller.setAnchorView(songListView);
+		musicController = new MusicController(this);
+		musicController.setAnchorView(songListView);
 		initSearch();
 		initMusicService();
 
@@ -447,30 +455,6 @@ public class MainActivity extends Activity {
 		}, 100);
 
 		super.onResume();
-
-	}
-
-	public void onSongPicked(View view) {
-
-		if (processingPick)
-			return;
-
-		processingPick = true;
-
-		// Song song = songAdapter.getItem(Integer.parseInt(((View) view
-		// .getParent()).getTag().toString()));
-
-		Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
-				.toString()));
-
-		if (song != null && musicService.audioFocusGranted())
-			musicService.playSong(song);
-
-		/*
-		 * songListView.setOnItemClickListener(new OnItemClickListener() {
-		 * public void onItemClick(AdapterView<?> parent, View v, int position,
-		 * long id) { onSongPicked(v); } });
-		 */
 
 	}
 

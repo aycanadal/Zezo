@@ -20,10 +20,11 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.KeyEvent;
+
+// Service to play music even after application loses focus.
 
 public class MusicService extends Service implements
 		MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
@@ -296,7 +297,7 @@ public class MusicService extends Service implements
 
 		startForeground(NOTIFY_ID, not);
 
-		Intent onPreparedIntent = new Intent("MEDIA_PLAYER_PREPARED");
+		Intent onPreparedIntent = new Intent("MEDIA_PLAYER_PLAYING");
 		LocalBroadcastManager.getInstance(this).sendBroadcast(onPreparedIntent);
 
 	}
