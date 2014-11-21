@@ -135,7 +135,7 @@ public class MusicController extends MediaController implements
 	@Override
 	public void start() {
 
-		musicService.go();
+		musicService.play();
 
 	}
 

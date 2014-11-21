@@ -69,7 +69,7 @@ public class MusicService extends Service implements
 					if (isPng())
 						pause();
 					else
-						go();
+						play();
 					break;
 				case KeyEvent.KEYCODE_MEDIA_NEXT:
 					playNext();
@@ -199,7 +199,7 @@ public class MusicService extends Service implements
 		return playlist.get(index);
 	}
 
-	public void go() {
+	public void play() {
 
 		if (audioFocusGranted())
 			player.start();
