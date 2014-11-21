@@ -9,7 +9,6 @@ import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,7 +19,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.BaseColumns;
-import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AudioColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.speech.RecognizerIntent;
@@ -32,8 +30,8 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -46,10 +44,13 @@ import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 
 public class MainActivity extends Activity {
 
+	private static final int DEFAULT_MUSIC_CONTROLLER_TIMEOUT = 3000;
 	private MusicController controller;
 	private TextView currentArtist;
-
 	private TextView currentTitle;
+	
+	private Song songToBeDeleted;
+	
 	private OnItemClickListener itemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View v, int position,
@@ -67,12 +68,16 @@ public class MainActivity extends Activity {
 			if (i.getAction() != "MEDIA_PLAYER_PREPARED")
 				return;
 
-			Song song = musicService.getSong();
+			Song song = musicService.getCurrentSong();
 			ArrayList<Song> songs = songAdapter.getSongs();
 			songListView.setItemChecked(songs.indexOf(song), true);
 			currentArtist.setText(song.getArtist());
 			currentTitle.setText(song.getTitle());
-			controller.show(0);
+			// controller.setFocusable(false);
+			// controller.setFocusableInTouchMode(false);
+			// controller.setClickable(false);
+			// controller.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+			controller.show(DEFAULT_MUSIC_CONTROLLER_TIMEOUT);
 			processingPick = false;
 
 		}
@@ -256,9 +261,9 @@ public class MainActivity extends Activity {
 		songListView = (SongListView) findViewById(R.id.song_list);
 		currentTitle = (TextView) findViewById(R.id.currentTitle);
 		currentArtist = (TextView) findViewById(R.id.currentArtist);
+		registerForContextMenu(songListView);
 		songListView.setOnItemClickListener(itemClickListener);
 		songListView.setAdapter(songAdapter);
-		registerForContextMenu(songListView);
 
 	}
 
@@ -299,19 +304,7 @@ public class MainActivity extends Activity {
 	 * }
 	 */
 
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-				.getMenuInfo();
-		switch (item.getItemId()) {
-		case R.id.action_delete:
-			// deleteNote(info.id);
-			return true;
-		default:
-			return super.onContextItemSelected(item);
-		}
-	}
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -329,9 +322,29 @@ public class MainActivity extends Activity {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
+
 		super.onCreateContextMenu(menu, v, menuInfo);
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.context, menu);
+
+		menu.add(R.string.Delete).setOnMenuItemClickListener(
+				new OnMenuItemClickListener() {
+					
+
+					@Override
+					public boolean onMenuItemClick(MenuItem item) {
+
+						AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+								.getMenuInfo();
+						
+						songToBeDeleted = musicService.getSongById(info.id);	
+						
+						showDeleteDialog();
+						
+						return true;
+
+					}
+				});
 	}
 
 	@Override
@@ -376,18 +389,6 @@ public class MainActivity extends Activity {
 
 			break;
 
-		case R.id.action_delete:
-
-			Song song = musicService.getSong();
-
-			if (song == null)
-				break;
-
-			Uri uri = ContentUris.withAppendedId(
-					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.getId());
-
-			// getContentResolver().delete(uri, null, null);
-
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -426,7 +427,7 @@ public class MainActivity extends Activity {
 		Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
 				.toString()));
 
-		if (musicService.audioFocusGranted())
+		if (song != null && musicService.audioFocusGranted())
 			musicService.playSong(song);
 
 		/*
@@ -444,8 +445,6 @@ public class MainActivity extends Activity {
 
 	}
 
-	
-
 	private void showExitDialog() {
 
 		new AlertDialog.Builder(this)
@@ -461,6 +460,37 @@ public class MainActivity extends Activity {
 								exit();
 							}
 						}).setNegativeButton(android.R.string.no, null).show();
+
+	}
+	
+	private void deleteSongToBeDeleted(){
+		
+		if (songToBeDeleted == musicService.getCurrentSong() ) 
+			return;
+		
+		songAdapter.getSongs().remove(songToBeDeleted);
+		songAdapter.getFilteredSongs().remove(songToBeDeleted);
+		songAdapter.notifyDataSetChanged();
+		musicService.delete(songToBeDeleted);
+		
+	}
+	
+	private void showDeleteDialog() {
+
+		
+		new AlertDialog.Builder(this)
+		.setTitle("Delete Song")
+		.setMessage("Do you really wish to delete the song from the device?")
+		.setIcon(android.R.drawable.ic_dialog_alert)
+		.setPositiveButton(android.R.string.yes,
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog,
+							int whichButton) {
+						deleteSongToBeDeleted();
+					}
+				}).setNegativeButton(android.R.string.no, null).show();
 
 	}
 

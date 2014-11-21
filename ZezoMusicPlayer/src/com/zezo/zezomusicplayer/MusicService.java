@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -177,11 +178,11 @@ public class MusicService extends Service implements
 		return player.getCurrentPosition();
 	}
 
-	public Song getSong() {
+	public Song getCurrentSong() {
 		return song;
 	}
 
-	private Song getSongById(long songId) {
+	public Song getSongById(long songId) {
 		for (Song song : songs) {
 			if (song.getId() == songId) {
 				return song;
@@ -280,9 +281,9 @@ public class MusicService extends Service implements
 		Notification.Builder builder = new Notification.Builder(this);
 
 		builder.setContentIntent(pendInt).setSmallIcon(R.drawable.play)
-				.setTicker(getSong().getTitle()).setOngoing(true)
+				.setTicker(getCurrentSong().getTitle()).setOngoing(true)
 				.setContentTitle("Playing")
-				.setContentText(getSong().getTitle());
+				.setContentText(getCurrentSong().getTitle());
 
 		Notification not = builder.build();
 
@@ -319,14 +320,14 @@ public class MusicService extends Service implements
 
 	public void playNext() {
 
-		int songIndex = songs.indexOf(getSong());
+		int songIndex = songs.indexOf(getCurrentSong());
 
 		if (shuffle) {
 
 			int newSongIndex = rand.nextInt(songs.size());
-			long newSongId = getSong().getId();
+			long newSongId = getCurrentSong().getId();
 
-			while (newSongId == getSong().getId()) {
+			while (newSongId == getCurrentSong().getId()) {
 
 				newSongIndex = rand.nextInt(songs.size());
 				newSongId = songs.get(newSongIndex).getId();
@@ -349,7 +350,7 @@ public class MusicService extends Service implements
 
 	public void playPrevious() {
 		// Song song = getSongById(songId);
-		int songIndex = songs.indexOf(getSong());
+		int songIndex = songs.indexOf(getCurrentSong());
 
 		songIndex--;
 		if (songIndex < 0)
@@ -371,21 +372,21 @@ public class MusicService extends Service implements
 		try {
 
 			player.setDataSource(getApplicationContext(), trackUri);
+			
+			try {
+
+				player.prepareAsync();
+
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			}
 
 		} catch (Exception e) {
 			Log.e("MUSIC SERVICE", "Error setting data source", e);
-		}
-
-		try {
-
-			player.prepareAsync();
-
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -408,6 +409,22 @@ public class MusicService extends Service implements
 			shuffle = false;
 		else
 			shuffle = true;
+	}
+
+	public void delete(Song song) {
+		
+		songs.remove(song);
+		
+		Uri uri = ContentUris.withAppendedId(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.getId());
+
+		int deleted = getContentResolver().delete(uri, null, null);
+		int a = 0;
+		
+	}
+
+	public Song getSongByIndex(int index) {
+		return songs.get(index);
 	}
 
 }

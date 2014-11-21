@@ -16,8 +16,8 @@ public class MusicController extends MediaController implements
 		super(context);
 
 	}
-
-	@Override
+	
+		@Override
 	public boolean canPause() {
 		return true;
 	}
@@ -68,10 +68,6 @@ public class MusicController extends MediaController implements
 			return musicService.getPauseDuration();
 		} else
 			return 0;
-	}
-
-	@Override
-	public void hide() {
 	}
 
 	public void init(MusicService musicService) {
