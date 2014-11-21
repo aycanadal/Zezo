@@ -83,6 +83,7 @@ public class MusicService extends Service implements
 	}
 
 	private static final int NOTIFY_ID = 1;
+
 	private OnAudioFocusChangeListener afChangeListener = new OnAudioFocusChangeListener() {
 
 		@Override
@@ -106,6 +107,7 @@ public class MusicService extends Service implements
 			}
 		}
 	};
+	
 	private final BroadcastReceiver bluetoothTurnedOnOff = new BroadcastReceiver() {
 
 		@Override
@@ -143,13 +145,14 @@ public class MusicService extends Service implements
 
 	private MediaPlayer player;
 
+	private ArrayList<Song> playlist;
+	private ArrayList<Song> playQueue = new ArrayList<Song>();
+
 	private Random rand;
 
 	private boolean shuffle = false;
 
-	private Song song;
-
-	private ArrayList<Song> songs;
+	private Song currentSong;
 
 	public boolean audioFocusGranted() {
 
@@ -162,23 +165,11 @@ public class MusicService extends Service implements
 
 	}
 
-	public void delete(Song song) {
-
-		songs.remove(song);
-
-		Uri uri = ContentUris.withAppendedId(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.getId());
-
-		int deleted = getContentResolver().delete(uri, null, null);
-		int a = 0;
-
-	}
-
 	public Song getCurrentSong() {
-		return song;
+		return currentSong;
 	}
 
-	public int getDur() {
+	public int getDuration() {
 		return player.getDuration();
 	}
 
@@ -190,12 +181,12 @@ public class MusicService extends Service implements
 		return pausePosition;
 	}
 
-	public int getPosn() {
+	public int getPosition() {
 		return player.getCurrentPosition();
 	}
 
 	public Song getSongById(long songId) {
-		for (Song song : songs) {
+		for (Song song : playlist) {
 			if (song.getId() == songId) {
 				return song;
 			}
@@ -204,7 +195,7 @@ public class MusicService extends Service implements
 	}
 
 	public Song getSongByIndex(int index) {
-		return songs.get(index);
+		return playlist.get(index);
 	}
 
 	public void go() {
@@ -328,52 +319,63 @@ public class MusicService extends Service implements
 
 	public void pause() {
 
-		pauseDuration = getDur();
-		pausePosition = getPosn();
+		pauseDuration = getDuration();
+		pausePosition = getPosition();
 		player.pause();
 
 	}
 
 	public void playNext() {
+		
+		if(playQueue.size() > 0){
+			
+			currentSong = playQueue.get(0);
+			playQueue.remove(0);
+			playSong(currentSong);
+			
+			return;
+			
+		}
+		
 
-		int songIndex = songs.indexOf(getCurrentSong());
+		int songIndex = playlist.indexOf(getCurrentSong());
 
 		if (shuffle) {
 
-			int newSongIndex = rand.nextInt(songs.size());
+			int newSongIndex = rand.nextInt(playlist.size());
 			long newSongId = getCurrentSong().getId();
 
 			while (newSongId == getCurrentSong().getId()) {
 
-				newSongIndex = rand.nextInt(songs.size());
-				newSongId = songs.get(newSongIndex).getId();
+				newSongIndex = rand.nextInt(playlist.size());
+				newSongId = playlist.get(newSongIndex).getId();
 
 			}
 
-			playSong(songs.get(newSongIndex));
+			playSong(playlist.get(newSongIndex));
 
 		} else {
 
 			songIndex++;
 
-			if (songIndex >= songs.size())
-				playSong(songs.get(0));
+			if (songIndex >= playlist.size())
+				playSong(playlist.get(0));
 			else
-				playSong(songs.get(songIndex));
+				playSong(playlist.get(songIndex));
 
 		}
 	}
 
 	public void playPrevious() {
 		// Song song = getSongById(songId);
-		int songIndex = songs.indexOf(getCurrentSong());
+		int songIndex = playlist.indexOf(getCurrentSong());
 
 		songIndex--;
 		if (songIndex < 0)
-			songIndex = songs.size() - 1;
+			songIndex = playlist.size() - 1;
 
 		// songId = songs.get(songIndex).getID();
-		playSong(songs.get(songIndex));
+		playSong(playlist.get(songIndex));
 	}
 
 	public void playSong(Song song) {
@@ -406,16 +408,22 @@ public class MusicService extends Service implements
 		}
 	}
 
+	public void removeFromPlaylist(Song song) {
+
+		playlist.remove(song);
+
+	}
+
 	public void seek(int posn) {
 		player.seekTo(posn);
 	}
 
 	public void setSong(Song song) {
-		this.song = song;
+		this.currentSong = song;
 	}
 
 	public void setSongs(ArrayList<Song> songs) {
-		this.songs = songs;
+		this.playlist = songs;
 		if (songs != null && songs.size() > 0)
 			setSong(songs.get(0));
 	}
@@ -425,6 +433,11 @@ public class MusicService extends Service implements
 			shuffle = false;
 		else
 			shuffle = true;
+	}
+
+	public void addToQueue(Song song) {
+		playQueue.add(song);
+		
 	}
 
 }

@@ -48,7 +48,7 @@ public class MusicController extends MediaController implements
 	public int getCurrentPosition() {
 		if (musicService != null && isMusicBound() && musicService.isPng())
 			// if (musicSrv != null && musicBound)
-			return musicService.getPosn();
+			return musicService.getPosition();
 		else if (musicService != null && isMusicBound())
 			return musicService.getPausePosition();
 		else
@@ -62,7 +62,7 @@ public class MusicController extends MediaController implements
 
 		if (musicService != null && isMusicBound() && musicService.isPng())
 			// if (musicSrv != null && musicBound)
-			return musicService.getDur();
+			return musicService.getDuration();
 		else if (musicService != null && isMusicBound()) {
 			int pauseDuration = musicService.getPauseDuration();
 			return musicService.getPauseDuration();

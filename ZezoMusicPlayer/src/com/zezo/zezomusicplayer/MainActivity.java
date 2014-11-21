@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.BaseColumns;
+import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AudioColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.speech.RecognizerIntent;
@@ -129,7 +131,14 @@ public class MainActivity extends Activity {
 		songAdapter.getSongs().remove(songToBeDeleted);
 		songAdapter.getFilteredSongs().remove(songToBeDeleted);
 		songAdapter.notifyDataSetChanged();
-		musicService.delete(songToBeDeleted);
+		
+		Uri uri = ContentUris.withAppendedId(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songToBeDeleted.getId());
+
+		 getContentResolver().delete(uri, null, null);
+
+		
+		musicService.removeFromPlaylist(songToBeDeleted);
 
 	}
 
@@ -337,6 +346,22 @@ public class MainActivity extends Activity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.context, menu);
+		
+		menu.add(R.string.AddToQueue).setOnMenuItemClickListener(
+				new OnMenuItemClickListener() {
+
+					@Override
+					public boolean onMenuItemClick(MenuItem item) {
+
+						AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+								.getMenuInfo();
+
+						musicService.addToQueue(musicService.getSongById(info.id));
+
+						return true;
+
+					}
+				});
 
 		menu.add(R.string.Delete).setOnMenuItemClickListener(
 				new OnMenuItemClickListener() {
@@ -355,6 +380,7 @@ public class MainActivity extends Activity {
 
 					}
 				});
+		
 	}
 
 	@Override
