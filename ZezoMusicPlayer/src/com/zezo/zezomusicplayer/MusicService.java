@@ -162,6 +162,22 @@ public class MusicService extends Service implements
 
 	}
 
+	public void delete(Song song) {
+
+		songs.remove(song);
+
+		Uri uri = ContentUris.withAppendedId(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.getId());
+
+		int deleted = getContentResolver().delete(uri, null, null);
+		int a = 0;
+
+	}
+
+	public Song getCurrentSong() {
+		return song;
+	}
+
 	public int getDur() {
 		return player.getDuration();
 	}
@@ -178,10 +194,6 @@ public class MusicService extends Service implements
 		return player.getCurrentPosition();
 	}
 
-	public Song getCurrentSong() {
-		return song;
-	}
-
 	public Song getSongById(long songId) {
 		for (Song song : songs) {
 			if (song.getId() == songId) {
@@ -189,6 +201,10 @@ public class MusicService extends Service implements
 			}
 		}
 		return null;
+	}
+
+	public Song getSongByIndex(int index) {
+		return songs.get(index);
 	}
 
 	public void go() {
@@ -372,7 +388,7 @@ public class MusicService extends Service implements
 		try {
 
 			player.setDataSource(getApplicationContext(), trackUri);
-			
+
 			try {
 
 				player.prepareAsync();
@@ -409,22 +425,6 @@ public class MusicService extends Service implements
 			shuffle = false;
 		else
 			shuffle = true;
-	}
-
-	public void delete(Song song) {
-		
-		songs.remove(song);
-		
-		Uri uri = ContentUris.withAppendedId(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.getId());
-
-		int deleted = getContentResolver().delete(uri, null, null);
-		int a = 0;
-		
-	}
-
-	public Song getSongByIndex(int index) {
-		return songs.get(index);
 	}
 
 }

@@ -16,8 +16,8 @@ public class MusicController extends MediaController implements
 		super(context);
 
 	}
-	
-		@Override
+
+	@Override
 	public boolean canPause() {
 		return true;
 	}

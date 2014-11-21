@@ -48,9 +48,7 @@ public class MainActivity extends Activity {
 	private MusicController controller;
 	private TextView currentArtist;
 	private TextView currentTitle;
-	
-	private Song songToBeDeleted;
-	
+
 	private OnItemClickListener itemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View v, int position,
@@ -105,21 +103,35 @@ public class MainActivity extends Activity {
 	};
 
 	private MusicService musicService;
-	private Intent musicServiceIntent;
 
+	private Intent musicServiceIntent;
 	private boolean processingPick = false;
 
 	private EditText searchBox;
 
 	private boolean searchEnabled;
+
 	private LinearLayout searchPane;
 	private SongAdapter songAdapter;
-
 	private ArrayList<Song> songList;
 
 	private SongListView songListView;
 
+	private Song songToBeDeleted;
+
 	private VoiceRecognitionHelper voiceRecognitionHelper;
+
+	private void deleteSongToBeDeleted() {
+
+		if (songToBeDeleted == musicService.getCurrentSong())
+			return;
+
+		songAdapter.getSongs().remove(songToBeDeleted);
+		songAdapter.getFilteredSongs().remove(songToBeDeleted);
+		songAdapter.notifyDataSetChanged();
+		musicService.delete(songToBeDeleted);
+
+	}
 
 	private void disableSearch() {
 
@@ -267,24 +279,6 @@ public class MainActivity extends Activity {
 
 	}
 
-	// Put voice recognition result to searchBox.
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-		if (requestCode == voiceRecognitionHelper.getRequestCode()
-				&& resultCode == RESULT_OK) {
-
-			ArrayList<String> matches = data
-					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
-			searchBox.setText(matches.get(0));
-
-		}
-
-		super.onActivityResult(requestCode, resultCode, data);
-
-	}
-
 	/*
 	 * @Override public void onBackPressed() {
 	 * 
@@ -304,7 +298,24 @@ public class MainActivity extends Activity {
 	 * }
 	 */
 
-	
+	// Put voice recognition result to searchBox.
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		if (requestCode == voiceRecognitionHelper.getRequestCode()
+				&& resultCode == RESULT_OK) {
+
+			ArrayList<String> matches = data
+					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+			searchBox.setText(matches.get(0));
+
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
+
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -329,18 +340,17 @@ public class MainActivity extends Activity {
 
 		menu.add(R.string.Delete).setOnMenuItemClickListener(
 				new OnMenuItemClickListener() {
-					
 
 					@Override
 					public boolean onMenuItemClick(MenuItem item) {
 
 						AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 								.getMenuInfo();
-						
-						songToBeDeleted = musicService.getSongById(info.id);	
-						
+
+						songToBeDeleted = musicService.getSongById(info.id);
+
 						showDeleteDialog();
-						
+
 						return true;
 
 					}
@@ -445,6 +455,25 @@ public class MainActivity extends Activity {
 
 	}
 
+	private void showDeleteDialog() {
+
+		new AlertDialog.Builder(this)
+				.setTitle("Delete Song")
+				.setMessage(
+						"Do you really wish to delete the song from the device?")
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setPositiveButton(android.R.string.yes,
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int whichButton) {
+								deleteSongToBeDeleted();
+							}
+						}).setNegativeButton(android.R.string.no, null).show();
+
+	}
+
 	private void showExitDialog() {
 
 		new AlertDialog.Builder(this)
@@ -460,37 +489,6 @@ public class MainActivity extends Activity {
 								exit();
 							}
 						}).setNegativeButton(android.R.string.no, null).show();
-
-	}
-	
-	private void deleteSongToBeDeleted(){
-		
-		if (songToBeDeleted == musicService.getCurrentSong() ) 
-			return;
-		
-		songAdapter.getSongs().remove(songToBeDeleted);
-		songAdapter.getFilteredSongs().remove(songToBeDeleted);
-		songAdapter.notifyDataSetChanged();
-		musicService.delete(songToBeDeleted);
-		
-	}
-	
-	private void showDeleteDialog() {
-
-		
-		new AlertDialog.Builder(this)
-		.setTitle("Delete Song")
-		.setMessage("Do you really wish to delete the song from the device?")
-		.setIcon(android.R.drawable.ic_dialog_alert)
-		.setPositiveButton(android.R.string.yes,
-				new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog,
-							int whichButton) {
-						deleteSongToBeDeleted();
-					}
-				}).setNegativeButton(android.R.string.no, null).show();
 
 	}
 
