@@ -33,27 +33,26 @@
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
-                <action android:name="android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED" />
-                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
-        <service android:name="com.zezo.zezomusicplayer.MusicService" />
+        <service android:name="com.zezo.zezomusicplayer.MusicService" >
+            <intent-filter>
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+                
+            </intent-filter>
+        </service>
 
-        <receiver android:name="RemoteControlReceiver" >
-            <action android:name="android.intent.action.MEDIA_BUTTON" />
-            <action android:name="android.intent.action.RECOGNIZE_SPEECH" />
-        </receiver>
-
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.bluetooth.device.action.ACL_CONNECTED" /> -->
-        <!-- <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" /> -->
-        <!-- <action android:name="android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED" /> -->
-        <!-- </intent-filter> -->
+        <receiver android:name="MediaButtonReceiver" android:enabled="true">
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+            <!-- <action android:name="android.intent.action.RECOGNIZE_SPEECH" /> -->
+            </receiver>
     </application>
 
 </manifest>
