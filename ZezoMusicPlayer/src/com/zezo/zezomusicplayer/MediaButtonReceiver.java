@@ -9,24 +9,11 @@ import android.view.KeyEvent;
 
 public class MediaButtonReceiver extends BroadcastReceiver {
 
-	private static ArrayList<MediaButtonReceiverListener> listeners = new ArrayList<MediaButtonReceiverListener>();
-
 	public interface MediaButtonReceiverListener {
 		void onMediaButtonReceive(int keyCode);
 	}
 
-	@Override
-	public void onReceive(Context context, Intent intent) {
-
-		if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
-			KeyEvent event = (KeyEvent) intent
-					.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-
-			for (MediaButtonReceiverListener listener : listeners) {
-				listener.onMediaButtonReceive(event.getKeyCode());
-			}
-		}
-	}
+	private static ArrayList<MediaButtonReceiverListener> listeners = new ArrayList<MediaButtonReceiverListener>();
 
 	public static void addBroadcastReceiveListener(
 			MediaButtonReceiverListener listener) {
@@ -39,6 +26,19 @@ public class MediaButtonReceiver extends BroadcastReceiver {
 			MediaButtonReceiverListener listener) {
 		if (listeners.contains(listener)) {
 			listeners.remove(listener);
+		}
+	}
+
+	@Override
+	public void onReceive(Context context, Intent intent) {
+
+		if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
+			KeyEvent event = (KeyEvent) intent
+					.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+
+			for (MediaButtonReceiverListener listener : listeners) {
+				listener.onMediaButtonReceive(event.getKeyCode());
+			}
 		}
 	}
 }

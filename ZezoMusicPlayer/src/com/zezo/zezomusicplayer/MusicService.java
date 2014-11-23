@@ -3,8 +3,6 @@ package com.zezo.zezomusicplayer;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.zezo.zezomusicplayer.MediaButtonReceiver.MediaButtonReceiverListener;
-
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -25,6 +23,8 @@ import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.KeyEvent;
+
+import com.zezo.zezomusicplayer.MediaButtonReceiver.MediaButtonReceiverListener;
 
 // Service to play music even after application loses focus.
 
@@ -58,6 +58,9 @@ public class MusicService extends Service implements
 
 	private static final int NOTIFY_ID = 1;
 
+	private Song currentSong;
+	private HeadsetStateReceiver headsetStateReceiver;
+	private final IBinder musicBind = new MusicBinder();
 	private final BroadcastReceiver onBluetoothStateChangeReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -87,22 +90,24 @@ public class MusicService extends Service implements
 
 		}
 	};
-	private HeadsetStateReceiver headsetStateReceiver;
-	private final IBinder musicBind = new MusicBinder();
+
 	private int pauseDuration = 0;
 
 	private int pausePosition = 0;
 
 	private MediaPlayer player;
-
 	private ArrayList<Song> playlist;
+
 	private ArrayList<Song> playQueue = new ArrayList<Song>();
 
 	private Random rand;
 
 	private boolean shuffle = false;
 
-	private Song currentSong;
+	public void addToQueue(Song song) {
+		playQueue.add(song);
+
+	}
 
 	public boolean audioFocusGranted() {
 
@@ -146,13 +151,6 @@ public class MusicService extends Service implements
 
 	public Song getSongByIndex(int index) {
 		return playlist.get(index);
-	}
-
-	public void play() {
-
-		if (audioFocusGranted())
-			player.start();
-
 	}
 
 	public void initMusicPlayer() {
@@ -223,6 +221,33 @@ public class MusicService extends Service implements
 	}
 
 	@Override
+	public void onAudioFocusChange(int focusChange) {
+
+		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+		if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+			pause();
+		} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+
+			// ComponentName mRemoteControlResponder = new ComponentName(
+			// getPackageName(),
+			// OnActionMediaButtonPushedReceiver.class.getName());
+			// am.registerMediaButtonEventReceiver(mRemoteControlResponder);
+
+		} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+
+			ComponentName mRemoteControlResponder = new ComponentName(
+					getPackageName(), MediaButtonReceiver.class.getName());
+			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
+			MediaButtonReceiver.removeBroadcastReceiveListener(this);
+			am.abandonAudioFocus(this);
+
+			pause();
+
+		}
+	}
+
+	@Override
 	public IBinder onBind(Intent intent) {
 		return musicBind;
 	}
@@ -256,6 +281,35 @@ public class MusicService extends Service implements
 	public boolean onError(MediaPlayer mp, int what, int extra) {
 		mp.reset();
 		return true;
+	}
+
+	@Override
+	public void onMediaButtonReceive(int keyCode) {
+
+		switch (keyCode) {
+
+		case KeyEvent.KEYCODE_MEDIA_STOP:
+			pause();
+			break;
+
+		case KeyEvent.KEYCODE_HEADSETHOOK:
+
+		case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+			if (isPng())
+				pause();
+			else
+				play();
+			break;
+
+		case KeyEvent.KEYCODE_MEDIA_NEXT:
+			playNext();
+			break;
+
+		case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+			playPrevious();
+			break;
+
+		}
 	}
 
 	@Override
@@ -306,6 +360,13 @@ public class MusicService extends Service implements
 		pauseDuration = getDuration();
 		pausePosition = getPosition();
 		player.pause();
+
+	}
+
+	public void play() {
+
+		if (audioFocusGranted())
+			player.start();
 
 	}
 
@@ -416,66 +477,5 @@ public class MusicService extends Service implements
 			shuffle = false;
 		else
 			shuffle = true;
-	}
-
-	public void addToQueue(Song song) {
-		playQueue.add(song);
-
-	}
-
-	@Override
-	public void onMediaButtonReceive(int keyCode) {
-
-		switch (keyCode) {
-
-		case KeyEvent.KEYCODE_MEDIA_STOP:
-			pause();
-			break;
-
-		case KeyEvent.KEYCODE_HEADSETHOOK:
-
-		case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-			 if (isPng())
-			 pause();
-			 else
-			 play();
-			break;
-
-		case KeyEvent.KEYCODE_MEDIA_NEXT:
-			 playNext();
-			break;
-
-		case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-			 playPrevious();
-			break;
-
-		}
-	}
-
-	@Override
-	public void onAudioFocusChange(int focusChange) {
-
-		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
-		if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
-			pause();
-		} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-
-			// ComponentName mRemoteControlResponder = new ComponentName(
-			// getPackageName(),
-			// OnActionMediaButtonPushedReceiver.class.getName());
-			// am.registerMediaButtonEventReceiver(mRemoteControlResponder);
-
-		} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-
-			ComponentName mRemoteControlResponder = new ComponentName(
-					getPackageName(), MediaButtonReceiver.class.getName());
-			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
-			MediaButtonReceiver.removeBroadcastReceiveListener(this);
-			am.abandonAudioFocus(this);
-
-			pause();
-
-		}
 	}
 }

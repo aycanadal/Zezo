@@ -47,49 +47,11 @@ import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 public class MainActivity extends Activity {
 
 	private static final int DEFAULT_MUSIC_CONTROLLER_TIMEOUT = 3000;
-	private MusicController musicController;
 	private TextView currentArtistView;
 	private TextView currentTitleView;
+	private MusicController musicController;
 
-	private OnItemClickListener onSongClickListener = new OnItemClickListener() {
-		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
-			if (processingPick)
-				return;
-
-			processingPick = true;
-
-			// Song song = songAdapter.getItem(Integer.parseInt(((View) view
-			// .getParent()).getTag().toString()));
-
-			Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
-					.toString()));
-
-			if (song != null && musicService.audioFocusGranted())
-				musicService.playSong(song);
-		}
-	};
-
-	// Broadcast receiver to determine when music player has been prepared
-	private BroadcastReceiver onMediaPlayerPlayingReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context c, Intent i) {
-
-			if (i.getAction() != "MEDIA_PLAYER_PLAYING")
-				return;
-
-			Song song = musicService.getCurrentSong();
-			ArrayList<Song> songs = songAdapter.getSongs();
-			songListView.setItemChecked(songs.indexOf(song), true);
-			currentArtistView.setText(song.getArtist());
-			currentTitleView.setText(song.getTitle());
-			musicController.show(DEFAULT_MUSIC_CONTROLLER_TIMEOUT);
-			processingPick = false;
-
-		}
-	};
+	private MusicService musicService;
 
 	private ServiceConnection musicServiceConnection = new ServiceConnection() {
 
@@ -112,9 +74,47 @@ public class MainActivity extends Activity {
 		}
 	};
 
-	private MusicService musicService;
-
 	private Intent musicServiceIntent;
+
+	// Broadcast receiver to determine when music player has been prepared
+	private BroadcastReceiver onMediaPlayerPlayingReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context c, Intent i) {
+
+			if (i.getAction() != "MEDIA_PLAYER_PLAYING")
+				return;
+
+			Song song = musicService.getCurrentSong();
+			ArrayList<Song> songs = songAdapter.getSongs();
+			songListView.setItemChecked(songs.indexOf(song), true);
+			currentArtistView.setText(song.getArtist());
+			currentTitleView.setText(song.getTitle());
+			musicController.show(DEFAULT_MUSIC_CONTROLLER_TIMEOUT);
+			processingPick = false;
+
+		}
+	};
+
+	private OnItemClickListener onSongClickListener = new OnItemClickListener() {
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			if (processingPick)
+				return;
+
+			processingPick = true;
+
+			// Song song = songAdapter.getItem(Integer.parseInt(((View) view
+			// .getParent()).getTag().toString()));
+
+			Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
+					.toString()));
+
+			if (song != null && musicService.audioFocusGranted())
+				musicService.playSong(song);
+		}
+	};
 	private boolean processingPick = false;
 
 	private EditText searchBox;
@@ -139,13 +139,13 @@ public class MainActivity extends Activity {
 		songAdapter.getSongs().remove(songToBeDeleted);
 		songAdapter.getFilteredSongs().remove(songToBeDeleted);
 		songAdapter.notifyDataSetChanged();
-		
+
 		Uri uri = ContentUris.withAppendedId(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songToBeDeleted.getId());
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				songToBeDeleted.getId());
 
-		 getContentResolver().delete(uri, null, null);
+		getContentResolver().delete(uri, null, null);
 
-		
 		musicService.removeFromPlaylist(songToBeDeleted);
 
 	}
@@ -354,7 +354,7 @@ public class MainActivity extends Activity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.context, menu);
-		
+
 		menu.add(R.string.AddToQueue).setOnMenuItemClickListener(
 				new OnMenuItemClickListener() {
 
@@ -364,7 +364,8 @@ public class MainActivity extends Activity {
 						AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 								.getMenuInfo();
 
-						musicService.addToQueue(musicService.getSongById(info.id));
+						musicService.addToQueue(musicService
+								.getSongById(info.id));
 
 						return true;
 
@@ -388,7 +389,7 @@ public class MainActivity extends Activity {
 
 					}
 				});
-		
+
 	}
 
 	@Override
