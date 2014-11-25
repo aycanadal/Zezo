@@ -180,6 +180,7 @@ public class MusicService extends Service implements
 					getPackageName(), MediaButtonReceiver.class.getName());
 
 			am.registerMediaButtonEventReceiver(mRemoteControlResponder);
+			Log.i("Tag", "Remote Receiver Registered");
 			MediaButtonReceiver.addBroadcastReceiveListener(this);
 		}
 
@@ -229,17 +230,17 @@ public class MusicService extends Service implements
 			pause();
 		} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
 
-			// ComponentName mRemoteControlResponder = new ComponentName(
-			// getPackageName(),
-			// OnActionMediaButtonPushedReceiver.class.getName());
-			// am.registerMediaButtonEventReceiver(mRemoteControlResponder);
+			 ComponentName mRemoteControlResponder = new ComponentName(
+			 getPackageName(),
+			 MediaButtonReceiver.class.getName());
+			 am.registerMediaButtonEventReceiver(mRemoteControlResponder);
 
 		} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
 
-			ComponentName mRemoteControlResponder = new ComponentName(
-					getPackageName(), MediaButtonReceiver.class.getName());
-			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
-			MediaButtonReceiver.removeBroadcastReceiveListener(this);
+//			ComponentName mRemoteControlResponder = new ComponentName(
+//					getPackageName(), MediaButtonReceiver.class.getName());
+//			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
+//			MediaButtonReceiver.removeBroadcastReceiveListener(this);
 			am.abandonAudioFocus(this);
 
 			pause();
@@ -284,8 +285,8 @@ public class MusicService extends Service implements
 	}
 
 	@Override
-	public void onMediaButtonReceive(int keyCode) {
-
+	public void onMediaButtonReceived(int keyCode) {
+		
 		switch (keyCode) {
 
 		case KeyEvent.KEYCODE_MEDIA_STOP:
@@ -293,8 +294,10 @@ public class MusicService extends Service implements
 			break;
 
 		case KeyEvent.KEYCODE_HEADSETHOOK:
+			
 
 		case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+			
 			if (isPng())
 				pause();
 			else
@@ -302,10 +305,12 @@ public class MusicService extends Service implements
 			break;
 
 		case KeyEvent.KEYCODE_MEDIA_NEXT:
+			
 			playNext();
 			break;
 
 		case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+			
 			playPrevious();
 			break;
 
