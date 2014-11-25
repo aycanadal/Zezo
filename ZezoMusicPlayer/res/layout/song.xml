@@ -39,7 +39,7 @@
             android:focusableInTouchMode="false"
             android:textColor="@drawable/list_item_text_selector"
             android:background="@drawable/list_item_background_selector"
-            android:textSize="20sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
@@ -51,7 +51,7 @@
             android:focusableInTouchMode="false"
             android:textColor="@drawable/list_item_text_selector"
             android:background="@drawable/list_item_background_selector"
-            android:textSize="18sp" />
+            android:textSize="10sp" />
     </LinearLayout>
 
 </LinearLayout>
