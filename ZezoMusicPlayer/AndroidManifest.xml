@@ -51,8 +51,11 @@
             <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
-            <action android:name="android.intent.action.RECOGNIZE_SPEECH" />
+           
             </receiver>
+            
+<!--          <action android:name="android.intent.action.RECOGNIZE_SPEECH" /> -->
+            
     </application>
 
 </manifest>

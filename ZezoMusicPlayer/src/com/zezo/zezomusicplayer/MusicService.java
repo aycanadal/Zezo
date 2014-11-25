@@ -116,8 +116,11 @@ public class MusicService extends Service implements
 		int result = am.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
 				AudioManager.AUDIOFOCUS_GAIN);
 
-		return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
-
+		if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
+			return false;
+		
+		registerMediaButtonListener();
+		return true;
 	}
 
 	public Song getCurrentSong() {
@@ -168,54 +171,22 @@ public class MusicService extends Service implements
 		headsetStateReceiver = new HeadsetStateReceiver();
 		registerReceiver(headsetStateReceiver, receiverFilter);
 
-		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
-		// Request audio focus for playback
-		int result = am.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
-				AudioManager.AUDIOFOCUS_GAIN);
-
-		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-
-			ComponentName mRemoteControlResponder = new ComponentName(
-					getPackageName(), MediaButtonReceiver.class.getName());
-
-			am.registerMediaButtonEventReceiver(mRemoteControlResponder);
-			Log.i("Tag", "Remote Receiver Registered");
-			MediaButtonReceiver.addBroadcastReceiveListener(this);
-		}
-
+		audioFocusGranted();
+	
 	}
 
-	// private class MediaButtonReceiver extends BroadcastReceiver {
-	//
-	// @Override
-	// public void onReceive(Context context, Intent intent) {
-	// if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
-	// KeyEvent event = (KeyEvent) intent
-	// .getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-	//
-	// switch (event.getKeyCode()) {
-	// case KeyEvent.KEYCODE_MEDIA_STOP:
-	// //pause();
-	// break;
-	// case KeyEvent.KEYCODE_HEADSETHOOK:
-	// case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-	// //if (isPng())
-	// //pause();
-	// //else
-	// //play();
-	// break;
-	// case KeyEvent.KEYCODE_MEDIA_NEXT:
-	// //playNext();
-	// break;
-	// case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-	// //playPrevious();
-	// break;
-	//
-	// }
-	// }
-	// }
-	// }
+	private void registerMediaButtonListener() {
+		
+		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+		ComponentName mRemoteControlResponder = new ComponentName(
+				getPackageName(), MediaButtonReceiver.class.getName());
+
+		am.registerMediaButtonEventReceiver(mRemoteControlResponder);
+		
+		MediaButtonReceiver.addBroadcastReceiveListener(this);
+		
+	}
 
 	public boolean isPng() {
 		return player.isPlaying();
@@ -228,19 +199,21 @@ public class MusicService extends Service implements
 
 		if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
 			pause();
+			ComponentName mRemoteControlResponder = new ComponentName(
+					getPackageName(), MediaButtonReceiver.class.getName());
+			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
+			MediaButtonReceiver.removeBroadcastReceiveListener(this);
+			am.abandonAudioFocus(this);
 		} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
 
-			 ComponentName mRemoteControlResponder = new ComponentName(
-			 getPackageName(),
-			 MediaButtonReceiver.class.getName());
-			 am.registerMediaButtonEventReceiver(mRemoteControlResponder);
+			registerMediaButtonListener();
 
 		} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
 
-//			ComponentName mRemoteControlResponder = new ComponentName(
-//					getPackageName(), MediaButtonReceiver.class.getName());
-//			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
-//			MediaButtonReceiver.removeBroadcastReceiveListener(this);
+			ComponentName mRemoteControlResponder = new ComponentName(
+					getPackageName(), MediaButtonReceiver.class.getName());
+			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
+			MediaButtonReceiver.removeBroadcastReceiveListener(this);
 			am.abandonAudioFocus(this);
 
 			pause();
@@ -286,7 +259,7 @@ public class MusicService extends Service implements
 
 	@Override
 	public void onMediaButtonReceived(int keyCode) {
-		
+
 		switch (keyCode) {
 
 		case KeyEvent.KEYCODE_MEDIA_STOP:
@@ -294,10 +267,9 @@ public class MusicService extends Service implements
 			break;
 
 		case KeyEvent.KEYCODE_HEADSETHOOK:
-			
 
 		case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-			
+
 			if (isPng())
 				pause();
 			else
@@ -305,12 +277,12 @@ public class MusicService extends Service implements
 			break;
 
 		case KeyEvent.KEYCODE_MEDIA_NEXT:
-			
+
 			playNext();
 			break;
 
 		case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-			
+
 			playPrevious();
 			break;
 
