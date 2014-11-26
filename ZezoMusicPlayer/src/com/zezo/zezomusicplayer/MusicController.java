@@ -16,6 +16,13 @@ public class MusicController extends MediaController implements
 		super(context);
 
 	}
+	
+	@Override
+	public void hide() {
+		
+		// Do nothing.
+				
+	};
 
 	@Override
 	public boolean canPause() {
@@ -110,17 +117,17 @@ public class MusicController extends MediaController implements
 			musicService.pause();
 
 		// initController();
-		// show(0);
+		//show(0);
 	}
 
 	private void playNext() {
 		musicService.playNext();
-		show(0);
+		//show(0);
 	}
 
 	private void playPrev() {
 		musicService.playPrevious();
-		show(0);
+		//show(0);
 	}
 
 	@Override

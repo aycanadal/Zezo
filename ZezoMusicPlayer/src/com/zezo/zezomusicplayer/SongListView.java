@@ -16,7 +16,7 @@ public class SongListView extends DragNDropListView {
 
 	private DragListener mDragListener = new DragListener() {
 
-		int backgroundColor = Color.GRAY;
+		int backgroundColor = Color.BLACK;
 		int defaultBackgroundColor;
 
 		@Override
@@ -26,21 +26,21 @@ public class SongListView extends DragNDropListView {
 
 		@Override
 		public void onStartDrag(View itemView) {
-			itemView.setVisibility(View.INVISIBLE);
-			defaultBackgroundColor = itemView.getDrawingCacheBackgroundColor();
-			itemView.setBackgroundColor(backgroundColor);
-			ImageView iv = (ImageView) itemView.findViewById(R.id.ImageView01);
-			if (iv != null)
-				iv.setVisibility(View.INVISIBLE);
+//			itemView.setVisibility(View.INVISIBLE);
+//			defaultBackgroundColor = itemView.getDrawingCacheBackgroundColor();
+//			itemView.setBackgroundColor(backgroundColor);
+//			ImageView iv = (ImageView) itemView.findViewById(R.id.DragHandleImageView);
+//			if (iv != null)
+//				iv.setVisibility(View.INVISIBLE);
 		}
 
 		@Override
 		public void onStopDrag(View itemView) {
-			itemView.setVisibility(View.VISIBLE);
-			itemView.setBackgroundColor(defaultBackgroundColor);
-			ImageView iv = (ImageView) itemView.findViewById(R.id.ImageView01);
-			if (iv != null)
-				iv.setVisibility(View.VISIBLE);
+//			itemView.setVisibility(View.VISIBLE);
+//			itemView.setBackgroundColor(defaultBackgroundColor);
+//			ImageView iv = (ImageView) itemView.findViewById(R.id.DragHandleImageView);
+//			if (iv != null)
+//				iv.setVisibility(View.VISIBLE);
 		}
 
 	};

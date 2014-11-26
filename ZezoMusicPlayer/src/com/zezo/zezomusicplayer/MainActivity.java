@@ -34,11 +34,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -63,6 +65,8 @@ public class MainActivity extends Activity {
 			musicService.setSongs(songList);
 			musicController.init(musicService);
 			musicController.setMusicBound(true);
+			musicController.show(0);
+			//player.reset();
 
 		}
 
@@ -90,31 +94,54 @@ public class MainActivity extends Activity {
 			songListView.setItemChecked(songs.indexOf(song), true);
 			currentArtistView.setText(song.getArtist());
 			currentTitleView.setText(song.getTitle());
-			musicController.show(DEFAULT_MUSIC_CONTROLLER_TIMEOUT);
+			musicController.show(0);
+//			musicController.setFocusable(false);
+//			musicController.setFocusableInTouchMode(false);
+//			musicController.setClickable(false);
+//			musicController.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 			processingPick = false;
 
 		}
 	};
 
-	private OnItemClickListener onSongClickListener = new OnItemClickListener() {
-		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
-			if (processingPick)
-				return;
+//	private OnItemClickListener onSongClickListener = new OnItemClickListener() {
+//		@Override
+//		public void onItemClick(AdapterView<?> parent, View view, int position,
+//				long id) {
+//			if (processingPick)
+//				return;
+//
+//			processingPick = true;
+//
+//			// Song song = songAdapter.getItem(Integer.parseInt(((View) view
+//			// .getParent()).getTag().toString()));
+//
+//			Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
+//					.toString()));
+//
+//			if (song != null && musicService.audioFocusGranted())
+//				musicService.playSong(song);
+//		}
+//	};
+	
+	public void onSongClicked(View view){
+		
+		if (processingPick)
+			return;
 
-			processingPick = true;
+		processingPick = true;
 
-			// Song song = songAdapter.getItem(Integer.parseInt(((View) view
-			// .getParent()).getTag().toString()));
+		 Song song = songAdapter.getItem(Integer.parseInt(((View) view
+		 .getParent()).getTag().toString()));
 
-			Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
-					.toString()));
+//		Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
+//				.toString()));
 
-			if (song != null && musicService.audioFocusGranted())
-				musicService.playSong(song);
-		}
-	};
+		if (song != null && musicService.audioFocusGranted())
+			musicService.playSong(song);
+		
+	}
+	
 	private boolean processingPick = false;
 
 	private EditText searchBox;
@@ -130,6 +157,7 @@ public class MainActivity extends Activity {
 	private Song songToBeDeleted;
 
 	private VoiceRecognitionHelper voiceRecognitionHelper;
+	private FrameLayout controllerFrame;
 
 	private void deleteSongToBeDeleted() {
 
@@ -290,8 +318,9 @@ public class MainActivity extends Activity {
 		songListView = (SongListView) findViewById(R.id.song_list);
 		currentTitleView = (TextView) findViewById(R.id.currentTitle);
 		currentArtistView = (TextView) findViewById(R.id.currentArtist);
+		controllerFrame = (FrameLayout) findViewById(R.id.controllerFrame);
 		registerForContextMenu(songListView);
-		songListView.setOnItemClickListener(onSongClickListener);
+		//songListView.setOnItemClickListener(onSongClickListener);
 		songListView.setAdapter(songAdapter);
 
 	}
@@ -341,7 +370,7 @@ public class MainActivity extends Activity {
 		initSongAdapter();
 		initViews();
 		musicController = new MusicController(this);
-		musicController.setAnchorView(songListView);
+		musicController.setAnchorView(controllerFrame);		
 		initSearch();
 		initMusicService();
 

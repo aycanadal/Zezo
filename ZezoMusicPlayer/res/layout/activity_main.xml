@@ -4,34 +4,38 @@
     android:layout_height="fill_parent"
     android:background="#000000"
     android:orientation="vertical"
+    android:weightSum="1.0"
     android:windowSoftInputMode="adjustPan"
     tools:context=".MainActivity" >
 
     <TextView
         android:id="@+id/currentTitle"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.05"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/currentArtist"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.05"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:textColor="#AAAAAA"
-        android:textSize="18sp" />
+        android:textColor="@color/gray"
+        android:textSize="14sp" />
 
     <LinearLayout
         android:id="@+id/searchPane"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.2"
         android:background="#000000"
         android:orientation="horizontal"
         android:weightSum="1.0"
@@ -64,10 +68,21 @@
     <com.zezo.zezomusicplayer.SongListView
         android:id="@+id/song_list"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.70"
         android:choiceMode="singleChoice"
         android:fastScrollAlwaysVisible="true"
         android:fastScrollEnabled="true"
         android:listSelector="#660000" >
     </com.zezo.zezomusicplayer.SongListView>
+
+    <FrameLayout
+        android:id="@+id/controllerFrame"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.01"
+         android:background="#000000"
+          >
+    </FrameLayout>
+
 </LinearLayout>

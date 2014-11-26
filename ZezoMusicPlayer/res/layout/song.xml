@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF"
+     android:background="@drawable/list_item_background_selector"
     android:clickable="false"
     android:focusable="false"
     android:focusableInTouchMode="false"
@@ -10,14 +10,14 @@
     android:padding="5dp" >
 
     <ImageView
-        android:id="@+id/ImageView01"
+        android:id="@+id/DragHandleImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:src="@drawable/icmpmove" >
+        android:src="@drawable/draghandle" >
     </ImageView>
 
     <LinearLayout
@@ -26,19 +26,19 @@
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:onClick="onSongClicked"
         android:orientation="vertical"
-        android:padding="5dp"
-        >
+        android:padding="5dp" >
 
         <TextView
             android:id="@+id/song_title"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/list_item_background_selector"
             android:clickable="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:textColor="@drawable/list_item_text_selector"
-            android:background="@drawable/list_item_background_selector"
             android:textSize="14sp"
             android:textStyle="bold" />
 
@@ -46,11 +46,11 @@
             android:id="@+id/song_artist"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/list_item_background_selector"
             android:clickable="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:textColor="@drawable/list_item_text_selector"
-            android:background="@drawable/list_item_background_selector"
             android:textSize="10sp" />
     </LinearLayout>
 
