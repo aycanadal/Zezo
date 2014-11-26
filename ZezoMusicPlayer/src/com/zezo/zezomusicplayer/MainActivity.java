@@ -124,6 +124,10 @@ public class MainActivity extends Activity {
 //		}
 //	};
 	
+	public void onOpenContextMenu(View view){
+		openContextMenu(view);
+	}
+	
 	public void onSongClicked(View view){
 		
 		if (processingPick)
@@ -319,9 +323,9 @@ public class MainActivity extends Activity {
 		currentTitleView = (TextView) findViewById(R.id.currentTitle);
 		currentArtistView = (TextView) findViewById(R.id.currentArtist);
 		controllerFrame = (FrameLayout) findViewById(R.id.controllerFrame);
-		registerForContextMenu(songListView);
-		//songListView.setOnItemClickListener(onSongClickListener);
 		songListView.setAdapter(songAdapter);
+		registerForContextMenu(songListView);
+		//songListView.setOnItemClickListener(onSongClickListener);		
 
 	}
 

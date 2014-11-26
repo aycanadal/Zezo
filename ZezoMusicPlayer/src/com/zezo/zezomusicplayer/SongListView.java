@@ -12,7 +12,7 @@ import com.zezo.dragndroplistview.DragNDropListView;
 import com.zezo.dragndroplistview.DropListener;
 import com.zezo.dragndroplistview.RemoveListener;
 
-public class SongListView extends DragNDropListView {
+public class SongListView extends ListView {
 
 	private DragListener mDragListener = new DragListener() {
 
@@ -88,9 +88,9 @@ public class SongListView extends DragNDropListView {
 
 		super(context, attrs);
 
-		setDropListener(mDropListener);
-		setRemoveListener(mRemoveListener);
-		setDragListener(mDragListener);
+//		setDropListener(mDropListener);
+//		setRemoveListener(mRemoveListener);
+//		setDragListener(mDragListener);
 
 	}
 

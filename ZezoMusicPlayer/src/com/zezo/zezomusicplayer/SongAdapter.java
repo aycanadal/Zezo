@@ -83,7 +83,7 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 
 		// set position as tag
 		songLayout.setTag(position);
-
+		
 		return songLayout;
 
 	}
