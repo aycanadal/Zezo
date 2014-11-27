@@ -18,7 +18,7 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:onClick="onOpenContextMenu"
-        android:src="@drawable/draghandle" >
+        android:src="@drawable/contextmenuhandle" >
     </ImageView>
 
     <LinearLayout
