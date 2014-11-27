@@ -17,7 +17,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="16"
         android:targetSdkVersion="21" />
 
     <application
@@ -27,6 +27,7 @@
         android:theme="@style/MyTheme" >
         <activity
             android:name=".MainActivity"
+            android:label="ZEZO"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor"
