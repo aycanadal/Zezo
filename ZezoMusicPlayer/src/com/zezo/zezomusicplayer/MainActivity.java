@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -34,11 +35,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -66,7 +64,7 @@ public class MainActivity extends Activity {
 			musicController.init(musicService);
 			musicController.setMusicBound(true);
 			musicController.show(0);
-			//player.reset();
+			// player.reset();
 
 		}
 
@@ -95,57 +93,58 @@ public class MainActivity extends Activity {
 			currentArtistView.setText(song.getArtist());
 			currentTitleView.setText(song.getTitle());
 			musicController.show(0);
-//			musicController.setFocusable(false);
-//			musicController.setFocusableInTouchMode(false);
-//			musicController.setClickable(false);
-//			musicController.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+			// musicController.setFocusable(false);
+			// musicController.setFocusableInTouchMode(false);
+			// musicController.setClickable(false);
+			// musicController.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 			processingPick = false;
 
 		}
 	};
 
-//	private OnItemClickListener onSongClickListener = new OnItemClickListener() {
-//		@Override
-//		public void onItemClick(AdapterView<?> parent, View view, int position,
-//				long id) {
-//			if (processingPick)
-//				return;
-//
-//			processingPick = true;
-//
-//			// Song song = songAdapter.getItem(Integer.parseInt(((View) view
-//			// .getParent()).getTag().toString()));
-//
-//			Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
-//					.toString()));
-//
-//			if (song != null && musicService.audioFocusGranted())
-//				musicService.playSong(song);
-//		}
-//	};
-	
-	public void onOpenContextMenu(View view){
+	// private OnItemClickListener onSongClickListener = new
+	// OnItemClickListener() {
+	// @Override
+	// public void onItemClick(AdapterView<?> parent, View view, int position,
+	// long id) {
+	// if (processingPick)
+	// return;
+	//
+	// processingPick = true;
+	//
+	// // Song song = songAdapter.getItem(Integer.parseInt(((View) view
+	// // .getParent()).getTag().toString()));
+	//
+	// Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
+	// .toString()));
+	//
+	// if (song != null && musicService.audioFocusGranted())
+	// musicService.playSong(song);
+	// }
+	// };
+
+	public void onOpenContextMenu(View view) {
 		openContextMenu(view);
 	}
-	
-	public void onSongClicked(View view){
-		
+
+	public void onSongClicked(View view) {
+
 		if (processingPick)
 			return;
 
 		processingPick = true;
 
-		 Song song = songAdapter.getItem(Integer.parseInt(((View) view
-		 .getParent()).getTag().toString()));
+		Song song = songAdapter.getItem(Integer.parseInt(((View) view
+				.getParent()).getTag().toString()));
 
-//		Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
-//				.toString()));
+		// Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
+		// .toString()));
 
 		if (song != null && musicService.audioFocusGranted())
 			musicService.playSong(song);
-		
+
 	}
-	
+
 	private boolean processingPick = false;
 
 	private EditText searchBox;
@@ -325,7 +324,7 @@ public class MainActivity extends Activity {
 		controllerFrame = (FrameLayout) findViewById(R.id.controllerFrame);
 		songListView.setAdapter(songAdapter);
 		registerForContextMenu(songListView);
-		//songListView.setOnItemClickListener(onSongClickListener);		
+		// songListView.setOnItemClickListener(onSongClickListener);
 
 	}
 
@@ -374,7 +373,7 @@ public class MainActivity extends Activity {
 		initSongAdapter();
 		initViews();
 		musicController = new MusicController(this);
-		musicController.setAnchorView(controllerFrame);		
+		musicController.setAnchorView(controllerFrame);
 		initSearch();
 		initMusicService();
 
@@ -449,7 +448,17 @@ public class MainActivity extends Activity {
 		switch (item.getItemId()) {
 
 		case R.id.action_shuffle:
-
+			
+			Drawable shuffleIcon;
+			
+			if (musicService.isShuffling())			
+			 shuffleIcon = getResources().getDrawable(
+					R.drawable.shufflewhite40);
+			else
+				shuffleIcon = getResources().getDrawable(
+						R.drawable.shufflegrey40);
+			
+			item.setIcon(shuffleIcon);
 			musicService.toggleShuffle();
 			break;
 
@@ -460,7 +469,7 @@ public class MainActivity extends Activity {
 
 		case R.id.action_search:
 
-			if (searchEnabled)
+			if (searchEnabled)				
 				disableSearch();
 			else
 				enableSearch();

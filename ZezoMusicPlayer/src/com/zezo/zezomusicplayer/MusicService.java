@@ -302,7 +302,7 @@ public class MusicService extends Service implements
 
 		Notification.Builder builder = new Notification.Builder(this);
 
-		builder.setContentIntent(pendInt).setSmallIcon(R.drawable.play)
+		builder.setContentIntent(pendInt).setSmallIcon(R.drawable.ic_launcher)
 				.setTicker(getCurrentSong().getTitle()).setOngoing(true)
 				.setContentTitle("Playing")
 				.setContentText(getCurrentSong().getTitle());
@@ -361,7 +361,7 @@ public class MusicService extends Service implements
 
 		int songIndex = playlist.indexOf(getCurrentSong());
 
-		if (shuffle) {
+		if (isShuffling()) {
 
 			int newSongIndex = rand.nextInt(playlist.size());
 			long newSongId = getCurrentSong().getId();
@@ -450,9 +450,17 @@ public class MusicService extends Service implements
 	}
 
 	public void toggleShuffle() {
-		if (shuffle)
-			shuffle = false;
+		if (isShuffling())
+			setShuffle(false);
 		else
-			shuffle = true;
+			setShuffle(true);
+	}
+
+	public boolean isShuffling() {
+		return shuffle;
+	}
+
+	public void setShuffle(boolean shuffle) {
+		this.shuffle = shuffle;
 	}
 }
