@@ -5,11 +5,15 @@ public class Song {
 	private String artist;
 	private long id;
 	private String title;
+	private String duration;
 
-	public Song(long songID, String songTitle, String songArtist) {
-		id = songID;
-		title = songTitle;
-		artist = songArtist;
+	public Song(long id, String title, String artist, String duration) {
+		
+		this.id = id;
+		this.title = title;
+		this.artist = artist;
+		this.setDuration(duration);
+		
 	}
 
 	public String getArtist() {
@@ -23,4 +27,13 @@ public class Song {
 	public String getTitle() {
 		return title;
 	}
+
+	public String getDuration() {
+		return duration;
+	}
+
+	public void setDuration(String duration) {
+		this.duration = duration;
+	}
+
 }

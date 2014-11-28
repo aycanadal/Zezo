@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-     android:background="@drawable/list_item_background_selector"
+    android:background="@drawable/list_item_background_selector"
     android:clickable="false"
     android:focusable="false"
     android:focusableInTouchMode="false"
@@ -43,16 +43,40 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/song_artist"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/list_item_background_selector"
             android:clickable="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:textColor="@drawable/list_item_text_selector"
-            android:textSize="10sp" />
-    </LinearLayout>
+            android:orientation="horizontal"
+            android:padding="5dp" >
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/song_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="@drawable/list_item_background_selector"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:textColor="@drawable/list_item_text_selector"
+                android:textSize="10sp" />
+            
+             <TextView
+                android:id="@+id/songDuration"
+                android:layout_width="match_parent"
+                android:gravity="right"
+                android:layout_height="fill_parent"
+                android:background="@drawable/list_item_background_selector"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:textColor="@drawable/list_item_text_selector"
+                android:textSize="10sp"
+                android:paddingRight="5dp"
+                 />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>

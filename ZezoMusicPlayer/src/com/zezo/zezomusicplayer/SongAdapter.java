@@ -73,6 +73,8 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 		TextView songView = (TextView) songLayout.findViewById(R.id.song_title);
 		TextView artistView = (TextView) songLayout
 				.findViewById(R.id.song_artist);
+		TextView durationView = (TextView) songLayout
+				.findViewById(R.id.songDuration);
 
 		// get song using position
 		Song currentSong = getFilteredSongs().get(position);
@@ -80,6 +82,7 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 		// get title and artist strings
 		songView.setText(currentSong.getTitle());
 		artistView.setText(currentSong.getArtist());
+		durationView.setText(currentSong.getDuration());
 
 		// set position as tag
 		songLayout.setTag(position);

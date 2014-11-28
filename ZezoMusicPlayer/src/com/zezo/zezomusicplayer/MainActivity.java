@@ -83,6 +83,8 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onReceive(Context c, Intent i) {
+			
+			int a = 9;
 
 			if (i.getAction() != "MEDIA_PLAYER_PLAYING")
 				return;
@@ -224,13 +226,15 @@ public class MainActivity extends Activity {
 			int titleColumn = musicCursor.getColumnIndex(MediaColumns.TITLE);
 			int idColumn = musicCursor.getColumnIndex(BaseColumns._ID);
 			int artistColumn = musicCursor.getColumnIndex(AudioColumns.ARTIST);
+			int durationColumn = musicCursor.getColumnIndex(AudioColumns.DURATION);
 
 			do {
 
 				long thisId = musicCursor.getLong(idColumn);
 				String thisTitle = musicCursor.getString(titleColumn);
 				String thisArtist = musicCursor.getString(artistColumn);
-				songs.add(new Song(thisId, thisTitle, thisArtist));
+	            String duration = getTimeStringFromMs(musicCursor.getInt(durationColumn));
+				songs.add(new Song(thisId, thisTitle, thisArtist, duration));
 
 			} while (musicCursor.moveToNext());
 
@@ -558,5 +562,21 @@ public class MainActivity extends Activity {
 		 */
 
 	}
+	
+	public static String getNumberWithLeadingZero(int _number) {
+        if (_number < 10) {
+           return "0" + String.valueOf(_number);
+        } else {
+           return String.valueOf(_number);
+        }
+     }
+
+     public static String getTimeStringFromMs(long _ms) {
+        int totalSeconds = (int) _ms / 1000;
+        int seconds = totalSeconds % 60;
+        int minutes = totalSeconds / 60;
+
+        return getNumberWithLeadingZero(minutes) + ":" + getNumberWithLeadingZero(seconds);
+     }
 
 }
