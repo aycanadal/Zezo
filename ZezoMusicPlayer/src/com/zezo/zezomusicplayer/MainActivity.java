@@ -67,7 +67,9 @@ public class MainActivity extends Activity {
 			MusicBinder binder = (MusicBinder) service;
 			musicService = binder.getService();
 			musicService.setSongLibrary(songLibrary);
-			
+			musicController.init(musicService);
+			musicController.setMusicBound(true);
+			showController();
 
 		}
 
@@ -177,9 +179,9 @@ public class MainActivity extends Activity {
 	}
 
 	private void showController() {
-		//musicController.show(0);
+		musicController.show(0);
 		musicController.setVisibility(View.VISIBLE);
-		//controllerFrame.setVisibility(View.VISIBLE);
+		controllerFrame.setVisibility(View.VISIBLE);
 	}
 
 	private void enableSearch() {
@@ -195,8 +197,8 @@ public class MainActivity extends Activity {
 	private void hideController() {
 
 		musicController.setVisibility(View.GONE);
-		//musicController.hideSuper();
-		//controllerFrame.setVisibility(View.GONE);
+		musicController.hideSuper();
+		controllerFrame.setVisibility(View.GONE);
 
 	}
 
@@ -332,7 +334,7 @@ public class MainActivity extends Activity {
 		songListView = (SongListView) findViewById(R.id.song_list);
 		currentTitleView = (TextView) findViewById(R.id.currentTitle);
 		currentArtistView = (TextView) findViewById(R.id.currentArtist);
-		//controllerFrame = (FrameLayout) findViewById(R.id.controllerFrame);
+		controllerFrame = (FrameLayout) findViewById(R.id.controllerFrame);
 
 		songListView.setAdapter(songAdapter);
 		registerForContextMenu(songListView);
@@ -363,7 +365,7 @@ public class MainActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 
-		SpannableString s = new SpannableString("ZEZO v0.124");
+		SpannableString s = new SpannableString("ZEZO v0.4.125");
 		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
 				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -375,11 +377,13 @@ public class MainActivity extends Activity {
 		
 		
 		
-		initSongAdapter();
+		initSongAdapter();	
+		
 		
 		initViews();
-
-		initController();
+		
+		musicController =  new MusicController(this);
+		musicController.setAnchorView(controllerFrame);
 
 		initSearch();
 		initMusicService();
@@ -388,11 +392,9 @@ public class MainActivity extends Activity {
 
 	private void initController() {
 		
-		musicController =  (MusicController) findViewById(R.id.musiccontroller);
-		musicController.setAnchorView(musicController);
-		musicController.init(musicService);
-		musicController.setMusicBound(true);
-		//showController();
+		
+		
+
 
 		//musicController = new MusicController(this);
 		//musicController =  (MusicController) findViewById(R.id.musiccontroller);

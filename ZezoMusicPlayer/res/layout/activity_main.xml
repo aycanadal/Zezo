@@ -74,26 +74,26 @@
     
     
     
-    <com.zezo.zezomusicplayer.MusicController 
-        android:id="@+id/musiccontroller"
-        android:layout_width="fill_parent"
-        android:layout_height="150dp" 
-        android:layout_alignParentBottom="true"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:visibility="visible"
-         >
-        
-    </com.zezo.zezomusicplayer.MusicController>
-    
-<!--     <FrameLayout -->
-<!--         android:id="@+id/controllerFrame" -->
+<!--     <com.zezo.zezomusicplayer.MusicController  -->
+<!--         android:id="@+id/musiccontroller" -->
 <!--         android:layout_width="fill_parent" -->
-<!--         android:layout_height="75dp" -->
-<!--          android:clickable="false" -->
+<!--         android:layout_height="150dp"  -->
+<!--         android:layout_alignParentBottom="true" -->
 <!--         android:focusable="false" -->
 <!--         android:focusableInTouchMode="false" -->
-<!--           > -->
-<!--     </FrameLayout> -->
+<!--         android:visibility="visible" -->
+<!--          > -->
+        
+<!--     </com.zezo.zezomusicplayer.MusicController> -->
+    
+    <FrameLayout
+        android:id="@+id/controllerFrame"
+        android:layout_width="fill_parent"
+        android:layout_height="75dp"
+         android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+          >
+    </FrameLayout>
 
 </LinearLayout>

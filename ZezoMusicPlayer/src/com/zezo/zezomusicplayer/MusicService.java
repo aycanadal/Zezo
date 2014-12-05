@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
@@ -30,7 +31,8 @@ import com.zezo.zezomusicplayer.MediaButtonReceiver.MediaButtonReceiverListener;
 
 public class MusicService extends Service implements
 		MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
-		MediaPlayer.OnCompletionListener, MediaButtonReceiverListener {
+		MediaPlayer.OnCompletionListener, MediaButtonReceiverListener,
+		OnAudioFocusChangeListener {
 
 	private class HeadsetStateReceiver extends BroadcastReceiver {
 		@Override
@@ -112,14 +114,13 @@ public class MusicService extends Service implements
 
 	public boolean audioFocusGranted() {
 
-		// AudioManager am = (AudioManager)
-		// getSystemService(Context.AUDIO_SERVICE);
+		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
-		// int result = am.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
-		// AudioManager.AUDIOFOCUS_GAIN);
-		//
-		// if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
-		// return false;
+		int result = am.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
+				AudioManager.AUDIOFOCUS_GAIN);
+
+		if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
+			return false;
 
 		registerMediaButtonListener();
 		return true;
@@ -197,34 +198,34 @@ public class MusicService extends Service implements
 
 	}
 
-	// @Override
-	// public void onAudioFocusChange(int focusChange) {
-	//
-	// AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-	//
-	// if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
-	// pause();
-	// ComponentName mRemoteControlResponder = new ComponentName(
-	// getPackageName(), MediaButtonReceiver.class.getName());
-	// am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
-	// MediaButtonReceiver.removeBroadcastReceiveListener(this);
-	// am.abandonAudioFocus(this);
-	// } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-	//
-	// registerMediaButtonListener();
-	//
-	// } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-	//
-	// ComponentName mRemoteControlResponder = new ComponentName(
-	// getPackageName(), MediaButtonReceiver.class.getName());
-	// am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
-	// MediaButtonReceiver.removeBroadcastReceiveListener(this);
-	// am.abandonAudioFocus(this);
-	//
-	// pause();
-	//
-	// }
-	// }
+	@Override
+	public void onAudioFocusChange(int focusChange) {
+
+		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+		if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+			pause();
+			ComponentName mRemoteControlResponder = new ComponentName(
+					getPackageName(), MediaButtonReceiver.class.getName());
+			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
+			MediaButtonReceiver.removeBroadcastReceiveListener(this);
+			am.abandonAudioFocus(this);
+		} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+
+			registerMediaButtonListener();
+
+		} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+
+			ComponentName mRemoteControlResponder = new ComponentName(
+					getPackageName(), MediaButtonReceiver.class.getName());
+			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
+			MediaButtonReceiver.removeBroadcastReceiveListener(this);
+			am.abandonAudioFocus(this);
+
+			pause();
+
+		}
+	}
 
 	@Override
 	public IBinder onBind(Intent intent) {

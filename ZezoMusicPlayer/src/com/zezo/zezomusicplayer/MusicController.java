@@ -12,11 +12,11 @@ public class MusicController extends MediaController implements
 	private boolean musicBound = false;
 	private MusicService musicService;
 	
-	public MusicController(Context context, AttributeSet attributeSet){
-		
-		super(context, attributeSet);
-		
-	}
+//	public MusicController(Context context, AttributeSet attributeSet){
+//		
+//		super(context, attributeSet);
+//		
+//	}
 
 	public MusicController(Context context) {
 
