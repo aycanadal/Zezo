@@ -9,16 +9,13 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
 
-    <!-- <uses-sdk -->
-    <!-- android:minSdkVersion="8" -->
-    <!-- android:targetSdkVersion="15" /> -->
+<!--     Soft input delete button bug above target 13 and above min 8. -->
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="21" />
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <uses-sdk
-        android:minSdkVersion="16"
-        android:targetSdkVersion="21" />
 
     <application
         android:allowBackup="true"
@@ -27,13 +24,14 @@
         android:theme="@style/MyTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="ZEZO"
             android:configChanges="orientation|screenSize"
+            android:label="ZEZO"
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -41,22 +39,26 @@
 
         <service android:name="com.zezo.zezomusicplayer.MusicService" >
             <intent-filter>
+                
+                <action android:name="com.zezo.zezomusicplayer.MusicService.BIND" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                
                 <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED" />
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
-                
             </intent-filter>
         </service>
 
-        <receiver android:name="MediaButtonReceiver" android:enabled="true">
-            <intent-filter android:priority="2147483647">
+        <receiver
+            android:name="MediaButtonReceiver"
+            android:enabled="true" >
+            <intent-filter android:priority="2147483647" >
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
-           
-            </receiver>
-            
-<!--          <action android:name="android.intent.action.RECOGNIZE_SPEECH" /> -->
-            
+        </receiver>
+
+        <!-- <action android:name="android.intent.action.RECOGNIZE_SPEECH" /> -->
+
     </application>
 
 </manifest>

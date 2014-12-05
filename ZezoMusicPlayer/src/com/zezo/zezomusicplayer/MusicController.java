@@ -1,6 +1,7 @@
 package com.zezo.zezomusicplayer;
 
 import android.content.Context;
+import android.util.AttributeSet;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.MediaController.MediaPlayerControl;
@@ -10,6 +11,12 @@ public class MusicController extends MediaController implements
 
 	private boolean musicBound = false;
 	private MusicService musicService;
+	
+	public MusicController(Context context, AttributeSet attributeSet){
+		
+		super(context, attributeSet);
+		
+	}
 
 	public MusicController(Context context) {
 
@@ -18,12 +25,16 @@ public class MusicController extends MediaController implements
 	}
 	
 	@Override
-	public void hide() {
+	public void hide(){
 		
-		// Do nothing.
-				
-	};
-
+	}
+	
+	public void hideSuper(){
+		
+		super.hide();
+		
+	}
+	
 	@Override
 	public boolean canPause() {
 		return true;
@@ -65,16 +76,15 @@ public class MusicController extends MediaController implements
 	@Override
 	public int getDuration() {
 
-		// Log.d(musicSrv.);
-
 		if (musicService != null && isMusicBound() && musicService.isPng())
-			// if (musicSrv != null && musicBound)
 			return musicService.getDuration();
-		else if (musicService != null && isMusicBound()) {
-			int pauseDuration = musicService.getPauseDuration();
+		
+		else if (musicService != null && isMusicBound())
 			return musicService.getPauseDuration();
-		} else
+		
+		else
 			return 0;
+		
 	}
 
 	public void init(MusicService musicService) {
@@ -116,10 +126,11 @@ public class MusicController extends MediaController implements
 		if (musicService != null && musicService.isPng())
 			musicService.pause();
 
-		// initController();
-		//show(0);
+		
+		show(0);
+		setVisibility(View.VISIBLE);
 	}
-
+	
 	private void playNext() {
 		musicService.playNext();
 		//show(0);

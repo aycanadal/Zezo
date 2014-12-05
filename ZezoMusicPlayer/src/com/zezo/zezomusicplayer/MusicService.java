@@ -14,10 +14,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
-import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -30,8 +30,7 @@ import com.zezo.zezomusicplayer.MediaButtonReceiver.MediaButtonReceiverListener;
 
 public class MusicService extends Service implements
 		MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
-		MediaPlayer.OnCompletionListener, MediaButtonReceiverListener,
-		OnAudioFocusChangeListener {
+		MediaPlayer.OnCompletionListener, MediaButtonReceiverListener {
 
 	private class HeadsetStateReceiver extends BroadcastReceiver {
 		@Override
@@ -96,13 +95,15 @@ public class MusicService extends Service implements
 	private int pausePosition = 0;
 
 	private MediaPlayer player;
-	private ArrayList<Song> playlist;
+	private ArrayList<Song> songLibrary;
 
 	private ArrayList<Song> playQueue = new ArrayList<Song>();
 
 	private Random rand;
 
 	private boolean shuffle = false;
+
+	// private OnAudioFocusChangeListener mOnAudioFocusChangeListener;
 
 	public void addToQueue(Song song) {
 		playQueue.add(song);
@@ -111,14 +112,15 @@ public class MusicService extends Service implements
 
 	public boolean audioFocusGranted() {
 
-		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		// AudioManager am = (AudioManager)
+		// getSystemService(Context.AUDIO_SERVICE);
 
-		int result = am.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
-				AudioManager.AUDIOFOCUS_GAIN);
+		// int result = am.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
+		// AudioManager.AUDIOFOCUS_GAIN);
+		//
+		// if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
+		// return false;
 
-		if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
-			return false;
-		
 		registerMediaButtonListener();
 		return true;
 	}
@@ -144,7 +146,7 @@ public class MusicService extends Service implements
 	}
 
 	public Song getSongById(long songId) {
-		for (Song song : playlist) {
+		for (Song song : songLibrary) {
 			if (song.getId() == songId) {
 				return song;
 			}
@@ -153,7 +155,7 @@ public class MusicService extends Service implements
 	}
 
 	public Song getSongByIndex(int index) {
-		return playlist.get(index);
+		return songLibrary.get(index);
 	}
 
 	public void initMusicPlayer() {
@@ -172,54 +174,57 @@ public class MusicService extends Service implements
 		registerReceiver(headsetStateReceiver, receiverFilter);
 
 		audioFocusGranted();
-	
+
 	}
 
 	private void registerMediaButtonListener() {
-		
+
 		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
 		ComponentName mRemoteControlResponder = new ComponentName(
 				getPackageName(), MediaButtonReceiver.class.getName());
 
-		am.registerMediaButtonEventReceiver(mRemoteControlResponder);
-		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
+			am.registerMediaButtonEventReceiver(mRemoteControlResponder);
+
 		MediaButtonReceiver.addBroadcastReceiveListener(this);
-		
+
 	}
 
 	public boolean isPng() {
+
 		return player.isPlaying();
+
 	}
 
-	@Override
-	public void onAudioFocusChange(int focusChange) {
-
-		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
-		if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
-			pause();
-			ComponentName mRemoteControlResponder = new ComponentName(
-					getPackageName(), MediaButtonReceiver.class.getName());
-			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
-			MediaButtonReceiver.removeBroadcastReceiveListener(this);
-			am.abandonAudioFocus(this);
-		} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-
-			registerMediaButtonListener();
-
-		} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-
-			ComponentName mRemoteControlResponder = new ComponentName(
-					getPackageName(), MediaButtonReceiver.class.getName());
-			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
-			MediaButtonReceiver.removeBroadcastReceiveListener(this);
-			am.abandonAudioFocus(this);
-
-			pause();
-
-		}
-	}
+	// @Override
+	// public void onAudioFocusChange(int focusChange) {
+	//
+	// AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+	//
+	// if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+	// pause();
+	// ComponentName mRemoteControlResponder = new ComponentName(
+	// getPackageName(), MediaButtonReceiver.class.getName());
+	// am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
+	// MediaButtonReceiver.removeBroadcastReceiveListener(this);
+	// am.abandonAudioFocus(this);
+	// } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+	//
+	// registerMediaButtonListener();
+	//
+	// } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+	//
+	// ComponentName mRemoteControlResponder = new ComponentName(
+	// getPackageName(), MediaButtonReceiver.class.getName());
+	// am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
+	// MediaButtonReceiver.removeBroadcastReceiveListener(this);
+	// am.abandonAudioFocus(this);
+	//
+	// pause();
+	//
+	// }
+	// }
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -300,16 +305,20 @@ public class MusicService extends Service implements
 		PendingIntent pendInt = PendingIntent.getActivity(this, 0, notIntent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 
-		Notification.Builder builder = new Notification.Builder(this);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 
-		builder.setContentIntent(pendInt).setSmallIcon(R.drawable.ic_launcher)
-				.setTicker(getCurrentSong().getTitle()).setOngoing(true)
-				.setContentTitle("Playing")
-				.setContentText(getCurrentSong().getTitle());
+			Notification.Builder builder = new Notification.Builder(this);
 
-		Notification not = builder.build();
+			builder.setContentIntent(pendInt)
+					.setSmallIcon(R.drawable.ic_launcher)
+					.setTicker(getCurrentSong().getTitle()).setOngoing(true)
+					.setContentTitle("Playing")
+					.setContentText(getCurrentSong().getTitle());
 
-		startForeground(NOTIFY_ID, not);
+			Notification not = builder.build();
+
+			startForeground(NOTIFY_ID, not);
+		}
 
 		Intent onPreparedIntent = new Intent("MEDIA_PLAYER_PLAYING");
 		LocalBroadcastManager.getInstance(this).sendBroadcast(onPreparedIntent);
@@ -342,12 +351,16 @@ public class MusicService extends Service implements
 
 	public void play() {
 
-		if (audioFocusGranted())
+		if (audioFocusGranted() && currentSong != null)
+
 			player.start();
 
 	}
 
 	public void playNext() {
+
+		if (songLibrary.size() <= 0)
+			return;
 
 		if (playQueue.size() > 0) {
 
@@ -359,44 +372,48 @@ public class MusicService extends Service implements
 
 		}
 
-		int songIndex = playlist.indexOf(getCurrentSong());
+		int songIndex = songLibrary.indexOf(getCurrentSong());
 
 		if (isShuffling()) {
 
-			int newSongIndex = rand.nextInt(playlist.size());
+			int newSongIndex = rand.nextInt(songLibrary.size());
 			long newSongId = getCurrentSong().getId();
 
 			while (newSongId == getCurrentSong().getId()) {
 
-				newSongIndex = rand.nextInt(playlist.size());
-				newSongId = playlist.get(newSongIndex).getId();
+				newSongIndex = rand.nextInt(songLibrary.size());
+				newSongId = songLibrary.get(newSongIndex).getId();
 
 			}
 
-			playSong(playlist.get(newSongIndex));
+			playSong(songLibrary.get(newSongIndex));
 
 		} else {
 
 			songIndex++;
 
-			if (songIndex >= playlist.size())
-				playSong(playlist.get(0));
+			if (songIndex >= songLibrary.size())
+				playSong(songLibrary.get(0));
 			else
-				playSong(playlist.get(songIndex));
+				playSong(songLibrary.get(songIndex));
 
 		}
 	}
 
 	public void playPrevious() {
+
+		if (songLibrary.size() <= 0)
+			return;
+
 		// Song song = getSongById(songId);
-		int songIndex = playlist.indexOf(getCurrentSong());
+		int songIndex = songLibrary.indexOf(getCurrentSong());
 
 		songIndex--;
 		if (songIndex < 0)
-			songIndex = playlist.size() - 1;
+			songIndex = songLibrary.size() - 1;
 
 		// songId = songs.get(songIndex).getID();
-		playSong(playlist.get(songIndex));
+		playSong(songLibrary.get(songIndex));
 	}
 
 	public void playSong(Song song) {
@@ -431,7 +448,7 @@ public class MusicService extends Service implements
 
 	public void removeFromPlaylist(Song song) {
 
-		playlist.remove(song);
+		songLibrary.remove(song);
 
 	}
 
@@ -443,8 +460,8 @@ public class MusicService extends Service implements
 		this.currentSong = song;
 	}
 
-	public void setSongs(ArrayList<Song> songs) {
-		this.playlist = songs;
+	public void setSongLibrary(ArrayList<Song> songs) {
+		this.songLibrary = songs;
 		if (songs != null && songs.size() > 0)
 			setSong(songs.get(0));
 	}

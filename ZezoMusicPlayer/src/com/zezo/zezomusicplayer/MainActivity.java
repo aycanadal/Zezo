@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -18,6 +19,7 @@ import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.BaseColumns;
@@ -27,6 +29,8 @@ import android.provider.MediaStore.MediaColumns;
 import android.speech.RecognizerIntent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -35,6 +39,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.EditText;
@@ -46,9 +51,10 @@ import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 
 public class MainActivity extends Activity {
 
-	private static final int DEFAULT_MUSIC_CONTROLLER_TIMEOUT = 3000;
+	private FrameLayout controllerFrame;
 	private TextView currentArtistView;
 	private TextView currentTitleView;
+
 	private MusicController musicController;
 
 	private MusicService musicService;
@@ -60,11 +66,8 @@ public class MainActivity extends Activity {
 
 			MusicBinder binder = (MusicBinder) service;
 			musicService = binder.getService();
-			musicService.setSongs(songList);
-			musicController.init(musicService);
-			musicController.setMusicBound(true);
-			musicController.show(0);
-			// player.reset();
+			musicService.setSongLibrary(songLibrary);
+			
 
 		}
 
@@ -77,32 +80,6 @@ public class MainActivity extends Activity {
 	};
 
 	private Intent musicServiceIntent;
-
-	// Broadcast receiver to determine when music player has been prepared
-	private BroadcastReceiver onMediaPlayerPlayingReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context c, Intent i) {
-
-			int a = 9;
-
-			if (i.getAction() != "MEDIA_PLAYER_PLAYING")
-				return;
-
-			Song song = musicService.getCurrentSong();
-			ArrayList<Song> songs = songAdapter.getSongs();
-			songListView.setItemChecked(songs.indexOf(song), true);
-			currentArtistView.setText(song.getArtist());
-			currentTitleView.setText(song.getTitle());
-			musicController.show(0);
-			// musicController.setFocusable(false);
-			// musicController.setFocusableInTouchMode(false);
-			// musicController.setClickable(false);
-			// musicController.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-			processingPick = false;
-
-		}
-	};
 
 	// private OnItemClickListener onSongClickListener = new
 	// OnItemClickListener() {
@@ -125,27 +102,25 @@ public class MainActivity extends Activity {
 	// }
 	// };
 
-	public void onOpenContextMenu(View view) {
-		openContextMenu(view);
-	}
+	// Broadcast receiver to determine when music player has been prepared
+	private BroadcastReceiver onMediaPlayerPlayingReceiver = new BroadcastReceiver() {
 
-	public void onSongClicked(View view) {
+		@Override
+		public void onReceive(Context c, Intent i) {
 
-		if (processingPick)
-			return;
+			if (i.getAction() != "MEDIA_PLAYER_PLAYING")
+				return;
 
-		processingPick = true;
+			Song song = musicService.getCurrentSong();
+			ArrayList<Song> songs = songAdapter.getSongs();
+			songListView.setItemChecked(songs.indexOf(song), true);
+			currentArtistView.setText(song.getArtist());
+			currentTitleView.setText(song.getTitle());
+			showController();
+			processingPick = false;
 
-		Song song = songAdapter.getItem(Integer.parseInt(((View) view
-				.getParent()).getTag().toString()));
-
-		// Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
-		// .toString()));
-
-		if (song != null && musicService.audioFocusGranted())
-			musicService.playSong(song);
-
-	}
+		}
+	};
 
 	private boolean processingPick = false;
 
@@ -154,15 +129,23 @@ public class MainActivity extends Activity {
 	private boolean searchEnabled;
 
 	private LinearLayout searchPane;
-	private SongAdapter songAdapter;
-	private ArrayList<Song> songList;
 
+	private SongAdapter songAdapter;
+	private ArrayList<Song> songLibrary;
 	private SongListView songListView;
 
 	private Song songToBeDeleted;
 
 	private VoiceRecognitionHelper voiceRecognitionHelper;
-	private FrameLayout controllerFrame;
+
+//	@Override
+//	public boolean onKeyUp(int keyCode, KeyEvent event) {
+//		if (keyCode == KeyEvent.KEYCODE_MENU) {
+//			hideController();
+//			return false;
+//		}
+//		return super.onKeyUp(keyCode, event);
+//	}
 
 	private void deleteSongToBeDeleted() {
 
@@ -189,17 +172,31 @@ public class MainActivity extends Activity {
 		searchBox.setText("");
 		searchPane.setVisibility(View.GONE);
 		hideKeyboard();
-		musicController.setVisibility(View.VISIBLE);
+		showController();
 
+	}
+
+	private void showController() {
+		//musicController.show(0);
+		musicController.setVisibility(View.VISIBLE);
+		//controllerFrame.setVisibility(View.VISIBLE);
 	}
 
 	private void enableSearch() {
 
 		searchEnabled = true;
 		searchPane.setVisibility(View.VISIBLE);
-		boolean focused = searchBox.requestFocus();
-		musicController.setVisibility(View.GONE);
+		hideController();
+		searchBox.requestFocus();
 		showKeyboard();
+
+	}
+
+	private void hideController() {
+
+		musicController.setVisibility(View.GONE);
+		//musicController.hideSuper();
+		//controllerFrame.setVisibility(View.GONE);
 
 	}
 
@@ -263,9 +260,19 @@ public class MainActivity extends Activity {
 
 		if (musicServiceIntent == null) {
 
+			// musicServiceIntent = new Intent(this, MusicService.class);
+
+			// musicServiceIntent = new Intent();
+			//
+			// musicServiceIntent.setComponent(new ComponentName(
+			// "com.zezo.zezomusicplayer",
+			// "comcom.zezo.zezomusicplayer.MusicService"));
+
 			musicServiceIntent = new Intent(this, MusicService.class);
+
 			bindService(musicServiceIntent, musicServiceConnection,
 					Context.BIND_AUTO_CREATE);
+
 			startService(musicServiceIntent);
 
 		}
@@ -285,13 +292,11 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void afterTextChanged(Editable arg0) {
-				// TODO Auto-generated method stub
 			}
 
 			@Override
 			public void beforeTextChanged(CharSequence arg0, int arg1,
 					int arg2, int arg3) {
-				// TODO Auto-generated method stub
 
 			}
 
@@ -307,17 +312,17 @@ public class MainActivity extends Activity {
 
 	private void initSongAdapter() {
 
-		if (songList == null || songList.size() < 1)
-			songList = getAllSongsOnDevice();
+		if (songLibrary == null || songLibrary.size() < 1)
+			songLibrary = getAllSongsOnDevice();
 
-		Collections.sort(songList, new Comparator<Song>() {
+		Collections.sort(songLibrary, new Comparator<Song>() {
 			@Override
 			public int compare(Song a, Song b) {
 				return a.getTitle().compareTo(b.getTitle());
 			}
 		});
 
-		songAdapter = new SongAdapter(this, songList);
+		songAdapter = new SongAdapter(this, songLibrary);
 
 	}
 
@@ -327,10 +332,76 @@ public class MainActivity extends Activity {
 		songListView = (SongListView) findViewById(R.id.song_list);
 		currentTitleView = (TextView) findViewById(R.id.currentTitle);
 		currentArtistView = (TextView) findViewById(R.id.currentArtist);
-		controllerFrame = (FrameLayout) findViewById(R.id.controllerFrame);
+		//controllerFrame = (FrameLayout) findViewById(R.id.controllerFrame);
+
 		songListView.setAdapter(songAdapter);
 		registerForContextMenu(songListView);
-		// songListView.setOnItemClickListener(onSongClickListener);
+
+	}
+
+	// Put voice recognition result to searchBox.
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		if (requestCode == voiceRecognitionHelper.getRequestCode()
+				&& resultCode == RESULT_OK) {
+
+			ArrayList<String> matches = data
+					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+			searchBox.setText(matches.get(0));
+
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
+
+	}
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+
+		super.onCreate(savedInstanceState);
+
+		SpannableString s = new SpannableString("ZEZO v0.124");
+		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
+				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			// Update the action bar title with the TypefaceSpan instance
+			android.app.ActionBar actionBar = getActionBar();
+			actionBar.setTitle(s);
+		}
+		
+		
+		
+		initSongAdapter();
+		
+		initViews();
+
+		initController();
+
+		initSearch();
+		initMusicService();
+
+	}
+
+	private void initController() {
+		
+		musicController =  (MusicController) findViewById(R.id.musiccontroller);
+		musicController.setAnchorView(musicController);
+		musicController.init(musicService);
+		musicController.setMusicBound(true);
+		//showController();
+
+		//musicController = new MusicController(this);
+		//musicController =  (MusicController) findViewById(R.id.musiccontroller);
+		//musicController.setAnchorView(controllerFrame);
+//		musicController.setFocusable(false);
+//		musicController.setFocusableInTouchMode(false);
+//		musicController.setClickable(false);
+//		musicController
+//				.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 
 	}
 
@@ -352,38 +423,6 @@ public class MainActivity extends Activity {
 	 * 
 	 * }
 	 */
-
-	// Put voice recognition result to searchBox.
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-		if (requestCode == voiceRecognitionHelper.getRequestCode()
-				&& resultCode == RESULT_OK) {
-
-			ArrayList<String> matches = data
-					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
-			searchBox.setText(matches.get(0));
-
-		}
-
-		super.onActivityResult(requestCode, resultCode, data);
-
-	}
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-
-		super.onCreate(savedInstanceState);
-
-		initSongAdapter();
-		initViews();
-		musicController = new MusicController(this);
-		musicController.setAnchorView(controllerFrame);
-		initSearch();
-		initMusicService();
-
-	}
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
@@ -448,6 +487,10 @@ public class MainActivity extends Activity {
 
 	}
 
+	public void onOpenContextMenu(View view) {
+		openContextMenu(view);
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -504,6 +547,24 @@ public class MainActivity extends Activity {
 		}, 100);
 
 		super.onResume();
+
+	}
+
+	public void onSongClicked(View view) {
+
+		if (processingPick)
+			return;
+
+		processingPick = true;
+
+		Song song = songAdapter.getItem(Integer.parseInt(((View) view
+				.getParent()).getTag().toString()));
+
+		// Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
+		// .toString()));
+
+		if (song != null && musicService.audioFocusGranted())
+			musicService.playSong(song);
 
 	}
 
