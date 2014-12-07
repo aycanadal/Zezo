@@ -312,9 +312,9 @@ public class MusicService extends Service implements
 
 			builder.setContentIntent(pendInt)
 					.setSmallIcon(R.drawable.ic_launcher)
-					.setTicker(getCurrentSong().getTitle()).setOngoing(true)
-					.setContentTitle("Playing")
-					.setContentText(getCurrentSong().getTitle());
+					.setTicker(getCurrentSong().getArtist() + " - " + getCurrentSong().getTitle()).setOngoing(true)
+					.setContentTitle(getCurrentSong().getTitle())
+					.setContentText(getCurrentSong().getArtist());
 
 			Notification not = builder.build();
 

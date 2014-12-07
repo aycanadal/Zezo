@@ -365,7 +365,7 @@ public class MainActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 
-		SpannableString s = new SpannableString("ZEZO v0.4.125");
+		SpannableString s = new SpannableString("ZEZO v0.4.126");
 		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
 				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -375,16 +375,10 @@ public class MainActivity extends Activity {
 			actionBar.setTitle(s);
 		}
 		
-		
-		
 		initSongAdapter();	
-		
-		
 		initViews();
-		
 		musicController =  new MusicController(this);
 		musicController.setAnchorView(controllerFrame);
-
 		initSearch();
 		initMusicService();
 
