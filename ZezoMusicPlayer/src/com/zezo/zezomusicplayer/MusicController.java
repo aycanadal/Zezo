@@ -144,6 +144,8 @@ public class MusicController extends MediaController implements
 	@Override
 	public void seekTo(int pos) {
 		musicService.seek(pos);
+		if (!musicService.isPng())
+			musicService.setPausePosition(pos);
 	}
 
 	public void setMusicBound(boolean musicBound) {

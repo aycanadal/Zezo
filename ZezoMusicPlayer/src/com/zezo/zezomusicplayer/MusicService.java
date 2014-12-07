@@ -77,7 +77,7 @@ public class MusicService extends Service implements
 			if (action.equals("android.bluetooth.device.action.ACL_CONNECTED")) {
 
 				Log.d("Z", "Received: Bluetooth Connected");
-
+				
 			}
 			if (action
 					.equals("android.bluetooth.device.action.ACL_DISCONNECTED")
@@ -480,5 +480,9 @@ public class MusicService extends Service implements
 
 	public void setShuffle(boolean shuffle) {
 		this.shuffle = shuffle;
+	}
+
+	public void setPausePosition(int pausePosition) {
+		this.pausePosition = pausePosition;
 	}
 }
