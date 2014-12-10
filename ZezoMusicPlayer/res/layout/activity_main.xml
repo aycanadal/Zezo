@@ -11,9 +11,7 @@
         android:id="@+id/currentTitle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:clickable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
+        android:onClick="scrollToCurrent"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -22,11 +20,16 @@
         android:id="@+id/currentArtist"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:clickable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
+        android:onClick="scrollToCurrent"
         android:textColor="@color/gray"
         android:textSize="14sp" />
+
+    <!-- <FrameLayout -->
+    <!-- android:id="@+id/fragmentContainer" -->
+    <!-- > -->
+
+
+    <!-- </FrameLayout> -->
 
     <LinearLayout
         android:id="@+id/searchPane"
@@ -71,29 +74,27 @@
         android:fastScrollEnabled="true"
         android:listSelector="#660000" >
     </com.zezo.zezomusicplayer.SongListView>
-    
-    
-    
-<!--     <com.zezo.zezomusicplayer.MusicController  -->
-<!--         android:id="@+id/musiccontroller" -->
-<!--         android:layout_width="fill_parent" -->
-<!--         android:layout_height="150dp"  -->
-<!--         android:layout_alignParentBottom="true" -->
-<!--         android:focusable="false" -->
-<!--         android:focusableInTouchMode="false" -->
-<!--         android:visibility="visible" -->
-<!--          > -->
-        
-<!--     </com.zezo.zezomusicplayer.MusicController> -->
-    
+
+    <!-- <com.zezo.zezomusicplayer.MusicController -->
+    <!-- android:id="@+id/musiccontroller" -->
+    <!-- android:layout_width="fill_parent" -->
+    <!-- android:layout_height="150dp" -->
+    <!-- android:layout_alignParentBottom="true" -->
+    <!-- android:focusable="false" -->
+    <!-- android:focusableInTouchMode="false" -->
+    <!-- android:visibility="visible" -->
+    <!-- > -->
+
+
+    <!-- </com.zezo.zezomusicplayer.MusicController> -->
+
     <FrameLayout
         android:id="@+id/controllerFrame"
         android:layout_width="fill_parent"
         android:layout_height="75dp"
-         android:clickable="false"
+        android:clickable="false"
         android:focusable="false"
-        android:focusableInTouchMode="false"
-          >
+        android:focusableInTouchMode="false" >
     </FrameLayout>
 
 </LinearLayout>

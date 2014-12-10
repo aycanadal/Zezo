@@ -140,14 +140,14 @@ public class MainActivity extends Activity {
 
 	private VoiceRecognitionHelper voiceRecognitionHelper;
 
-//	@Override
-//	public boolean onKeyUp(int keyCode, KeyEvent event) {
-//		if (keyCode == KeyEvent.KEYCODE_MENU) {
-//			hideController();
-//			return false;
-//		}
-//		return super.onKeyUp(keyCode, event);
-//	}
+	// @Override
+	// public boolean onKeyUp(int keyCode, KeyEvent event) {
+	// if (keyCode == KeyEvent.KEYCODE_MENU) {
+	// hideController();
+	// return false;
+	// }
+	// return super.onKeyUp(keyCode, event);
+	// }
 
 	private void deleteSongToBeDeleted() {
 
@@ -374,10 +374,10 @@ public class MainActivity extends Activity {
 			android.app.ActionBar actionBar = getActionBar();
 			actionBar.setTitle(s);
 		}
-		
-		initSongAdapter();	
+
+		initSongAdapter();
 		initViews();
-		musicController =  new MusicController(this);
+		musicController = new MusicController(this);
 		musicController.setAnchorView(controllerFrame);
 		initSearch();
 		initMusicService();
@@ -385,19 +385,16 @@ public class MainActivity extends Activity {
 	}
 
 	private void initController() {
-		
-		
-		
 
-
-		//musicController = new MusicController(this);
-		//musicController =  (MusicController) findViewById(R.id.musiccontroller);
-		//musicController.setAnchorView(controllerFrame);
-//		musicController.setFocusable(false);
-//		musicController.setFocusableInTouchMode(false);
-//		musicController.setClickable(false);
-//		musicController
-//				.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+		// musicController = new MusicController(this);
+		// musicController = (MusicController)
+		// findViewById(R.id.musiccontroller);
+		// musicController.setAnchorView(controllerFrame);
+		// musicController.setFocusable(false);
+		// musicController.setFocusableInTouchMode(false);
+		// musicController.setClickable(false);
+		// musicController
+		// .setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 
 	}
 
@@ -543,6 +540,15 @@ public class MainActivity extends Activity {
 		}, 100);
 
 		super.onResume();
+
+	}
+
+	@TargetApi(Build.VERSION_CODES.FROYO)
+	public void scrollToCurrent(View view) {
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
+			songListView.smoothScrollToPosition(songListView
+					.getCheckedItemPosition());
 
 	}
 
