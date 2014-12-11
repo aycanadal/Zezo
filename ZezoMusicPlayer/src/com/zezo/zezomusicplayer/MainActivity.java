@@ -25,14 +25,11 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AudioColumns;
 import android.provider.MediaStore.MediaColumns;
-import android.speech.RecognizerIntent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -42,9 +39,7 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.zezo.zezomusicplayer.MusicService.MusicBinder;
@@ -127,19 +122,12 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 
 	private boolean processingPick = false;
 
-	private EditText searchBox;
-
-	private boolean searchEnabled;
-
-	private LinearLayout searchPane;
-
 	private SongAdapter songAdapter;
 	private ArrayList<Song> songLibrary;
 	private SongListView songListView;
 
 	private Song songToBeDeleted;
 
-	private VoiceRecognitionHelper voiceRecognitionHelper;
 	private SearchFragment searchFragment;
 
 	// @Override
@@ -186,7 +174,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 
 	private void exit() {
 
-		//hideKeyboard();
+		// hideKeyboard();
 		stopService(musicServiceIntent);
 		musicService = null;
 		System.exit(0);
@@ -256,39 +244,6 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 
 	}
 
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	public void initSearch(View view) {
-
-		searchPane = (LinearLayout) view.findViewById(R.id.searchPane);
-		searchBox = (EditText) view.findViewById(R.id.searchBox);
-
-		// searchFragment.showKeyboard((InputMethodManager) this
-		// .getSystemService(Context.INPUT_METHOD_SERVICE));
-
-		searchBox.addTextChangedListener(new TextWatcher() {
-
-			@Override
-			public void afterTextChanged(Editable arg0) {
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence arg0, int arg1,
-					int arg2, int arg3) {
-
-			}
-
-			@Override
-			public void onTextChanged(CharSequence cs, int arg1, int arg2,
-					int arg3) {
-				// When user changed the Text
-				MainActivity.this.songAdapter.getFilter().filter(cs);
-			}
-		});
-
-		voiceRecognitionHelper = new VoiceRecognitionHelper(searchBox);
-
-	}
-
 	private void initSongAdapter() {
 
 		if (songLibrary == null || songLibrary.size() < 1)
@@ -318,31 +273,13 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 
 	}
 
-	// Put voice recognition result to searchBox.
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-		if (requestCode == voiceRecognitionHelper.getRequestCode()
-				&& resultCode == RESULT_OK) {
-
-			ArrayList<String> matches = data
-					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
-			searchBox.setText(matches.get(0));
-
-		}
-
-		super.onActivityResult(requestCode, resultCode, data);
-
-	}
-
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 
-		SpannableString s = new SpannableString("ZEZO v0.4.127");
+		SpannableString s = new SpannableString("ZEZO v0.4.13");
 		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
 				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -477,7 +414,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 
 		// stopService(playIntent);
 		// musicService = null;
-		//hideKeyboard();
+		// hideKeyboard();
 		// unregisterReceiver(onPrepareReceiver);
 		super.onDestroy();
 
@@ -514,7 +451,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 
 		case R.id.action_search:
 
-			if (searchEnabled) {
+			if (searchFragment.isVisible()) {
 
 				searchFragment
 						.disableSearch(
@@ -523,7 +460,6 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 										.getSystemService(Context.INPUT_METHOD_SERVICE));
 
 				showController();
-				searchEnabled = false;
 
 			} else {
 
@@ -533,7 +469,6 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 								(InputMethodManager) this
 										.getSystemService(Context.INPUT_METHOD_SERVICE));
 				hideController();
-				searchEnabled = true;
 
 			}
 
@@ -592,13 +527,6 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 
 	}
 
-	public void onTalkButtonClick(View view) {
-
-		startActivityForResult(voiceRecognitionHelper.getIntent(),
-				voiceRecognitionHelper.getRequestCode());
-
-	}
-
 	private void showDeleteDialog() {
 
 		new AlertDialog.Builder(this)
@@ -633,6 +561,13 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 								exit();
 							}
 						}).setNegativeButton(android.R.string.no, null).show();
+
+	}
+
+	@Override
+	public void onSearchTextChanged(CharSequence cs) {
+
+		songAdapter.getFilter().filter(cs);
 
 	}
 

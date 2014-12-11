@@ -24,11 +24,10 @@
     </EditText>
 
     <Button
-        android:id="@+id/speakButton"
+        android:id="@+id/talkButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.2"
-        android:onClick="onTalkButtonClick"
-        android:text="Talk" />
+        android:text="@string/Talk" />
 
 </LinearLayout>
