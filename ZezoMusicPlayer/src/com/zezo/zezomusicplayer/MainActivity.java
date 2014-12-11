@@ -26,6 +26,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AudioColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.speech.RecognizerIntent;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
@@ -169,32 +170,10 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 
 	}
 
-	private void disableSearch() {
-
-		
-
-		 searchEnabled = false;
-		 searchBox.setText("");
-		 searchPane.setVisibility(View.GONE);
-		hideKeyboard();
-		showController();
-
-	}
-
 	private void showController() {
 		musicController.show(0);
 		musicController.setVisibility(View.VISIBLE);
 		controllerFrame.setVisibility(View.VISIBLE);
-	}
-
-	private void enableSearch() {
-
-		
-		
-		searchEnabled = true;
-		hideController();
-		//showKeyboard();
-
 	}
 
 	private void hideController() {
@@ -207,7 +186,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 
 	private void exit() {
 
-		hideKeyboard();
+		//hideKeyboard();
 		stopService(musicServiceIntent);
 		musicService = null;
 		System.exit(0);
@@ -250,13 +229,6 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 
 	}
 
-	private void hideKeyboard() {
-
-		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
-
-	}
-
 	private void initMusicService() {
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -290,8 +262,8 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 		searchPane = (LinearLayout) view.findViewById(R.id.searchPane);
 		searchBox = (EditText) view.findViewById(R.id.searchBox);
 
-//		searchFragment.showKeyboard((InputMethodManager) this
-//				.getSystemService(Context.INPUT_METHOD_SERVICE));
+		// searchFragment.showKeyboard((InputMethodManager) this
+		// .getSystemService(Context.INPUT_METHOD_SERVICE));
 
 		searchBox.addTextChangedListener(new TextWatcher() {
 
@@ -385,29 +357,33 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 		musicController = new MusicController(this);
 		musicController.setAnchorView(controllerFrame);
 		initMusicService();
-		
-		 if (findViewById(R.id.fragmentContainer) != null) {
 
-	            // However, if we're being restored from a previous state,
-	            // then we don't need to do anything and should return or else
-	            // we could end up with overlapping fragments.
-	            if (savedInstanceState != null) {
-	                return;
-	            }
-		
-		// Create a new Fragment to be placed in the activity layout
-				searchFragment = new SearchFragment();
+		if (findViewById(R.id.fragmentContainer) != null) {
 
-				// In case this activity was started with special instructions from an
-				// Intent, pass the Intent's extras to the fragment as arguments
-				searchFragment.setArguments(getIntent().getExtras());
+			// However, if we're being restored from a previous state,
+			// then we don't need to do anything and should return or else
+			// we could end up with overlapping fragments.
+			if (savedInstanceState != null) {
+				return;
+			}
 
-				// Add the fragment to the 'fragment_container' FrameLayout
-				getSupportFragmentManager().beginTransaction()
-						.add(R.id.fragmentContainer, searchFragment, "searchFragment")
-						.commit();
-		 }
+			// Create a new Fragment to be placed in the activity layout
+			searchFragment = new SearchFragment();
 
+			// In case this activity was started with special instructions from
+			// an
+			// Intent, pass the Intent's extras to the fragment as arguments
+			searchFragment.setArguments(getIntent().getExtras());
+
+			// Add the fragment to the 'fragment_container' FrameLayout
+			getSupportFragmentManager()
+					.beginTransaction()
+					.add(R.id.fragmentContainer, searchFragment,
+							"searchFragment").commit();
+
+			FragmentManager fm = getSupportFragmentManager();
+			fm.beginTransaction().hide(searchFragment).commit();
+		}
 
 	}
 
@@ -501,7 +477,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 
 		// stopService(playIntent);
 		// musicService = null;
-		hideKeyboard();
+		//hideKeyboard();
 		// unregisterReceiver(onPrepareReceiver);
 		super.onDestroy();
 
@@ -538,10 +514,28 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 
 		case R.id.action_search:
 
-			if (searchEnabled)
-				disableSearch();
-			else
-				enableSearch();
+			if (searchEnabled) {
+
+				searchFragment
+						.disableSearch(
+								getSupportFragmentManager(),
+								(InputMethodManager) this
+										.getSystemService(Context.INPUT_METHOD_SERVICE));
+
+				showController();
+				searchEnabled = false;
+
+			} else {
+
+				searchFragment
+						.enableSearch(
+								getSupportFragmentManager(),
+								(InputMethodManager) this
+										.getSystemService(Context.INPUT_METHOD_SERVICE));
+				hideController();
+				searchEnabled = true;
+
+			}
 
 			break;
 
