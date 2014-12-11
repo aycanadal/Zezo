@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -26,12 +25,11 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AudioColumns;
 import android.provider.MediaStore.MediaColumns;
-import android.speech.RecognizerIntent;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.Editable;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -39,17 +37,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.zezo.zezomusicplayer.MusicService.MusicBinder;
+import com.zezo.zezomusicplayer.SearchFragment.SearchListener;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ActionBarActivity implements SearchListener {
 
 	private FrameLayout controllerFrame;
 	private TextView currentArtistView;
@@ -126,19 +122,13 @@ public class MainActivity extends Activity {
 
 	private boolean processingPick = false;
 
-	private EditText searchBox;
-
-	private boolean searchEnabled;
-
-	private LinearLayout searchPane;
-
 	private SongAdapter songAdapter;
 	private ArrayList<Song> songLibrary;
 	private SongListView songListView;
 
 	private Song songToBeDeleted;
 
-	private VoiceRecognitionHelper voiceRecognitionHelper;
+	private SearchFragment searchFragment;
 
 	// @Override
 	// public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -168,30 +158,10 @@ public class MainActivity extends Activity {
 
 	}
 
-	private void disableSearch() {
-
-		searchEnabled = false;
-		searchBox.setText("");
-		searchPane.setVisibility(View.GONE);
-		hideKeyboard();
-		showController();
-
-	}
-
 	private void showController() {
 		musicController.show(0);
 		musicController.setVisibility(View.VISIBLE);
 		controllerFrame.setVisibility(View.VISIBLE);
-	}
-
-	private void enableSearch() {
-
-		searchEnabled = true;
-		searchPane.setVisibility(View.VISIBLE);
-		hideController();
-		searchBox.requestFocus();
-		showKeyboard();
-
 	}
 
 	private void hideController() {
@@ -204,7 +174,7 @@ public class MainActivity extends Activity {
 
 	private void exit() {
 
-		hideKeyboard();
+		// hideKeyboard();
 		stopService(musicServiceIntent);
 		musicService = null;
 		System.exit(0);
@@ -247,13 +217,6 @@ public class MainActivity extends Activity {
 
 	}
 
-	private void hideKeyboard() {
-
-		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
-
-	}
-
 	private void initMusicService() {
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -278,37 +241,6 @@ public class MainActivity extends Activity {
 			startService(musicServiceIntent);
 
 		}
-
-	}
-
-	private void initSearch() {
-
-		searchPane = (LinearLayout) findViewById(R.id.searchPane);
-		searchBox = (EditText) findViewById(R.id.searchBox);
-		searchPane.setVisibility(View.GONE);
-		// searchBox.setVisibility(View.GONE);
-		searchEnabled = false;
-		voiceRecognitionHelper = new VoiceRecognitionHelper(searchBox);
-
-		searchBox.addTextChangedListener(new TextWatcher() {
-
-			@Override
-			public void afterTextChanged(Editable arg0) {
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence arg0, int arg1,
-					int arg2, int arg3) {
-
-			}
-
-			@Override
-			public void onTextChanged(CharSequence cs, int arg1, int arg2,
-					int arg3) {
-				// When user changed the Text
-				MainActivity.this.songAdapter.getFilter().filter(cs);
-			}
-		});
 
 	}
 
@@ -341,31 +273,13 @@ public class MainActivity extends Activity {
 
 	}
 
-	// Put voice recognition result to searchBox.
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-		if (requestCode == voiceRecognitionHelper.getRequestCode()
-				&& resultCode == RESULT_OK) {
-
-			ArrayList<String> matches = data
-					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
-			searchBox.setText(matches.get(0));
-
-		}
-
-		super.onActivityResult(requestCode, resultCode, data);
-
-	}
-
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 
-		SpannableString s = new SpannableString("ZEZO v0.4.126");
+		SpannableString s = new SpannableString("ZEZO v0.4.13");
 		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
 				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -379,24 +293,50 @@ public class MainActivity extends Activity {
 		initViews();
 		musicController = new MusicController(this);
 		musicController.setAnchorView(controllerFrame);
-		initSearch();
 		initMusicService();
 
+		if (findViewById(R.id.fragmentContainer) != null) {
+
+			// However, if we're being restored from a previous state,
+			// then we don't need to do anything and should return or else
+			// we could end up with overlapping fragments.
+			if (savedInstanceState != null) {
+				return;
+			}
+
+			// Create a new Fragment to be placed in the activity layout
+			searchFragment = new SearchFragment();
+
+			// In case this activity was started with special instructions from
+			// an
+			// Intent, pass the Intent's extras to the fragment as arguments
+			searchFragment.setArguments(getIntent().getExtras());
+
+			// Add the fragment to the 'fragment_container' FrameLayout
+			getSupportFragmentManager()
+					.beginTransaction()
+					.add(R.id.fragmentContainer, searchFragment,
+							"searchFragment").commit();
+
+			FragmentManager fm = getSupportFragmentManager();
+			fm.beginTransaction().hide(searchFragment).commit();
+		}
+
 	}
 
-	private void initController() {
-
-		// musicController = new MusicController(this);
-		// musicController = (MusicController)
-		// findViewById(R.id.musiccontroller);
-		// musicController.setAnchorView(controllerFrame);
-		// musicController.setFocusable(false);
-		// musicController.setFocusableInTouchMode(false);
-		// musicController.setClickable(false);
-		// musicController
-		// .setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-
-	}
+	// private void initController() {
+	//
+	// musicController = new MusicController(this);
+	// musicController = (MusicController)
+	// findViewById(R.id.musiccontroller);
+	// musicController.setAnchorView(controllerFrame);
+	// musicController.setFocusable(false);
+	// musicController.setFocusableInTouchMode(false);
+	// musicController.setClickable(false);
+	// musicController
+	// .setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+	//
+	// }
 
 	/*
 	 * @Override public void onBackPressed() {
@@ -474,7 +414,7 @@ public class MainActivity extends Activity {
 
 		// stopService(playIntent);
 		// musicService = null;
-		hideKeyboard();
+		// hideKeyboard();
 		// unregisterReceiver(onPrepareReceiver);
 		super.onDestroy();
 
@@ -511,10 +451,26 @@ public class MainActivity extends Activity {
 
 		case R.id.action_search:
 
-			if (searchEnabled)
-				disableSearch();
-			else
-				enableSearch();
+			if (searchFragment.isVisible()) {
+
+				searchFragment
+						.disableSearch(
+								getSupportFragmentManager(),
+								(InputMethodManager) this
+										.getSystemService(Context.INPUT_METHOD_SERVICE));
+
+				showController();
+
+			} else {
+
+				searchFragment
+						.enableSearch(
+								getSupportFragmentManager(),
+								(InputMethodManager) this
+										.getSystemService(Context.INPUT_METHOD_SERVICE));
+				hideController();
+
+			}
 
 			break;
 
@@ -524,24 +480,25 @@ public class MainActivity extends Activity {
 
 	}
 
-	@Override
-	protected void onResume() {
-
-		findViewById(R.id.song_list).postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				searchBox.requestFocus();
-				InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-				inputMethodManager.showSoftInput(searchBox,
-						InputMethodManager.SHOW_IMPLICIT);
-
-				hideKeyboard();
-			}
-		}, 100);
-
-		super.onResume();
-
-	}
+	// @Override
+	// protected void onResume() {
+	//
+	// findViewById(R.id.song_list).postDelayed(new Runnable() {
+	// @Override
+	// public void run() {
+	// searchBox.requestFocus();
+	// InputMethodManager inputMethodManager = (InputMethodManager)
+	// getSystemService(INPUT_METHOD_SERVICE);
+	// inputMethodManager.showSoftInput(searchBox,
+	// InputMethodManager.SHOW_IMPLICIT);
+	//
+	// hideKeyboard();
+	// }
+	// }, 100);
+	//
+	// super.onResume();
+	//
+	// }
 
 	@TargetApi(Build.VERSION_CODES.FROYO)
 	public void scrollToCurrent(View view) {
@@ -567,13 +524,6 @@ public class MainActivity extends Activity {
 
 		if (song != null && musicService.audioFocusGranted())
 			musicService.playSong(song);
-
-	}
-
-	public void onTalkButtonClick(View view) {
-
-		startActivityForResult(voiceRecognitionHelper.getIntent(),
-				voiceRecognitionHelper.getRequestCode());
 
 	}
 
@@ -614,17 +564,24 @@ public class MainActivity extends Activity {
 
 	}
 
-	private void showKeyboard() {
+	@Override
+	public void onSearchTextChanged(CharSequence cs) {
 
-		((InputMethodManager) this
-				.getSystemService(Context.INPUT_METHOD_SERVICE))
-				.toggleSoftInputFromWindow(searchBox.getWindowToken(), 0, 0);
-
-		/*
-		 * InputMethodManager imm = (InputMethodManager)
-		 * getSystemService(Context.INPUT_METHOD_SERVICE);
-		 * imm.showSoftInput(searchBox, InputMethodManager.SHOW_FORCED);
-		 */
+		songAdapter.getFilter().filter(cs);
 
 	}
+
+	// private void showKeyboard() {
+	//
+	// ((InputMethodManager) this
+	// .getSystemService(Context.INPUT_METHOD_SERVICE))
+	// .toggleSoftInputFromWindow(searchBox.getWindowToken(), 0, 0);
+	//
+	// /*
+	// * InputMethodManager imm = (InputMethodManager)
+	// * getSystemService(Context.INPUT_METHOD_SERVICE);
+	// * imm.showSoftInput(searchBox, InputMethodManager.SHOW_FORCED);
+	// */
+	//
+	// }
 }
