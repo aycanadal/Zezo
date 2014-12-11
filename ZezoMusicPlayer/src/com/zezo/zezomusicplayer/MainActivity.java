@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -28,6 +27,7 @@ import android.provider.MediaStore.Audio.AudioColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.speech.RecognizerIntent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -39,7 +39,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.EditText;
@@ -48,8 +47,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.zezo.zezomusicplayer.MusicService.MusicBinder;
+import com.zezo.zezomusicplayer.SearchFragment.SearchListener;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ActionBarActivity implements SearchListener  {
 
 	private FrameLayout controllerFrame;
 	private TextView currentArtistView;
@@ -139,6 +139,7 @@ public class MainActivity extends Activity {
 	private Song songToBeDeleted;
 
 	private VoiceRecognitionHelper voiceRecognitionHelper;
+	private SearchFragment searchFragment;
 
 	// @Override
 	// public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -281,14 +282,18 @@ public class MainActivity extends Activity {
 
 	}
 
-	private void initSearch() {
-
-		searchPane = (LinearLayout) findViewById(R.id.searchPane);
-		searchBox = (EditText) findViewById(R.id.searchBox);
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public void initSearch(View view) {
+		
+		//View searchFragmentView = searchFragment.getView();
+		searchPane = (LinearLayout) view.findViewById(R.id.searchPane);
+		
+		searchBox = (EditText)  view.findViewById(R.id.searchBox);
 		searchPane.setVisibility(View.GONE);
-		// searchBox.setVisibility(View.GONE);
 		searchEnabled = false;
-		voiceRecognitionHelper = new VoiceRecognitionHelper(searchBox);
+		
+		
+		
 
 		searchBox.addTextChangedListener(new TextWatcher() {
 
@@ -309,6 +314,8 @@ public class MainActivity extends Activity {
 				MainActivity.this.songAdapter.getFilter().filter(cs);
 			}
 		});
+		
+		voiceRecognitionHelper = new VoiceRecognitionHelper(searchBox);
 
 	}
 
@@ -379,24 +386,47 @@ public class MainActivity extends Activity {
 		initViews();
 		musicController = new MusicController(this);
 		musicController.setAnchorView(controllerFrame);
-		initSearch();
+		
+		// Check that the activity is using the layout version with
+        // the fragment_container FrameLayout
+        if (findViewById(R.id.fragmentContainer) != null) {
+
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                return;
+            }
+
+            // Create a new Fragment to be placed in the activity layout
+            searchFragment = new SearchFragment();
+            
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            searchFragment.setArguments(getIntent().getExtras());
+            
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragmentContainer, searchFragment, "searchFragment").commit();
+        }
+		
 		initMusicService();
 
 	}
 
-	private void initController() {
-
-		// musicController = new MusicController(this);
-		// musicController = (MusicController)
-		// findViewById(R.id.musiccontroller);
-		// musicController.setAnchorView(controllerFrame);
-		// musicController.setFocusable(false);
-		// musicController.setFocusableInTouchMode(false);
-		// musicController.setClickable(false);
-		// musicController
-		// .setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-
-	}
+//	private void initController() {
+//
+//		 musicController = new MusicController(this);
+//		 musicController = (MusicController)
+//		 findViewById(R.id.musiccontroller);
+//		 musicController.setAnchorView(controllerFrame);
+//		 musicController.setFocusable(false);
+//		 musicController.setFocusableInTouchMode(false);
+//		 musicController.setClickable(false);
+//		 musicController
+//		 .setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+//
+//	}
 
 	/*
 	 * @Override public void onBackPressed() {
