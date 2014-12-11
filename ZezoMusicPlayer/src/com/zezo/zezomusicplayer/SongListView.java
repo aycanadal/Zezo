@@ -21,7 +21,6 @@ public class SongListView extends ListView {
 
 		@Override
 		public void onDrag(int x, int y, ListView listView) {
-			// TODO Auto-generated method stub
 		}
 
 		@Override

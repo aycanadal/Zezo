@@ -52,20 +52,17 @@ public class MusicController extends MediaController implements
 
 	@Override
 	public int getAudioSessionId() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int getBufferPercentage() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int getCurrentPosition() {
 		if (musicService != null && isMusicBound() && musicService.isPng())
-			// if (musicSrv != null && musicBound)
 			return musicService.getPosition();
 		else if (musicService != null && isMusicBound())
 			return musicService.getPausePosition();
@@ -133,19 +130,20 @@ public class MusicController extends MediaController implements
 	
 	private void playNext() {
 		musicService.playNext();
-		//show(0);
 	}
 
 	private void playPrev() {
 		musicService.playPrevious();
-		//show(0);
 	}
 
 	@Override
 	public void seekTo(int pos) {
+		
 		musicService.seek(pos);
+		
 		if (!musicService.isPng())
 			musicService.setPausePosition(pos);
+		
 	}
 
 	public void setMusicBound(boolean musicBound) {
