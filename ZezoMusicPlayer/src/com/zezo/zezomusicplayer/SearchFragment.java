@@ -121,7 +121,6 @@ public class SearchFragment extends Fragment {
 
 	}
 
-	// Put voice recognition result to searchBox.
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 

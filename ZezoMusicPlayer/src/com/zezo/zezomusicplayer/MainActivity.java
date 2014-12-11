@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -25,6 +26,7 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AudioColumns;
 import android.provider.MediaStore.MediaColumns;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
@@ -44,8 +46,10 @@ import android.widget.TextView;
 
 import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 import com.zezo.zezomusicplayer.SearchFragment.SearchListener;
+import com.zezo.zezomusicplayer.YesNoDialogFragment.OnDeleteConfirmedListener;
 
-public class MainActivity extends ActionBarActivity implements SearchListener {
+public class MainActivity extends ActionBarActivity implements SearchListener,
+		OnDeleteConfirmedListener {
 
 	private FrameLayout controllerFrame;
 	private TextView currentArtistView;
@@ -126,8 +130,6 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 	private ArrayList<Song> songLibrary;
 	private SongListView songListView;
 
-	private Song songToBeDeleted;
-
 	private SearchFragment searchFragment;
 
 	// @Override
@@ -139,22 +141,25 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 	// return super.onKeyUp(keyCode, event);
 	// }
 
-	private void deleteSongToBeDeleted() {
-
-		if (songToBeDeleted == musicService.getCurrentSong())
+	@Override
+	public void onDeleteConfirmed(long songId) {
+		
+		Song song = musicService.getSongById(songId);
+		
+		if (song == musicService.getCurrentSong())
 			return;
 
-		songAdapter.getSongs().remove(songToBeDeleted);
-		songAdapter.getFilteredSongs().remove(songToBeDeleted);
+		songAdapter.getSongs().remove(song);
+		songAdapter.getFilteredSongs().remove(song);
 		songAdapter.notifyDataSetChanged();
 
 		Uri uri = ContentUris.withAppendedId(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-				songToBeDeleted.getId());
+				song.getId());
 
 		getContentResolver().delete(uri, null, null);
 
-		musicService.removeFromPlaylist(songToBeDeleted);
+		musicService.removeFromPlaylist(song);
 
 	}
 
@@ -391,9 +396,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 						AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 								.getMenuInfo();
 
-						songToBeDeleted = musicService.getSongById(info.id);
-
-						showDeleteDialog();
+						showDeleteDialog(musicService.getSongById(info.id));
 
 						return true;
 
@@ -527,22 +530,16 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 
 	}
 
-	private void showDeleteDialog() {
+	private void showDeleteDialog(Song song) {
 
-		new AlertDialog.Builder(this)
-				.setTitle("Delete Song")
-				.setMessage(
-						"Do you really wish to delete the song from the device?")
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setPositiveButton(android.R.string.yes,
-						new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog,
-									int whichButton) {
-								deleteSongToBeDeleted();
-							}
-						}).setNegativeButton(android.R.string.no, null).show();
+		DialogFragment dialog = new YesNoDialogFragment();
+		Bundle args = new Bundle();
+		args.putString("title", "Delete File?");
+		args.putString("message",
+				"Do you really wish to delete the song from the device?");
+		args.putLong("songId", song.getId());
+		dialog.setArguments(args);
+		dialog.show(getSupportFragmentManager(), "deleteDialog");
 
 	}
 
@@ -584,4 +581,5 @@ public class MainActivity extends ActionBarActivity implements SearchListener {
 	// */
 	//
 	// }
+
 }
