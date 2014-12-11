@@ -49,7 +49,7 @@ import android.widget.TextView;
 import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 import com.zezo.zezomusicplayer.SearchFragment.SearchListener;
 
-public class MainActivity extends ActionBarActivity implements SearchListener  {
+public class MainActivity extends ActionBarActivity implements SearchListener {
 
 	private FrameLayout controllerFrame;
 	private TextView currentArtistView;
@@ -171,9 +171,11 @@ public class MainActivity extends ActionBarActivity implements SearchListener  {
 
 	private void disableSearch() {
 
-		searchEnabled = false;
-		searchBox.setText("");
-		searchPane.setVisibility(View.GONE);
+		
+
+		 searchEnabled = false;
+		 searchBox.setText("");
+		 searchPane.setVisibility(View.GONE);
 		hideKeyboard();
 		showController();
 
@@ -187,11 +189,11 @@ public class MainActivity extends ActionBarActivity implements SearchListener  {
 
 	private void enableSearch() {
 
+		
+		
 		searchEnabled = true;
-		searchPane.setVisibility(View.VISIBLE);
 		hideController();
-		searchBox.requestFocus();
-		showKeyboard();
+		//showKeyboard();
 
 	}
 
@@ -284,16 +286,12 @@ public class MainActivity extends ActionBarActivity implements SearchListener  {
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void initSearch(View view) {
-		
-		//View searchFragmentView = searchFragment.getView();
+
 		searchPane = (LinearLayout) view.findViewById(R.id.searchPane);
-		
-		searchBox = (EditText)  view.findViewById(R.id.searchBox);
-		searchPane.setVisibility(View.GONE);
-		searchEnabled = false;
-		
-		
-		
+		searchBox = (EditText) view.findViewById(R.id.searchBox);
+
+//		searchFragment.showKeyboard((InputMethodManager) this
+//				.getSystemService(Context.INPUT_METHOD_SERVICE));
 
 		searchBox.addTextChangedListener(new TextWatcher() {
 
@@ -314,7 +312,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener  {
 				MainActivity.this.songAdapter.getFilter().filter(cs);
 			}
 		});
-		
+
 		voiceRecognitionHelper = new VoiceRecognitionHelper(searchBox);
 
 	}
@@ -372,7 +370,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener  {
 
 		super.onCreate(savedInstanceState);
 
-		SpannableString s = new SpannableString("ZEZO v0.4.126");
+		SpannableString s = new SpannableString("ZEZO v0.4.127");
 		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
 				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -386,47 +384,46 @@ public class MainActivity extends ActionBarActivity implements SearchListener  {
 		initViews();
 		musicController = new MusicController(this);
 		musicController.setAnchorView(controllerFrame);
-		
-		// Check that the activity is using the layout version with
-        // the fragment_container FrameLayout
-        if (findViewById(R.id.fragmentContainer) != null) {
-
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
-                return;
-            }
-
-            // Create a new Fragment to be placed in the activity layout
-            searchFragment = new SearchFragment();
-            
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
-            searchFragment.setArguments(getIntent().getExtras());
-            
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragmentContainer, searchFragment, "searchFragment").commit();
-        }
-		
 		initMusicService();
+		
+		 if (findViewById(R.id.fragmentContainer) != null) {
+
+	            // However, if we're being restored from a previous state,
+	            // then we don't need to do anything and should return or else
+	            // we could end up with overlapping fragments.
+	            if (savedInstanceState != null) {
+	                return;
+	            }
+		
+		// Create a new Fragment to be placed in the activity layout
+				searchFragment = new SearchFragment();
+
+				// In case this activity was started with special instructions from an
+				// Intent, pass the Intent's extras to the fragment as arguments
+				searchFragment.setArguments(getIntent().getExtras());
+
+				// Add the fragment to the 'fragment_container' FrameLayout
+				getSupportFragmentManager().beginTransaction()
+						.add(R.id.fragmentContainer, searchFragment, "searchFragment")
+						.commit();
+		 }
+
 
 	}
 
-//	private void initController() {
-//
-//		 musicController = new MusicController(this);
-//		 musicController = (MusicController)
-//		 findViewById(R.id.musiccontroller);
-//		 musicController.setAnchorView(controllerFrame);
-//		 musicController.setFocusable(false);
-//		 musicController.setFocusableInTouchMode(false);
-//		 musicController.setClickable(false);
-//		 musicController
-//		 .setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-//
-//	}
+	// private void initController() {
+	//
+	// musicController = new MusicController(this);
+	// musicController = (MusicController)
+	// findViewById(R.id.musiccontroller);
+	// musicController.setAnchorView(controllerFrame);
+	// musicController.setFocusable(false);
+	// musicController.setFocusableInTouchMode(false);
+	// musicController.setClickable(false);
+	// musicController
+	// .setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+	//
+	// }
 
 	/*
 	 * @Override public void onBackPressed() {
@@ -554,24 +551,25 @@ public class MainActivity extends ActionBarActivity implements SearchListener  {
 
 	}
 
-	@Override
-	protected void onResume() {
-
-		findViewById(R.id.song_list).postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				searchBox.requestFocus();
-				InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-				inputMethodManager.showSoftInput(searchBox,
-						InputMethodManager.SHOW_IMPLICIT);
-
-				hideKeyboard();
-			}
-		}, 100);
-
-		super.onResume();
-
-	}
+	// @Override
+	// protected void onResume() {
+	//
+	// findViewById(R.id.song_list).postDelayed(new Runnable() {
+	// @Override
+	// public void run() {
+	// searchBox.requestFocus();
+	// InputMethodManager inputMethodManager = (InputMethodManager)
+	// getSystemService(INPUT_METHOD_SERVICE);
+	// inputMethodManager.showSoftInput(searchBox,
+	// InputMethodManager.SHOW_IMPLICIT);
+	//
+	// hideKeyboard();
+	// }
+	// }, 100);
+	//
+	// super.onResume();
+	//
+	// }
 
 	@TargetApi(Build.VERSION_CODES.FROYO)
 	public void scrollToCurrent(View view) {
@@ -644,17 +642,17 @@ public class MainActivity extends ActionBarActivity implements SearchListener  {
 
 	}
 
-	private void showKeyboard() {
-
-		((InputMethodManager) this
-				.getSystemService(Context.INPUT_METHOD_SERVICE))
-				.toggleSoftInputFromWindow(searchBox.getWindowToken(), 0, 0);
-
-		/*
-		 * InputMethodManager imm = (InputMethodManager)
-		 * getSystemService(Context.INPUT_METHOD_SERVICE);
-		 * imm.showSoftInput(searchBox, InputMethodManager.SHOW_FORCED);
-		 */
-
-	}
+	// private void showKeyboard() {
+	//
+	// ((InputMethodManager) this
+	// .getSystemService(Context.INPUT_METHOD_SERVICE))
+	// .toggleSoftInputFromWindow(searchBox.getWindowToken(), 0, 0);
+	//
+	// /*
+	// * InputMethodManager imm = (InputMethodManager)
+	// * getSystemService(Context.INPUT_METHOD_SERVICE);
+	// * imm.showSoftInput(searchBox, InputMethodManager.SHOW_FORCED);
+	// */
+	//
+	// }
 }
