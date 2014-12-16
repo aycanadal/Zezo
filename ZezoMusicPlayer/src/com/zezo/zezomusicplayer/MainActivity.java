@@ -43,6 +43,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 import com.zezo.zezomusicplayer.SearchFragment.SearchListener;
@@ -114,11 +115,13 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 				return;
 
 			Song song = musicService.getCurrentSong();
-			ArrayList<Song> songs = songAdapter.getSongs();
+
+			ArrayList<Song> songs = songAdapter.getFilteredSongs();
+			songAdapter.setItemChecked(song.getId());
 			songListView.setItemChecked(songs.indexOf(song), true);
+			// songListView.setSelection(songs.indexOf(song));
 			currentArtistView.setText(song.getArtist());
 			currentTitleView.setText(song.getTitle());
-			showController();
 			processingPick = false;
 
 		}
@@ -143,9 +146,9 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	@Override
 	public void onDeleteConfirmed(long songId) {
-		
+
 		Song song = musicService.getSongById(songId);
-		
+
 		if (song == musicService.getCurrentSong())
 			return;
 
@@ -154,8 +157,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		songAdapter.notifyDataSetChanged();
 
 		Uri uri = ContentUris.withAppendedId(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-				song.getId());
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.getId());
 
 		getContentResolver().delete(uri, null, null);
 
@@ -180,6 +182,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 	private void exit() {
 
 		// hideKeyboard();
+		unbindService(musicServiceConnection);
 		stopService(musicServiceIntent);
 		musicService = null;
 		System.exit(0);
@@ -508,6 +511,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
 			songListView.smoothScrollToPosition(songListView
+			// .getSelectedItemPosition()
 					.getCheckedItemPosition());
 
 	}
@@ -525,8 +529,10 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		// Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
 		// .toString()));
 
-		if (song != null && musicService.audioFocusGranted())
+		if (song != null && musicService.audioFocusGranted()) {
 			musicService.playSong(song);
+			Toast.makeText(this, "Playing.", Toast.LENGTH_LONG).show();
+		}
 
 	}
 
@@ -564,8 +570,19 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 	@Override
 	public void onSearchTextChanged(CharSequence cs) {
 
+		int checkedSongPosition = songListView.getCheckedItemPosition();
+		long checkedSongId = songListView
+				.getItemIdAtPosition(checkedSongPosition);
+
 		songAdapter.getFilter().filter(cs);
 
+		for (int i = 0; i < songListView.getCount(); i++) {
+			long songId = songLibrary.get(i).getId();// songAdapter.getItemId(i);
+			if (checkedSongId == songId)
+				songListView.setItemChecked(i, true);
+			break;
+		}
+		
 	}
 
 	// private void showKeyboard() {

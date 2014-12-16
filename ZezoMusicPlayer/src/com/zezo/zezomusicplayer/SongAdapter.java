@@ -10,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zezo.dragndroplistview.DropListener;
@@ -22,6 +23,7 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 	private ArrayList<Song> filteredSongs;
 	private LayoutInflater songInflater;
 	private ArrayList<Song> songs;
+	private long checkedItemId;
 
 	public SongAdapter(Context c, ArrayList<Song> theSongs) {
 
@@ -49,8 +51,13 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 	}
 
 	@Override
-	public Song getItem(int arg0) {
-		return getFilteredSongs().get(arg0);
+	public Song getItem(int songId) {
+			for (Song song : filteredSongs) {
+				if (song.getId() == songId) {
+					return song;
+				}
+			}
+			return null;
 	}
 
 	@Override
@@ -77,16 +84,22 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 				.findViewById(R.id.songDuration);
 
 		// get song using position
-		Song currentSong = getFilteredSongs().get(position);
+		Song song = getFilteredSongs().get(position);
 
 		// get title and artist strings
-		songView.setText(currentSong.getTitle());
-		artistView.setText(currentSong.getArtist());
-		durationView.setText(currentSong.getDuration());
+		songView.setText(song.getTitle());
+		artistView.setText(song.getArtist());
+		durationView.setText(song.getDuration());
 
 		// set position as tag
-		songLayout.setTag(position);
+		songLayout.setTag(song.getId()); // position as tag?
 		
+		long itemId = getItemId(position);
+		
+		if(checkedItemId > 0 && checkedItemId == itemId )
+		{			
+			((ListView)parent).setItemChecked(position, true);
+		}
 		return songLayout;
 
 	}
@@ -116,6 +129,12 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 
 	public void setSongs(ArrayList<Song> songs) {
 		this.songs = songs;
+	}
+
+	public void setItemChecked(long id) {
+
+		checkedItemId = id;
+		
 	}
 
 	/*
