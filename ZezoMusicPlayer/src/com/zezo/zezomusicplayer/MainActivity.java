@@ -328,7 +328,24 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 			FragmentManager fm = getSupportFragmentManager();
 			fm.beginTransaction().hide(searchFragment).commit();
 		}
+		
+		initKeyboard();
 
+	}
+
+	private void initKeyboard() {
+		
+		// Show and hide keyboard once to work around the first time show doesn't work bug.
+		
+		InputMethodManager inputMethodManager = (InputMethodManager) this
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		
+		inputMethodManager.toggleSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(),
+				0, 0);
+		
+		inputMethodManager.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(),
+				0);
+		
 	}
 
 	// private void initController() {
@@ -421,6 +438,8 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		// musicService = null;
 		// hideKeyboard();
 		// unregisterReceiver(onPrepareReceiver);
+		
+		unbindService(musicServiceConnection);
 		super.onDestroy();
 
 	}
