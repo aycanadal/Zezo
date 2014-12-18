@@ -3,6 +3,7 @@ package com.zezo.zezomusicplayer;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -20,7 +21,7 @@ import android.widget.EditText;
 
 public class SearchFragment extends Fragment {
 
-	SearchListener searchListener;
+	private SearchListener searchListener;
 	private EditText searchBox;
 
 	private VoiceRecognitionHelper voiceRecognitionHelper;
@@ -89,41 +90,29 @@ public class SearchFragment extends Fragment {
 		return view;
 	}
 
-	public void enableSearch(FragmentManager fragmentManager,
+	public void showSearch(FragmentManager fragmentManager,
 			InputMethodManager inputMethodManager) {
 
 		fragmentManager.beginTransaction().show(this).commit();
-		
-		inputMethodManager
-		.toggleSoftInputFromWindow(searchBox.getWindowToken(), 0, 0);
-		
-		inputMethodManager.hideSoftInputFromWindow(searchBox.getWindowToken(),
-				0);
-
-		inputMethodManager//.showSoftInput(searchBox, InputMethodManager.SHOW_FORCED);
-				.toggleSoftInputFromWindow(searchBox.getWindowToken(), 0, 0);
-
 		searchBox.requestFocus();
+		
+		inputMethodManager.toggleSoftInputFromWindow(
+				searchBox.getWindowToken(), 0, 0);
 
-		/*
-		 * InputMethodManager imm = (InputMethodManager)
-		 * getSystemService(Context.INPUT_METHOD_SERVICE);
-		 * imm.showSoftInput(searchBox, InputMethodManager.SHOW_FORCED);
-		 */
-
-		// showKeyboard();
+		// inputMethodManager.showSoftInput(searchBox,
+		// InputMethodManager.SHOW_FORCED);
 
 	}
 
-	public void disableSearch(FragmentManager fragmentManager,
+	public void hideSearch(FragmentManager fragmentManager,
 			InputMethodManager inputMethodManager) {
 
 		searchBox.setText("");
 
-		fragmentManager.beginTransaction().hide(this).commit();
-
 		inputMethodManager.hideSoftInputFromWindow(searchBox.getWindowToken(),
 				0);
+		
+		fragmentManager.beginTransaction().hide(this).commit();
 
 	}
 
