@@ -11,30 +11,30 @@ public class MusicController extends MediaController implements
 
 	private boolean musicBound = false;
 	private MusicService musicService;
-	
-//	public MusicController(Context context, AttributeSet attributeSet){
-//		
-//		super(context, attributeSet);
-//		
-//	}
+
+	// public MusicController(Context context, AttributeSet attributeSet){
+	//
+	// super(context, attributeSet);
+	//
+	// }
 
 	public MusicController(Context context) {
 
 		super(context);
 
 	}
-	
+
 	@Override
-	public void hide(){
-		
+	public void hide() {
+
 	}
-	
-	public void hideSuper(){
-		
+
+	public void hideSuper() {
+
 		super.hide();
-		
+
 	}
-	
+
 	@Override
 	public boolean canPause() {
 		return true;
@@ -75,13 +75,13 @@ public class MusicController extends MediaController implements
 
 		if (musicService != null && isMusicBound() && musicService.isPng())
 			return musicService.getDuration();
-		
+
 		else if (musicService != null && isMusicBound())
 			return musicService.getPauseDuration();
-		
+
 		else
 			return 0;
-		
+
 	}
 
 	public void init(MusicService musicService) {
@@ -123,27 +123,28 @@ public class MusicController extends MediaController implements
 		if (musicService != null && musicService.isPng())
 			musicService.pause();
 
-		
 		show(0);
 		setVisibility(View.VISIBLE);
 	}
-	
+
 	private void playNext() {
 		musicService.playNext();
+		// show(0);
 	}
 
 	private void playPrev() {
 		musicService.playPrevious();
+		// show(0);
 	}
 
 	@Override
 	public void seekTo(int pos) {
-		
+
 		musicService.seek(pos);
-		
+
 		if (!musicService.isPng())
 			musicService.setPausePosition(pos);
-		
+
 	}
 
 	public void setMusicBound(boolean musicBound) {
@@ -154,6 +155,7 @@ public class MusicController extends MediaController implements
 	public void start() {
 
 		musicService.play();
+		// show(0);
 
 	}
 

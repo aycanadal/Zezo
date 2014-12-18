@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
 
-<!--     Soft input delete button bug above target 13 and above min 8. -->
+    <!-- Soft input delete button bug above target 13 and above min 8. -->
     <uses-sdk
         android:minSdkVersion="7"
         android:targetSdkVersion="21" />
@@ -39,10 +39,10 @@
 
         <service android:name="com.zezo.zezomusicplayer.MusicService" >
             <intent-filter>
-                
                 <action android:name="com.zezo.zezomusicplayer.MusicService.BIND" />
-                <category android:name="android.intent.category.DEFAULT"/>
-                
+
+                <category android:name="android.intent.category.DEFAULT" />
+
                 <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED" />
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />

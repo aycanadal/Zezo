@@ -119,11 +119,10 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 			ArrayList<Song> songs = songAdapter.getFilteredSongs();
 			songAdapter.setItemChecked(song.getId());
 			songListView.setItemChecked(songs.indexOf(song), true);
-			// songListView.setSelection(songs.indexOf(song));
 			currentArtistView.setText(song.getArtist());
 			currentTitleView.setText(song.getTitle());
+			musicController.show(0);
 			processingPick = false;
-
 		}
 	};
 
@@ -287,7 +286,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		super.onCreate(savedInstanceState);
 
-		SpannableString s = new SpannableString("ZEZO v0.4.13");
+		SpannableString s = new SpannableString("Zezo v0.4.14");
 		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
 				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -582,7 +581,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 				songListView.setItemChecked(i, true);
 			break;
 		}
-		
+
 	}
 
 	// private void showKeyboard() {

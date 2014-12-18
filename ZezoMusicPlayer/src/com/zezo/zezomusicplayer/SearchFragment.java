@@ -93,9 +93,15 @@ public class SearchFragment extends Fragment {
 			InputMethodManager inputMethodManager) {
 
 		fragmentManager.beginTransaction().show(this).commit();
+		
+		inputMethodManager
+		.toggleSoftInputFromWindow(searchBox.getWindowToken(), 0, 0);
+		
+		inputMethodManager.hideSoftInputFromWindow(searchBox.getWindowToken(),
+				0);
 
-		inputMethodManager.toggleSoftInputFromWindow(
-				searchBox.getWindowToken(), 0, 0);
+		inputMethodManager//.showSoftInput(searchBox, InputMethodManager.SHOW_FORCED);
+				.toggleSoftInputFromWindow(searchBox.getWindowToken(), 0, 0);
 
 		searchBox.requestFocus();
 

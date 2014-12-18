@@ -77,7 +77,7 @@ public class MusicService extends Service implements
 			if (action.equals("android.bluetooth.device.action.ACL_CONNECTED")) {
 
 				Log.d("Z", "Received: Bluetooth Connected");
-				
+
 			}
 			if (action
 					.equals("android.bluetooth.device.action.ACL_DISCONNECTED")
@@ -312,7 +312,10 @@ public class MusicService extends Service implements
 
 			builder.setContentIntent(pendInt)
 					.setSmallIcon(R.drawable.ic_launcher)
-					.setTicker(getCurrentSong().getArtist() + " - " + getCurrentSong().getTitle()).setOngoing(true)
+					.setTicker(
+							getCurrentSong().getArtist() + " - "
+									+ getCurrentSong().getTitle())
+					.setOngoing(true)
 					.setContentTitle(getCurrentSong().getTitle())
 					.setContentText(getCurrentSong().getArtist());
 

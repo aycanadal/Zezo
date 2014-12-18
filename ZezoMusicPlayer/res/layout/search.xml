@@ -18,7 +18,9 @@
         android:hint="@string/Search"
         android:inputType="textVisiblePassword"
         android:longClickable="true"
-        android:textColor="@color/white" >
+        android:textColor="@color/white"
+        android:imeOptions="flagNoExtractUi"
+         >
 
         <requestFocus />
     </EditText>
