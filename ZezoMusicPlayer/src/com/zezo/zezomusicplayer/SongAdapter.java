@@ -96,6 +96,8 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 		
 		long itemId = getItemId(position);
 		
+		((ListView)parent).setItemChecked(position, false);
+		
 		if(checkedItemId > 0 && checkedItemId == itemId )
 		{			
 			((ListView)parent).setItemChecked(position, true);
