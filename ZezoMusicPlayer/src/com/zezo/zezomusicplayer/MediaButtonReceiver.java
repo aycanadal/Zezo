@@ -12,7 +12,7 @@ public class MediaButtonReceiver extends BroadcastReceiver {
 
 	public interface MediaButtonReceiverListener {
 		void onMediaButtonReceived(int keyCode);
-		
+
 	}
 
 	private static ArrayList<MediaButtonReceiverListener> listeners = new ArrayList<MediaButtonReceiverListener>();
@@ -33,7 +33,7 @@ public class MediaButtonReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		
+
 		if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
 
 			KeyEvent event = (KeyEvent) intent
@@ -46,10 +46,10 @@ public class MediaButtonReceiver extends BroadcastReceiver {
 				for (MediaButtonReceiverListener listener : listeners) {
 
 					listener.onMediaButtonReceived(event.getKeyCode());
-					
+
 				}
 			}
-			
+
 			if (isOrderedBroadcast())
 				abortBroadcast();
 

@@ -8,12 +8,12 @@ public class Song {
 	private String duration;
 
 	public Song(long id, String title, String artist, String duration) {
-		
+
 		this.id = id;
 		this.title = title;
 		this.artist = artist;
 		this.setDuration(duration);
-		
+
 	}
 
 	public String getArtist() {

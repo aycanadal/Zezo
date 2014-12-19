@@ -4,11 +4,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.zezo.dragndroplistview.DragListener;
-import com.zezo.dragndroplistview.DragNDropListView;
 import com.zezo.dragndroplistview.DropListener;
 import com.zezo.dragndroplistview.RemoveListener;
 
@@ -25,21 +23,24 @@ public class SongListView extends ListView {
 
 		@Override
 		public void onStartDrag(View itemView) {
-//			itemView.setVisibility(View.INVISIBLE);
-//			defaultBackgroundColor = itemView.getDrawingCacheBackgroundColor();
-//			itemView.setBackgroundColor(backgroundColor);
-//			ImageView iv = (ImageView) itemView.findViewById(R.id.DragHandleImageView);
-//			if (iv != null)
-//				iv.setVisibility(View.INVISIBLE);
+			// itemView.setVisibility(View.INVISIBLE);
+			// defaultBackgroundColor =
+			// itemView.getDrawingCacheBackgroundColor();
+			// itemView.setBackgroundColor(backgroundColor);
+			// ImageView iv = (ImageView)
+			// itemView.findViewById(R.id.DragHandleImageView);
+			// if (iv != null)
+			// iv.setVisibility(View.INVISIBLE);
 		}
 
 		@Override
 		public void onStopDrag(View itemView) {
-//			itemView.setVisibility(View.VISIBLE);
-//			itemView.setBackgroundColor(defaultBackgroundColor);
-//			ImageView iv = (ImageView) itemView.findViewById(R.id.DragHandleImageView);
-//			if (iv != null)
-//				iv.setVisibility(View.VISIBLE);
+			// itemView.setVisibility(View.VISIBLE);
+			// itemView.setBackgroundColor(defaultBackgroundColor);
+			// ImageView iv = (ImageView)
+			// itemView.findViewById(R.id.DragHandleImageView);
+			// if (iv != null)
+			// iv.setVisibility(View.VISIBLE);
 		}
 
 	};
@@ -87,9 +88,9 @@ public class SongListView extends ListView {
 
 		super(context, attrs);
 
-//		setDropListener(mDropListener);
-//		setRemoveListener(mRemoveListener);
-//		setDragListener(mDragListener);
+		// setDropListener(mDropListener);
+		// setRemoveListener(mRemoveListener);
+		// setDragListener(mDragListener);
 
 	}
 

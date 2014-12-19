@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -32,6 +31,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -84,27 +84,6 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	private Intent musicServiceIntent;
 
-	// private OnItemClickListener onSongClickListener = new
-	// OnItemClickListener() {
-	// @Override
-	// public void onItemClick(AdapterView<?> parent, View view, int position,
-	// long id) {
-	// if (processingPick)
-	// return;
-	//
-	// processingPick = true;
-	//
-	// // Song song = songAdapter.getItem(Integer.parseInt(((View) view
-	// // .getParent()).getTag().toString()));
-	//
-	// Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
-	// .toString()));
-	//
-	// if (song != null && musicService.audioFocusGranted())
-	// musicService.playSong(song);
-	// }
-	// };
-
 	// Broadcast receiver to determine when music player has been prepared
 	private BroadcastReceiver onMediaPlayerPlayingReceiver = new BroadcastReceiver() {
 
@@ -134,15 +113,6 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	private SearchFragment searchFragment;
 
-	// @Override
-	// public boolean onKeyUp(int keyCode, KeyEvent event) {
-	// if (keyCode == KeyEvent.KEYCODE_MENU) {
-	// hideController();
-	// return false;
-	// }
-	// return super.onKeyUp(keyCode, event);
-	// }
-
 	@Override
 	public void onDeleteConfirmed(long songId) {
 
@@ -165,9 +135,11 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 	}
 
 	private void showController() {
+
 		musicController.show(0);
 		musicController.setVisibility(View.VISIBLE);
 		controllerFrame.setVisibility(View.VISIBLE);
+
 	}
 
 	private void hideController() {
@@ -180,7 +152,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	private void exit() {
 
-		// hideKeyboard();
+		hideKeyboard();
 		unbindService(musicServiceConnection);
 		stopService(musicServiceIntent);
 		musicService = null;
@@ -232,10 +204,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		if (musicServiceIntent == null) {
 
-			// musicServiceIntent = new Intent(this, MusicService.class);
-
 			// musicServiceIntent = new Intent();
-			//
 			// musicServiceIntent.setComponent(new ComponentName(
 			// "com.zezo.zezomusicplayer",
 			// "comcom.zezo.zezomusicplayer.MusicService"));
@@ -288,7 +257,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		SpannableString s = new SpannableString("Zezo v0.4.14");
 		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
-				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			// Update the action bar title with the TypefaceSpan instance
@@ -328,58 +297,10 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 			FragmentManager fm = getSupportFragmentManager();
 			fm.beginTransaction().hide(searchFragment).commit();
 		}
-		
+
 		initKeyboard();
 
 	}
-
-	private void initKeyboard() {
-		
-		// Show and hide keyboard once to work around the first time show doesn't work bug.
-		
-		InputMethodManager inputMethodManager = (InputMethodManager) this
-				.getSystemService(Context.INPUT_METHOD_SERVICE);
-		
-		inputMethodManager.toggleSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(),
-				0, 0);
-		
-		inputMethodManager.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(),
-				0);
-		
-	}
-
-	// private void initController() {
-	//
-	// musicController = new MusicController(this);
-	// musicController = (MusicController)
-	// findViewById(R.id.musiccontroller);
-	// musicController.setAnchorView(controllerFrame);
-	// musicController.setFocusable(false);
-	// musicController.setFocusableInTouchMode(false);
-	// musicController.setClickable(false);
-	// musicController
-	// .setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-	//
-	// }
-
-	/*
-	 * @Override public void onBackPressed() {
-	 * 
-	 * super.onBackPressed();
-	 * 
-	 * if (searchEnabled) disableSearch();
-	 * 
-	 * }
-	 */
-
-	/*
-	 * @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-	 * 
-	 * if (keyCode == KeyEvent.KEYCODE_BACK) { hideKeyboard();
-	 * super.onKeyDown(keyCode, event); } return true;
-	 * 
-	 * }
-	 */
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
@@ -426,7 +347,6 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
@@ -438,7 +358,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		// musicService = null;
 		// hideKeyboard();
 		// unregisterReceiver(onPrepareReceiver);
-		
+
 		unbindService(musicServiceConnection);
 		super.onDestroy();
 
@@ -488,7 +408,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 			} else {
 
 				hideController();
-				
+
 				searchFragment
 						.showSearch(
 								getSupportFragmentManager(),
@@ -504,26 +424,6 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		return super.onOptionsItemSelected(item);
 
 	}
-
-	// @Override
-	// protected void onResume() {
-	//
-	// findViewById(R.id.song_list).postDelayed(new Runnable() {
-	// @Override
-	// public void run() {
-	// searchBox.requestFocus();
-	// InputMethodManager inputMethodManager = (InputMethodManager)
-	// getSystemService(INPUT_METHOD_SERVICE);
-	// inputMethodManager.showSoftInput(searchBox,
-	// InputMethodManager.SHOW_IMPLICIT);
-	//
-	// hideKeyboard();
-	// }
-	// }, 100);
-	//
-	// super.onResume();
-	//
-	// }
 
 	@TargetApi(Build.VERSION_CODES.FROYO)
 	public void scrollToCurrent(View view) {
@@ -604,18 +504,101 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	}
 
-	// private void showKeyboard() {
+	private void initKeyboard() {
+
+		// Show and hide keyboard once to work around the first time show
+		// doesn't work bug.
+
+		InputMethodManager inputMethodManager = (InputMethodManager) this
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+		inputMethodManager.toggleSoftInputFromWindow(
+				findViewById(android.R.id.content).getWindowToken(), 0, 0);
+
+		inputMethodManager.hideSoftInputFromWindow(
+				findViewById(android.R.id.content).getWindowToken(), 0);
+
+	}
+
+	private void hideKeyboard() {
+
+		InputMethodManager inputMethodManager = (InputMethodManager) this
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+		inputMethodManager.hideSoftInputFromWindow(
+				findViewById(android.R.id.content).getWindowToken(), 0);
+
+	}
+
+	// @Override
+	// public boolean onKeyUp(int keyCode, KeyEvent event) {
+	// if (keyCode == KeyEvent.KEYCODE_MENU) {
+	// hideController();
+	// return false;
+	// }
+	// return super.onKeyUp(keyCode, event);
+	// }
+
+	// private OnItemClickListener onSongClickListener = new
+	// OnItemClickListener() {
+	// @Override
+	// public void onItemClick(AdapterView<?> parent, View view, int position,
+	// long id) {
+	// if (processingPick)
+	// return;
 	//
-	// ((InputMethodManager) this
-	// .getSystemService(Context.INPUT_METHOD_SERVICE))
-	// .toggleSoftInputFromWindow(searchBox.getWindowToken(), 0, 0);
+	// processingPick = true;
 	//
-	// /*
-	// * InputMethodManager imm = (InputMethodManager)
-	// * getSystemService(Context.INPUT_METHOD_SERVICE);
-	// * imm.showSoftInput(searchBox, InputMethodManager.SHOW_FORCED);
-	// */
+	// // Song song = songAdapter.getItem(Integer.parseInt(((View) view
+	// // .getParent()).getTag().toString()));
+	//
+	// Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
+	// .toString()));
+	//
+	// if (song != null && musicService.audioFocusGranted())
+	// musicService.playSong(song);
+	// }
+	// };
+
+	// !! RESUME TO SEARCH SCREEN BUG FIX !? !!
+
+	// @Override
+	// protected void onResume() {
+	//
+	// findViewById(R.id.song_list).postDelayed(new Runnable() {
+	// @Override
+	// public void run() {
+	// searchBox.requestFocus();
+	// InputMethodManager inputMethodManager = (InputMethodManager)
+	// getSystemService(INPUT_METHOD_SERVICE);
+	// inputMethodManager.showSoftInput(searchBox,
+	// InputMethodManager.SHOW_IMPLICIT);
+	//
+	// hideKeyboard();
+	// }
+	// }, 100);
+	//
+	// super.onResume();
 	//
 	// }
+
+	/*
+	 * @Override public void onBackPressed() {
+	 * 
+	 * super.onBackPressed();
+	 * 
+	 * if (searchEnabled) disableSearch();
+	 * 
+	 * }
+	 */
+
+	/*
+	 * @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+	 * 
+	 * if (keyCode == KeyEvent.KEYCODE_BACK) { hideKeyboard();
+	 * super.onKeyDown(keyCode, event); } return true;
+	 * 
+	 * }
+	 */
 
 }

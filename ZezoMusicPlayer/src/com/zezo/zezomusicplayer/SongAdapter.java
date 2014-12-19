@@ -52,12 +52,12 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 
 	@Override
 	public Song getItem(int songId) {
-			for (Song song : filteredSongs) {
-				if (song.getId() == songId) {
-					return song;
-				}
+		for (Song song : filteredSongs) {
+			if (song.getId() == songId) {
+				return song;
 			}
-			return null;
+		}
+		return null;
 	}
 
 	@Override
@@ -93,14 +93,13 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 
 		// set position as tag
 		songLayout.setTag(song.getId()); // position as tag?
-		
+
 		long itemId = getItemId(position);
-		
-		((ListView)parent).setItemChecked(position, false);
-		
-		if(checkedItemId > 0 && checkedItemId == itemId )
-		{			
-			((ListView)parent).setItemChecked(position, true);
+
+		((ListView) parent).setItemChecked(position, false);
+
+		if (checkedItemId > 0 && checkedItemId == itemId) {
+			((ListView) parent).setItemChecked(position, true);
 		}
 		return songLayout;
 
@@ -136,7 +135,7 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 	public void setItemChecked(long id) {
 
 		checkedItemId = id;
-		
+
 	}
 
 	/*

@@ -25,10 +25,8 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class DragNDropListView extends ListView {
 
@@ -46,30 +44,30 @@ public class DragNDropListView extends ListView {
 	int mStartPosition;
 
 	public DragNDropListView(final Context context, AttributeSet attrs) {
-		
+
 		super(context, attrs);
-		
-//		setOnItemLongClickListener(new OnItemLongClickListener() {
-//
-//			@Override
-//			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-//					int arg2, long arg3) {
-//				
-//				Toast.makeText(context, "long click ", Toast.LENGTH_SHORT).show();
-//				return false;
-//			}		
-//			
-//		});
-//		
-//		setOnItemClickListener(new OnItemClickListener() {
-//
-//			@Override
-//			public void onItemClick(AdapterView<?> arg0, View arg1,
-//					int arg2, long arg3) {
-//				Toast.makeText(context, "click ", Toast.LENGTH_SHORT).show();
-//			}		
-//			
-//		});
+
+		// setOnItemLongClickListener(new OnItemLongClickListener() {
+		//
+		// @Override
+		// public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+		// int arg2, long arg3) {
+		//
+		// Toast.makeText(context, "long click ", Toast.LENGTH_SHORT).show();
+		// return false;
+		// }
+		//
+		// });
+		//
+		// setOnItemClickListener(new OnItemClickListener() {
+		//
+		// @Override
+		// public void onItemClick(AdapterView<?> arg0, View arg1,
+		// int arg2, long arg3) {
+		// Toast.makeText(context, "click ", Toast.LENGTH_SHORT).show();
+		// }
+		//
+		// });
 
 	}
 
@@ -92,13 +90,11 @@ public class DragNDropListView extends ListView {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
-		
-		
-		
+
 		final int action = ev.getAction();
 		final int x = (int) ev.getX();
 		final int y = (int) ev.getY();
-		
+
 		if (action == MotionEvent.ACTION_DOWN && x < this.getWidth() / 4) {
 			mDragMode = true;
 		}

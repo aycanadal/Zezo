@@ -3,7 +3,6 @@ package com.zezo.zezomusicplayer;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -95,7 +94,7 @@ public class SearchFragment extends Fragment {
 
 		fragmentManager.beginTransaction().show(this).commit();
 		searchBox.requestFocus();
-		
+
 		inputMethodManager.toggleSoftInputFromWindow(
 				searchBox.getWindowToken(), 0, 0);
 
@@ -111,7 +110,7 @@ public class SearchFragment extends Fragment {
 
 		inputMethodManager.hideSoftInputFromWindow(searchBox.getWindowToken(),
 				0);
-		
+
 		fragmentManager.beginTransaction().hide(this).commit();
 
 	}
