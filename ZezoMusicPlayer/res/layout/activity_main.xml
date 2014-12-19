@@ -11,8 +11,8 @@
         android:id="@+id/currentTitle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:onClick="scrollToCurrent"
         android:clickable="true"
+        android:onClick="scrollToCurrent"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -20,7 +20,7 @@
     <TextView
         android:id="@+id/currentArtist"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"        
+        android:layout_height="wrap_content"
         android:clickable="true"
         android:textColor="@color/gray"
         android:textSize="14sp" />
@@ -31,16 +31,16 @@
         android:layout_height="wrap_content" >
     </FrameLayout>
 
-    <com.zezo.zezomusicplayer.SongListView
+    <ListView
         android:id="@+id/song_list"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight=".95"
         android:choiceMode="singleChoice"
         android:fastScrollAlwaysVisible="true"
         android:fastScrollEnabled="true"
         android:listSelector="#660000" >
-    </com.zezo.zezomusicplayer.SongListView>
+    </ListView>
 
     <!-- <com.zezo.zezomusicplayer.MusicController -->
     <!-- android:id="@+id/musiccontroller" -->
@@ -51,8 +51,6 @@
     <!-- android:focusableInTouchMode="false" -->
     <!-- android:visibility="visible" -->
     <!-- > -->
-
-
     <!-- </com.zezo.zezomusicplayer.MusicController> -->
 
     <FrameLayout
@@ -61,7 +59,8 @@
         android:layout_height="75dp"
         android:clickable="false"
         android:focusable="false"
-        android:focusableInTouchMode="false" >
+        android:focusableInTouchMode="false"
+        android:windowSoftInputMode="stateHidden" >
     </FrameLayout>
 
 </LinearLayout>

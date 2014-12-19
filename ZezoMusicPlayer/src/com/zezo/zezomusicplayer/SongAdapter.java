@@ -13,11 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.zezo.dragndroplistview.DropListener;
-import com.zezo.dragndroplistview.RemoveListener;
-
-public class SongAdapter extends BaseAdapter implements Filterable,
-		RemoveListener, DropListener {
+public class SongAdapter extends BaseAdapter implements // RemoveListener,
+														// DropListener,
+		Filterable {
 
 	private Filter filter;
 	private ArrayList<Song> filteredSongs;
@@ -105,24 +103,24 @@ public class SongAdapter extends BaseAdapter implements Filterable,
 
 	}
 
-	@Override
-	public void onDrag(int songIndex) {
-
-		if (songIndex < 0 || songIndex > getSongs().size())
-			return;
-
-		getSongs().remove(songIndex);
-
-	}
-
-	@Override
-	public void onDrop(int from, int to) {
-
-		Song temp = getSongs().get(from);
-		getSongs().remove(from);
-		getSongs().add(to, temp);
-
-	}
+//	@Override
+//	public void onDrag(int songIndex) {
+//
+//		if (songIndex < 0 || songIndex > getSongs().size())
+//			return;
+//
+//		getSongs().remove(songIndex);
+//
+//	}
+//
+//	@Override
+//	public void onDrop(int from, int to) {
+//
+//		Song temp = getSongs().get(from);
+//		getSongs().remove(from);
+//		getSongs().add(to, temp);
+//
+//	}
 
 	public void setFilteredSongs(ArrayList<Song> filteredSongs) {
 		this.filteredSongs = filteredSongs;

@@ -30,7 +30,7 @@ public class YesNoDialogFragment extends DialogFragment {
 			onDeleteConfirmedListener = (OnDeleteConfirmedListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
-					+ " must implement OnArticleSelectedListener");
+					+ " must implement OnDeleteConfirmedListener");
 		}
 	}
 

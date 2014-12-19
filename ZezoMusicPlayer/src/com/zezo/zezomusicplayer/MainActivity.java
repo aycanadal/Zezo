@@ -29,7 +29,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.view.ContextMenu;
@@ -42,6 +41,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -109,7 +109,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	private SongAdapter songAdapter;
 	private ArrayList<Song> songLibrary;
-	private SongListView songListView;
+	private ListView songListView;
 
 	private SearchFragment searchFragment;
 
@@ -239,7 +239,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 	private void initViews() {
 
 		setContentView(R.layout.activity_main);
-		songListView = (SongListView) findViewById(R.id.song_list);
+		songListView = (ListView) findViewById(R.id.song_list);
 		currentTitleView = (TextView) findViewById(R.id.currentTitle);
 		currentArtistView = (TextView) findViewById(R.id.currentArtist);
 		controllerFrame = (FrameLayout) findViewById(R.id.controllerFrame);
@@ -267,8 +267,10 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		initSongAdapter();
 		initViews();
+		
 		musicController = new MusicController(this);
 		musicController.setAnchorView(controllerFrame);
+		
 		initMusicService();
 
 		if (findViewById(R.id.fragmentContainer) != null) {
@@ -397,23 +399,11 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 			if (searchFragment.isVisible()) {
 
-				searchFragment
-						.hide(
-								getSupportFragmentManager(),
-								(InputMethodManager) this
-										.getSystemService(Context.INPUT_METHOD_SERVICE));
-
-				showController();
+				hideSearch();
 
 			} else {
 
-				hideController();
-
-				searchFragment
-						.show(
-								getSupportFragmentManager(),
-								(InputMethodManager) this
-										.getSystemService(Context.INPUT_METHOD_SERVICE));
+				showSearch();
 
 			}
 
@@ -425,12 +415,32 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	}
 
+	private void showSearch() {
+		
+		hideController();
+
+		searchFragment
+				.show(getSupportFragmentManager(),
+						(InputMethodManager) this
+								.getSystemService(Context.INPUT_METHOD_SERVICE));
+	}
+
+	private void hideSearch() {
+		
+		searchFragment
+				.hide(getSupportFragmentManager(),
+						(InputMethodManager) this
+								.getSystemService(Context.INPUT_METHOD_SERVICE));
+
+		showController();
+		
+	}
+
 	@TargetApi(Build.VERSION_CODES.FROYO)
 	public void scrollToCurrent(View view) {
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
 			songListView.smoothScrollToPosition(songListView
-			// .getSelectedItemPosition()
 					.getCheckedItemPosition());
 
 	}
@@ -488,19 +498,8 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	@Override
 	public void onSearchTextChanged(CharSequence cs) {
-
-		int checkedSongPosition = songListView.getCheckedItemPosition();
-		long checkedSongId = songListView
-				.getItemIdAtPosition(checkedSongPosition);
-
+		
 		songAdapter.getFilter().filter(cs);
-
-		for (int i = 0; i < songListView.getCount(); i++) {
-			long songId = songLibrary.get(i).getId();// songAdapter.getItemId(i);
-			if (checkedSongId == songId)
-				songListView.setItemChecked(i, true);
-			break;
-		}
 
 	}
 
@@ -582,15 +581,14 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 	//
 	// }
 
-	/*
-	 * @Override public void onBackPressed() {
-	 * 
-	 * super.onBackPressed();
-	 * 
-	 * if (searchEnabled) disableSearch();
-	 * 
-	 * }
-	 */
+	@Override
+	public void onBackPressed() {
+
+		// super.onBackPressed();
+		//
+		if (searchFragment.isOn())
+			hideSearch();
+	}
 
 	/*
 	 * @Override public boolean onKeyDown(int keyCode, KeyEvent event) {

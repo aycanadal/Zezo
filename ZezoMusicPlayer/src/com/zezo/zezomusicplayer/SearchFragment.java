@@ -24,12 +24,18 @@ public class SearchFragment extends Fragment {
 	private EditText searchBox;
 
 	private VoiceRecognitionHelper voiceRecognitionHelper;
+	
+	private boolean isOn = false;
 
 	// Container Activity must implement this interface
 	public interface SearchListener {
 
 		public void onSearchTextChanged(CharSequence cs);
 
+	}
+	
+	public boolean isOn(){
+		return isOn;
 	}
 
 	@Override
@@ -97,6 +103,8 @@ public class SearchFragment extends Fragment {
 
 		inputMethodManager.toggleSoftInputFromWindow(
 				searchBox.getWindowToken(), 0, 0);
+		
+		isOn = true;
 
 		// inputMethodManager.showSoftInput(searchBox,
 		// InputMethodManager.SHOW_FORCED);
@@ -112,6 +120,8 @@ public class SearchFragment extends Fragment {
 				0);
 
 		fragmentManager.beginTransaction().hide(this).commit();
+		
+		isOn = true;
 
 	}
 
