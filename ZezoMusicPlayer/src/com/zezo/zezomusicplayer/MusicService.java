@@ -192,7 +192,7 @@ public class MusicService extends Service implements
 
 	}
 
-	public boolean isPng() {
+	public boolean isPlaying() {
 
 		return player.isPlaying();
 
@@ -276,7 +276,7 @@ public class MusicService extends Service implements
 
 		case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
 
-			if (isPng())
+			if (isPlaying())
 				pause();
 			else
 				play();

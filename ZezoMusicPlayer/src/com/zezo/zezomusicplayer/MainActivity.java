@@ -398,7 +398,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 			if (searchFragment.isVisible()) {
 
 				searchFragment
-						.hideSearch(
+						.hide(
 								getSupportFragmentManager(),
 								(InputMethodManager) this
 										.getSystemService(Context.INPUT_METHOD_SERVICE));
@@ -410,7 +410,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 				hideController();
 
 				searchFragment
-						.showSearch(
+						.show(
 								getSupportFragmentManager(),
 								(InputMethodManager) this
 										.getSystemService(Context.INPUT_METHOD_SERVICE));

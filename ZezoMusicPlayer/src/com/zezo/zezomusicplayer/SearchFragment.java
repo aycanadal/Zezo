@@ -89,10 +89,10 @@ public class SearchFragment extends Fragment {
 		return view;
 	}
 
-	public void showSearch(FragmentManager fragmentManager,
+	public void show(FragmentManager fragmentManager,
 			InputMethodManager inputMethodManager) {
 
-		fragmentManager.beginTransaction().show(this).commit();
+		fragmentManager.beginTransaction().show(this).addToBackStack("searchFragment").commit();
 		searchBox.requestFocus();
 
 		inputMethodManager.toggleSoftInputFromWindow(
@@ -103,7 +103,7 @@ public class SearchFragment extends Fragment {
 
 	}
 
-	public void hideSearch(FragmentManager fragmentManager,
+	public void hide(FragmentManager fragmentManager,
 			InputMethodManager inputMethodManager) {
 
 		searchBox.setText("");

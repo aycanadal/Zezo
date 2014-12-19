@@ -61,7 +61,7 @@ public class MusicController extends MediaController implements
 
 	@Override
 	public int getCurrentPosition() {
-		if (musicService != null && isMusicBound() && musicService.isPng())
+		if (musicService != null && isMusicBound() && musicService.isPlaying())
 			return musicService.getPosition();
 		else if (musicService != null && isMusicBound())
 			return musicService.getPausePosition();
@@ -72,7 +72,7 @@ public class MusicController extends MediaController implements
 	@Override
 	public int getDuration() {
 
-		if (musicService != null && isMusicBound() && musicService.isPng())
+		if (musicService != null && isMusicBound() && musicService.isPlaying())
 			return musicService.getDuration();
 
 		else if (musicService != null && isMusicBound())
@@ -112,14 +112,14 @@ public class MusicController extends MediaController implements
 	@Override
 	public boolean isPlaying() {
 		if (musicService != null & isMusicBound())
-			return musicService.isPng();
+			return musicService.isPlaying();
 		return false;
 	}
 
 	@Override
 	public void pause() {
 
-		if (musicService != null && musicService.isPng())
+		if (musicService != null && musicService.isPlaying())
 			musicService.pause();
 
 		show(0);
@@ -141,7 +141,7 @@ public class MusicController extends MediaController implements
 
 		musicService.seek(pos);
 
-		if (!musicService.isPng())
+		if (!musicService.isPlaying())
 			musicService.setPausePosition(pos);
 
 	}
