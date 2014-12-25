@@ -9,7 +9,7 @@
         zezo:showAsAction="always"/>
     <item
         android:id="@+id/action_shuffle"
-        android:icon="@drawable/shufflewhite40"
+        android:icon="@drawable/shufflegrey40"
         android:orderInCategory="2"
         android:title="@string/Shuffle"
         zezo:showAsAction="always"/>

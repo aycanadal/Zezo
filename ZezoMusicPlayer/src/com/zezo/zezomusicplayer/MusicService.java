@@ -34,6 +34,12 @@ public class MusicService extends Service implements
 		MediaPlayer.OnCompletionListener, MediaButtonReceiverListener,
 		OnAudioFocusChangeListener {
 
+	public class MusicBinder extends Binder {
+		MusicService getService() {
+			return MusicService.this;
+		}
+	}
+
 	private class HeadsetStateReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -48,12 +54,6 @@ public class MusicService extends Service implements
 					break;
 				}
 			}
-		}
-	}
-
-	public class MusicBinder extends Binder {
-		MusicService getService() {
-			return MusicService.this;
 		}
 	}
 
@@ -97,13 +97,13 @@ public class MusicService extends Service implements
 	private int pausePosition = 0;
 
 	private MediaPlayer player;
-	private ArrayList<Song> songLibrary;
-
 	private ArrayList<Song> playQueue = new ArrayList<Song>();
 
 	private Random rand;
 
 	private boolean shuffle = false;
+
+	private ArrayList<Song> songLibrary;
 
 	// private OnAudioFocusChangeListener mOnAudioFocusChangeListener;
 
@@ -178,24 +178,14 @@ public class MusicService extends Service implements
 
 	}
 
-	private void registerMediaButtonListener() {
-
-		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
-		ComponentName mRemoteControlResponder = new ComponentName(
-				getPackageName(), MediaButtonReceiver.class.getName());
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
-			am.registerMediaButtonEventReceiver(mRemoteControlResponder);
-
-		MediaButtonReceiver.addBroadcastReceiveListener(this);
-
-	}
-
 	public boolean isPlaying() {
 
 		return player.isPlaying();
 
+	}
+
+	public boolean isShuffling() {
+		return shuffle;
 	}
 
 	@Override
@@ -460,6 +450,14 @@ public class MusicService extends Service implements
 		player.seekTo(posn);
 	}
 
+	public void setPausePosition(int pausePosition) {
+		this.pausePosition = pausePosition;
+	}
+
+	public void setShuffle(boolean shuffle) {
+		this.shuffle = shuffle;
+	}
+
 	public void setSong(Song song) {
 		this.currentSong = song;
 	}
@@ -477,15 +475,17 @@ public class MusicService extends Service implements
 			setShuffle(true);
 	}
 
-	public boolean isShuffling() {
-		return shuffle;
-	}
+	private void registerMediaButtonListener() {
 
-	public void setShuffle(boolean shuffle) {
-		this.shuffle = shuffle;
-	}
+		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
-	public void setPausePosition(int pausePosition) {
-		this.pausePosition = pausePosition;
+		ComponentName mRemoteControlResponder = new ComponentName(
+				getPackageName(), MediaButtonReceiver.class.getName());
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
+			am.registerMediaButtonEventReceiver(mRemoteControlResponder);
+
+		MediaButtonReceiver.addBroadcastReceiveListener(this);
+
 	}
 }

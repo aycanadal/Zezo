@@ -55,11 +55,9 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 	private FrameLayout controllerFrame;
 	private TextView currentArtistView;
 	private TextView currentTitleView;
-
+	private Menu menu;
 	private MusicController musicController;
-
 	private MusicService musicService;
-
 	private ServiceConnection musicServiceConnection = new ServiceConnection() {
 
 		@Override
@@ -81,10 +79,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		}
 	};
-
 	private Intent musicServiceIntent;
-
-	// Broadcast receiver to determine when music player has been prepared
 	private BroadcastReceiver onMediaPlayerPlayingReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -104,14 +99,74 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 			processingPick = false;
 		}
 	};
-
 	private boolean processingPick = false;
+	private SearchFragment searchFragment;
 
 	private SongAdapter songAdapter;
+
 	private ArrayList<Song> songLibrary;
 	private ListView songListView;
 
-	private SearchFragment searchFragment;
+	@Override
+	public void onBackPressed() {
+
+		// super.onBackPressed();
+		//
+		if (searchFragment.isOn())
+			hideSearch();
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.context, menu);
+
+		menu.add(R.string.AddToQueue).setOnMenuItemClickListener(
+				new OnMenuItemClickListener() {
+
+					@Override
+					public boolean onMenuItemClick(MenuItem item) {
+
+						AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+								.getMenuInfo();
+
+						musicService.addToQueue(musicService
+								.getSongById(info.id));
+
+						return true;
+
+					}
+				});
+
+		menu.add(R.string.Delete).setOnMenuItemClickListener(
+				new OnMenuItemClickListener() {
+
+					@Override
+					public boolean onMenuItemClick(MenuItem item) {
+
+						AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+								.getMenuInfo();
+
+						showDeleteDialog(musicService.getSongById(info.id));
+
+						return true;
+
+					}
+				});
+
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		this.menu = menu;
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+
+	}
 
 	@Override
 	public void onDeleteConfirmed(long songId) {
@@ -134,19 +189,78 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	}
 
-	private void showController() {
+	public void onOpenContextMenu(View view) {
+		openContextMenu(view);
+	}
 
-		musicController.show(0);
-		musicController.setVisibility(View.VISIBLE);
-		controllerFrame.setVisibility(View.VISIBLE);
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+
+		case R.id.action_shuffle:
+
+			toggleShuffle();
+			break;
+
+		case R.id.action_exit:
+
+			showExitDialog();
+			break;
+
+		case R.id.action_search:
+
+			if (searchFragment.isVisible()) {
+
+				hideSearch();
+
+			} else {
+
+				showSearch();
+
+			}
+
+			break;
+
+		}
+
+		return super.onOptionsItemSelected(item);
 
 	}
 
-	private void hideController() {
+	@Override
+	public void onSearchTextChanged(CharSequence cs) {
 
-		musicController.setVisibility(View.GONE);
-		musicController.hideSuper();
-		controllerFrame.setVisibility(View.GONE);
+		songAdapter.getFilter().filter(cs);
+
+	}
+
+	public void onSongClicked(View view) {
+
+		if (processingPick)
+			return;
+
+		processingPick = true;
+
+		Song song = songAdapter.getItem(Integer.parseInt(((View) view
+				.getParent()).getTag().toString()));
+
+		// Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
+		// .toString()));
+
+		if (song != null && musicService.audioFocusGranted()) {
+			musicService.playSong(song);
+			Toast.makeText(this, "Playing.", Toast.LENGTH_SHORT).show();
+		}
+
+	}
+
+	@TargetApi(Build.VERSION_CODES.FROYO)
+	public void scrollToCurrent(View view) {
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
+			songListView.smoothScrollToPosition(songListView
+					.getCheckedItemPosition());
 
 	}
 
@@ -193,6 +307,50 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		musicCursor.close();
 
 		return songs;
+
+	}
+
+	private void hideController() {
+
+		musicController.setVisibility(View.GONE);
+		musicController.hideSuper();
+		controllerFrame.setVisibility(View.GONE);
+
+	}
+
+	private void hideKeyboard() {
+
+		InputMethodManager inputMethodManager = (InputMethodManager) this
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+		inputMethodManager.hideSoftInputFromWindow(
+				findViewById(android.R.id.content).getWindowToken(), 0);
+
+	}
+
+	private void hideSearch() {
+
+		searchFragment.hide(getSupportFragmentManager(),
+				(InputMethodManager) this
+						.getSystemService(Context.INPUT_METHOD_SERVICE));
+
+		showController();
+
+	}
+
+	private void initKeyboard() {
+
+		// Show and hide keyboard once to work around the first time show
+		// doesn't work bug.
+
+		InputMethodManager inputMethodManager = (InputMethodManager) this
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+		inputMethodManager.toggleSoftInputFromWindow(
+				findViewById(android.R.id.content).getWindowToken(), 0, 0);
+
+		inputMethodManager.hideSoftInputFromWindow(
+				findViewById(android.R.id.content).getWindowToken(), 0);
 
 	}
 
@@ -249,221 +407,11 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	}
 
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-
-		super.onCreate(savedInstanceState);
-
-		SpannableString s = new SpannableString("Zezo v0.4.16");
-		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
-				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			
-			// Update the action bar title with the TypefaceSpan instance
-			android.app.ActionBar actionBar = getActionBar();
-			actionBar.setTitle(s);
-			
-		}
-
-		initSongAdapter();
-		initViews();
-		
-		musicController = new MusicController(this);
-		musicController.setAnchorView(controllerFrame);
-		
-		initMusicService();
-
-		if (findViewById(R.id.fragmentContainer) != null) {
-
-			// However, if we're being restored from a previous state,
-			// then we don't need to do anything and should return or else
-			// we could end up with overlapping fragments.
-			if (savedInstanceState != null) {
-				return;
-			}
-
-			// Create a new Fragment to be placed in the activity layout
-			searchFragment = new SearchFragment();
-
-			// In case this activity was started with special instructions from
-			// an
-			// Intent, pass the Intent's extras to the fragment as arguments
-			searchFragment.setArguments(getIntent().getExtras());
-
-			// Add the fragment to the 'fragment_container' FrameLayout
-			getSupportFragmentManager()
-					.beginTransaction()
-					.add(R.id.fragmentContainer, searchFragment,
-							"searchFragment").commit();
-
-			FragmentManager fm = getSupportFragmentManager();
-			fm.beginTransaction().hide(searchFragment).commit();
-		}
-
-		initKeyboard();
-
-	}
-
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
-
-		super.onCreateContextMenu(menu, v, menuInfo);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.context, menu);
-
-		menu.add(R.string.AddToQueue).setOnMenuItemClickListener(
-				new OnMenuItemClickListener() {
-
-					@Override
-					public boolean onMenuItemClick(MenuItem item) {
-
-						AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-								.getMenuInfo();
-
-						musicService.addToQueue(musicService
-								.getSongById(info.id));
-
-						return true;
-
-					}
-				});
-
-		menu.add(R.string.Delete).setOnMenuItemClickListener(
-				new OnMenuItemClickListener() {
-
-					@Override
-					public boolean onMenuItemClick(MenuItem item) {
-
-						AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-								.getMenuInfo();
-
-						showDeleteDialog(musicService.getSongById(info.id));
-
-						return true;
-
-					}
-				});
-
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	protected void onDestroy() {
-
-		// stopService(playIntent);
-		// musicService = null;
-		// hideKeyboard();
-		// unregisterReceiver(onPrepareReceiver);
-
-		unbindService(musicServiceConnection);
-		super.onDestroy();
-
-	}
-
-	public void onOpenContextMenu(View view) {
-		openContextMenu(view);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-
-		switch (item.getItemId()) {
-
-		case R.id.action_shuffle:
-
-			Drawable shuffleIcon;
-
-			if (musicService.isShuffling())
-				shuffleIcon = getResources().getDrawable(
-						R.drawable.shufflewhite40);
-			else
-				shuffleIcon = getResources().getDrawable(
-						R.drawable.shufflegrey40);
-
-			item.setIcon(shuffleIcon);
-			musicService.toggleShuffle();
-			break;
-
-		case R.id.action_exit:
-
-			showExitDialog();
-			break;
-
-		case R.id.action_search:
-
-			if (searchFragment.isVisible()) {
-
-				hideSearch();
-
-			} else {
-
-				showSearch();
-
-			}
-
-			break;
-
-		}
-
-		return super.onOptionsItemSelected(item);
-
-	}
-
-	private void showSearch() {
-		
-		hideController();
-
-		searchFragment
-				.show(getSupportFragmentManager(),
-						(InputMethodManager) this
-								.getSystemService(Context.INPUT_METHOD_SERVICE));
-	}
-
-	private void hideSearch() {
-		
-		searchFragment
-				.hide(getSupportFragmentManager(),
-						(InputMethodManager) this
-								.getSystemService(Context.INPUT_METHOD_SERVICE));
-
-		showController();
-		
-	}
-
-	@TargetApi(Build.VERSION_CODES.FROYO)
-	public void scrollToCurrent(View view) {
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
-			songListView.smoothScrollToPosition(songListView
-					.getCheckedItemPosition());
-
-	}
-
-	public void onSongClicked(View view) {
-
-		if (processingPick)
-			return;
-
-		processingPick = true;
-
-		Song song = songAdapter.getItem(Integer.parseInt(((View) view
-				.getParent()).getTag().toString()));
-
-		// Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
-		// .toString()));
-
-		if (song != null && musicService.audioFocusGranted()) {
-			musicService.playSong(song);
-			Toast.makeText(this, "Playing.", Toast.LENGTH_LONG).show();
-		}
+	private void showController() {
+
+		musicController.show(0);
+		musicController.setVisibility(View.VISIBLE);
+		controllerFrame.setVisibility(View.VISIBLE);
 
 	}
 
@@ -498,36 +446,88 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	}
 
+	private void showSearch() {
+
+		hideController();
+
+		searchFragment.show(getSupportFragmentManager(),
+				(InputMethodManager) this
+						.getSystemService(Context.INPUT_METHOD_SERVICE));
+	}
+
+	private void toggleShuffle() {
+
+		Drawable shuffleIcon;
+		MenuItem item = menu.findItem(R.id.action_shuffle);
+
+		if (musicService.isShuffling()) {
+			shuffleIcon = getResources().getDrawable(R.drawable.shufflegrey40);
+			Toast.makeText(this, "Shuffle is now off.", Toast.LENGTH_SHORT)
+					.show();
+		} else {
+			shuffleIcon = getResources().getDrawable(R.drawable.shufflewhite40);
+			Toast.makeText(this, "Shuffle is now on.", Toast.LENGTH_SHORT)
+					.show();
+		}
+
+		item.setIcon(shuffleIcon);
+		musicService.toggleShuffle();
+	}
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
-	public void onSearchTextChanged(CharSequence cs) {
-		
-		songAdapter.getFilter().filter(cs);
+	protected void onCreate(Bundle savedInstanceState) {
 
-	}
+		super.onCreate(savedInstanceState);
 
-	private void initKeyboard() {
+		SpannableString s = new SpannableString("Zezo v0.4.16");
+		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
+				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-		// Show and hide keyboard once to work around the first time show
-		// doesn't work bug.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 
-		InputMethodManager inputMethodManager = (InputMethodManager) this
-				.getSystemService(Context.INPUT_METHOD_SERVICE);
+			// Update the action bar title with the TypefaceSpan instance
+			android.app.ActionBar actionBar = getActionBar();
+			actionBar.setTitle(s);
 
-		inputMethodManager.toggleSoftInputFromWindow(
-				findViewById(android.R.id.content).getWindowToken(), 0, 0);
+		}
 
-		inputMethodManager.hideSoftInputFromWindow(
-				findViewById(android.R.id.content).getWindowToken(), 0);
+		initSongAdapter();
+		initViews();
 
-	}
+		musicController = new MusicController(this);
+		musicController.setAnchorView(controllerFrame);
 
-	private void hideKeyboard() {
+		initMusicService();
 
-		InputMethodManager inputMethodManager = (InputMethodManager) this
-				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		if (findViewById(R.id.fragmentContainer) != null) {
 
-		inputMethodManager.hideSoftInputFromWindow(
-				findViewById(android.R.id.content).getWindowToken(), 0);
+			// However, if we're being restored from a previous state,
+			// then we don't need to do anything and should return or else
+			// we could end up with overlapping fragments.
+			if (savedInstanceState != null) {
+				return;
+			}
+
+			// Create a new Fragment to be placed in the activity layout
+			searchFragment = new SearchFragment();
+
+			// In case this activity was started with special instructions from
+			// an
+			// Intent, pass the Intent's extras to the fragment as arguments
+			searchFragment.setArguments(getIntent().getExtras());
+
+			// Add the fragment to the 'fragment_container' FrameLayout
+			getSupportFragmentManager()
+					.beginTransaction()
+					.add(R.id.fragmentContainer, searchFragment,
+							"searchFragment").commit();
+
+			FragmentManager fm = getSupportFragmentManager();
+			fm.beginTransaction().hide(searchFragment).commit();
+		}
+
+		initKeyboard();
 
 	}
 
@@ -584,12 +584,16 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 	// }
 
 	@Override
-	public void onBackPressed() {
+	protected void onDestroy() {
 
-		// super.onBackPressed();
-		//
-		if (searchFragment.isOn())
-			hideSearch();
+		// stopService(playIntent);
+		// musicService = null;
+		// hideKeyboard();
+		// unregisterReceiver(onPrepareReceiver);
+
+		unbindService(musicServiceConnection);
+		super.onDestroy();
+
 	}
 
 	/*

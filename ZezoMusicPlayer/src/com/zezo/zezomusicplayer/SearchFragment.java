@@ -20,22 +20,53 @@ import android.widget.EditText;
 
 public class SearchFragment extends Fragment {
 
-	private SearchListener searchListener;
-	private EditText searchBox;
-
-	private VoiceRecognitionHelper voiceRecognitionHelper;
-	
-	private boolean isOn = false;
-
 	// Container Activity must implement this interface
 	public interface SearchListener {
 
 		public void onSearchTextChanged(CharSequence cs);
 
 	}
+	private boolean isOn = false;
+
+	private EditText searchBox;
 	
+	private SearchListener searchListener;
+
+	private VoiceRecognitionHelper voiceRecognitionHelper;
+	
+	public void hide(FragmentManager fragmentManager,
+			InputMethodManager inputMethodManager) {
+
+		searchBox.setText("");
+
+		inputMethodManager.hideSoftInputFromWindow(searchBox.getWindowToken(),
+				0);
+
+		fragmentManager.beginTransaction().hide(this).commit();
+		
+		isOn = true;
+
+	}
+
 	public boolean isOn(){
 		return isOn;
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		if (requestCode == voiceRecognitionHelper.getRequestCode()
+				&& resultCode == Activity.RESULT_OK) {
+
+			ArrayList<String> matches = data
+					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+			searchBox.setText(matches.get(0));
+
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
+
 	}
 
 	@Override
@@ -108,37 +139,6 @@ public class SearchFragment extends Fragment {
 
 		// inputMethodManager.showSoftInput(searchBox,
 		// InputMethodManager.SHOW_FORCED);
-
-	}
-
-	public void hide(FragmentManager fragmentManager,
-			InputMethodManager inputMethodManager) {
-
-		searchBox.setText("");
-
-		inputMethodManager.hideSoftInputFromWindow(searchBox.getWindowToken(),
-				0);
-
-		fragmentManager.beginTransaction().hide(this).commit();
-		
-		isOn = true;
-
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-		if (requestCode == voiceRecognitionHelper.getRequestCode()
-				&& resultCode == Activity.RESULT_OK) {
-
-			ArrayList<String> matches = data
-					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
-			searchBox.setText(matches.get(0));
-
-		}
-
-		super.onActivityResult(requestCode, resultCode, data);
 
 	}
 

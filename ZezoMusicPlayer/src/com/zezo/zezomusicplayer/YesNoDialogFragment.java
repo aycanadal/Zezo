@@ -11,10 +11,14 @@ import android.support.v4.app.DialogFragment;
 
 public class YesNoDialogFragment extends DialogFragment {
 
-	private static final int REQUEST_CODE = 1235;
-
 	public interface OnDeleteConfirmedListener {
 		public void onDeleteConfirmed(long songId);
+	}
+
+	private static final int REQUEST_CODE = 1235;
+
+	public static int getRequestCode() {
+		return REQUEST_CODE;
 	}
 
 	private OnDeleteConfirmedListener onDeleteConfirmedListener;
@@ -64,9 +68,5 @@ public class YesNoDialogFragment extends DialogFragment {
 
 							}
 						}).create();
-	}
-
-	public static int getRequestCode() {
-		return REQUEST_CODE;
 	}
 }

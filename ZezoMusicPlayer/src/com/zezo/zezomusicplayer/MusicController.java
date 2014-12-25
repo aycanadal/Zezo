@@ -24,17 +24,6 @@ public class MusicController extends MediaController implements
 	}
 
 	@Override
-	public void hide() {
-
-	}
-
-	public void hideSuper() {
-
-		super.hide();
-
-	}
-
-	@Override
 	public boolean canPause() {
 		return true;
 	}
@@ -83,6 +72,17 @@ public class MusicController extends MediaController implements
 
 	}
 
+	@Override
+	public void hide() {
+
+	}
+
+	public void hideSuper() {
+
+		super.hide();
+
+	}
+
 	public void init(MusicService musicService) {
 
 		this.musicService = musicService;
@@ -126,16 +126,6 @@ public class MusicController extends MediaController implements
 		setVisibility(View.VISIBLE);
 	}
 
-	private void playNext() {
-		musicService.playNext();
-		// show(0);
-	}
-
-	private void playPrev() {
-		musicService.playPrevious();
-		// show(0);
-	}
-
 	@Override
 	public void seekTo(int pos) {
 
@@ -156,6 +146,16 @@ public class MusicController extends MediaController implements
 		musicService.play();
 		// show(0);
 
+	}
+
+	private void playNext() {
+		musicService.playNext();
+		// show(0);
+	}
+
+	private void playPrev() {
+		musicService.playPrevious();
+		// show(0);
 	}
 
 }

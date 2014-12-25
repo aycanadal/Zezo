@@ -17,11 +17,11 @@ public class SongAdapter extends BaseAdapter implements // RemoveListener,
 														// DropListener,
 		Filterable {
 
+	private long checkedItemId;
 	private Filter filter;
 	private ArrayList<Song> filteredSongs;
 	private LayoutInflater songInflater;
 	private ArrayList<Song> songs;
-	private long checkedItemId;
 
 	public SongAdapter(Context c, ArrayList<Song> theSongs) {
 
@@ -126,14 +126,14 @@ public class SongAdapter extends BaseAdapter implements // RemoveListener,
 		this.filteredSongs = filteredSongs;
 	}
 
-	public void setSongs(ArrayList<Song> songs) {
-		this.songs = songs;
-	}
-
 	public void setItemChecked(long id) {
 
 		checkedItemId = id;
 
+	}
+
+	public void setSongs(ArrayList<Song> songs) {
+		this.songs = songs;
 	}
 
 	/*

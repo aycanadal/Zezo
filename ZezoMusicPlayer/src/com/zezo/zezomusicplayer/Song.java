@@ -3,9 +3,9 @@ package com.zezo.zezomusicplayer;
 public class Song {
 
 	private String artist;
+	private String duration;
 	private long id;
 	private String title;
-	private String duration;
 
 	public Song(long id, String title, String artist, String duration) {
 
@@ -20,16 +20,16 @@ public class Song {
 		return artist;
 	}
 
+	public String getDuration() {
+		return duration;
+	}
+
 	public long getId() {
 		return id;
 	}
 
 	public String getTitle() {
 		return title;
-	}
-
-	public String getDuration() {
-		return duration;
 	}
 
 	public void setDuration(String duration) {
