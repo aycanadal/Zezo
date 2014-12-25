@@ -11,7 +11,7 @@
 
     <!-- Soft input delete button bug above target 13 and above min 8. -->
     <uses-sdk
-        android:minSdkVersion="7"
+        android:minSdkVersion="14"
         android:targetSdkVersion="21" />
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />

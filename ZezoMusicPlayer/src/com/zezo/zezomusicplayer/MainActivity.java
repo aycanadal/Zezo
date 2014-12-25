@@ -480,7 +480,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		super.onCreate(savedInstanceState);
 
-		SpannableString s = new SpannableString("Zezo v0.4.16");
+		SpannableString s = new SpannableString("Zezo a0.1");
 		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
 				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
