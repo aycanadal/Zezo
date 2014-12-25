@@ -255,14 +255,16 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		super.onCreate(savedInstanceState);
 
-		SpannableString s = new SpannableString("Zezo v0.4.14");
+		SpannableString s = new SpannableString("Zezo v0.4.16");
 		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
 				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			
 			// Update the action bar title with the TypefaceSpan instance
 			android.app.ActionBar actionBar = getActionBar();
 			actionBar.setTitle(s);
+			
 		}
 
 		initSongAdapter();
