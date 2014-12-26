@@ -31,6 +31,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -481,8 +482,13 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		super.onCreate(savedInstanceState);
 
 		SpannableString s = new SpannableString("Zezo a0.1");
+		
 		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
 				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		
+		/*s.setSpan(new RelativeSizeSpan(0.6f), 0, s.length(),
+				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);*/
+		
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 
