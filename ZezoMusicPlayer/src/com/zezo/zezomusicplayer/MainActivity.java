@@ -260,7 +260,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 	public void scrollToCurrent(View view) {
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
-			songListView.smoothScrollToPosition(songListView
+			songListView.setSelection(songListView
 					.getCheckedItemPosition());
 
 	}
@@ -481,7 +481,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		super.onCreate(savedInstanceState);
 
-		SpannableString s = new SpannableString("Zezo a0.1");
+		SpannableString s = new SpannableString("Zezo");
 		
 		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
 				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
