@@ -48,7 +48,7 @@ public class MusicService extends Service implements
 				int state = intent.getIntExtra("state", -1);
 				switch (state) {
 				case 0:
-					player.pause();
+					pause();
 					break;
 				case 1:
 					break;
