@@ -6,6 +6,7 @@ import java.util.Random;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -24,6 +25,7 @@ import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.RemoteViews;
 
 import com.zezo.zezomusicplayer.MediaButtonReceiver.MediaButtonReceiverListener;
 
@@ -322,7 +324,15 @@ public class MusicService extends Service implements
 			Notification not = builder.build();
 
 			startForeground(NOTIFY_ID, not);
+			
 		}
+		
+		Context context = getApplicationContext();
+		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.zezo_appwidget);
+		ComponentName thisWidget = new ComponentName(context, ZezoWidgetProvider.class);
+		remoteViews.setTextViewText(R.id.currentTitle, currentSong.getTitle());
+		appWidgetManager.updateAppWidget(thisWidget, remoteViews);
 
 		Intent onPreparedIntent = new Intent("MEDIA_PLAYER_PLAYING");
 		LocalBroadcastManager.getInstance(this).sendBroadcast(onPreparedIntent);

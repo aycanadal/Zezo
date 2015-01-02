@@ -7,6 +7,7 @@ import java.util.Comparator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -42,6 +43,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.FrameLayout;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -123,6 +125,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 			currentTitleView.setText(song.getTitle());
 			musicController.show(0);
 			processingPick = false;
+			
 		}
 	};
 
