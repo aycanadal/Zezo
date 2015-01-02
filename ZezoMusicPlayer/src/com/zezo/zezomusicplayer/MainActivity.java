@@ -483,11 +483,11 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		SpannableString s = new SpannableString("Zezo");
 		
-		s.setSpan(new TypefaceSpan(this, "Action_Man.ttf"), 0, s.length(),
+		s.setSpan(new TypefaceSpan(this, "electrical.ttf"), 0, s.length(),
 				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		
-		/*s.setSpan(new RelativeSizeSpan(0.6f), 0, s.length(),
-				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);*/
+		s.setSpan(new RelativeSizeSpan(0.6f), 0, s.length(),
+				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
