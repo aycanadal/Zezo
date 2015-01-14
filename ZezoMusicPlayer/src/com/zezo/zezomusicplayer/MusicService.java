@@ -106,6 +106,8 @@ public class MusicService extends Service implements
 
 	private ArrayList<Song> songLibrary;
 
+	private boolean isPlayerPrepared = false;
+
 	// private OnAudioFocusChangeListener mOnAudioFocusChangeListener;
 
 	public void addToQueue(Song song) {
@@ -353,9 +355,13 @@ public class MusicService extends Service implements
 
 	public void play() {
 
-		if (audioFocusGranted() && currentSong != null)
-
+		if (!audioFocusGranted() || currentSong == null)
+			return;
+		
+		if (isPlayerPrepared)
 			player.start();
+		else
+			playSong(currentSong);
 
 	}
 
@@ -495,5 +501,11 @@ public class MusicService extends Service implements
 
 		MediaButtonReceiver.addBroadcastReceiveListener(this);
 
+	}
+
+	public void setPlayerPrepared(boolean isPlayerPrepared) {
+		
+		this.isPlayerPrepared = isPlayerPrepared;
+		
 	}
 }

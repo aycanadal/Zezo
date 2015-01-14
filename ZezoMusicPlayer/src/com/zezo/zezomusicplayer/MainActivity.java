@@ -98,6 +98,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 			currentArtistView.setText(song.getArtist());
 			currentTitleView.setText(song.getTitle());
 			musicController.show(0);
+			musicService.setPlayerPrepared(true);
 			processingPick = false;
 		}
 	};
@@ -482,7 +483,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		super.onCreate(savedInstanceState);
 
-		SpannableString s = new SpannableString("Zezo");
+		SpannableString s = new SpannableString("Zezo -");
 		
 		s.setSpan(new TypefaceSpan(this, "electrical.ttf"), 0, s.length(),
 				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
