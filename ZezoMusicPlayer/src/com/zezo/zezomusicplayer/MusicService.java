@@ -7,6 +7,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentUris;
@@ -173,6 +174,13 @@ public class MusicService extends Service implements
 				Intent.ACTION_HEADSET_PLUG);
 		headsetStateReceiver = new HeadsetStateReceiver();
 		registerReceiver(headsetStateReceiver, receiverFilter);
+		
+		IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        this.registerReceiver(onBluetoothStateChangeReceiver, filter1);
+        this.registerReceiver(onBluetoothStateChangeReceiver, filter2);
+        this.registerReceiver(onBluetoothStateChangeReceiver, filter3);
 
 		audioFocusGranted();
 
