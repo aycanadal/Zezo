@@ -399,7 +399,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	private void initViews() {
 
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.main);
 		songListView = (ListView) findViewById(R.id.song_list);
 		currentTitleView = (TextView) findViewById(R.id.currentTitle);
 		currentArtistView = (TextView) findViewById(R.id.currentArtist);
@@ -464,17 +464,22 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		MenuItem item = menu.findItem(R.id.action_shuffle);
 
 		if (musicService.isShuffling()) {
+			
 			shuffleIcon = getResources().getDrawable(R.drawable.shufflegrey40);
 			Toast.makeText(this, "Shuffle is now off.", Toast.LENGTH_SHORT)
 					.show();
+			
 		} else {
+			
 			shuffleIcon = getResources().getDrawable(R.drawable.shufflewhite40);
 			Toast.makeText(this, "Shuffle is now on.", Toast.LENGTH_SHORT)
 					.show();
+			
 		}
 
 		item.setIcon(shuffleIcon);
 		musicService.toggleShuffle();
+		
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)

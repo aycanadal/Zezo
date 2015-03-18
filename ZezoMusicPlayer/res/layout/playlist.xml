@@ -48,17 +48,6 @@
         android:listSelector="#660000" >
     </ListView>
 
-    <!-- <com.zezo.zezomusicplayer.MusicController -->
-    <!-- android:id="@+id/musiccontroller" -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="150dp" -->
-    <!-- android:layout_alignParentBottom="true" -->
-    <!-- android:focusable="false" -->
-    <!-- android:focusableInTouchMode="false" -->
-    <!-- android:visibility="visible" -->
-    <!-- > -->
-    <!-- </com.zezo.zezomusicplayer.MusicController> -->
-
     <FrameLayout
         android:id="@+id/controllerFrame"
         android:layout_width="fill_parent"
