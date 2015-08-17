@@ -266,9 +266,6 @@ public class MainActivity extends ActionBarActivity implements SearchListener, O
 
 		Song song = songAdapter.getItem(Integer.parseInt(((View) view.getParent()).getTag().toString()));
 
-		// Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
-		// .toString()));
-
 		if (song != null && musicService.audioFocusGranted()) {
 			musicService.playSong(song);
 			Toast.makeText(this, "Playing.", Toast.LENGTH_SHORT).show();
