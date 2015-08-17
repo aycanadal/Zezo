@@ -39,9 +39,9 @@ public class FolderSelector {
 				public boolean accept(File dir, String filename) {
 					// add some filters here, for now return true to see all
 					// files
-					// File file = new File(dir, filename);
+					File file = new File(dir, filename);
 					// return filename.contains(".txt") || file.isDirectory();
-					return true; // dir.isDirectory();
+					return file.isDirectory();
 				}
 			};
 

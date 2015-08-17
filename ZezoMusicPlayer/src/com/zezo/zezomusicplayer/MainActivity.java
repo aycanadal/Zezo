@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -33,6 +34,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog.Builder;
+import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
@@ -56,8 +58,11 @@ import com.zezo.zezomusicplayer.SearchFragment.SearchListener;
 import com.zezo.zezomusicplayer.YesNoDialogFragment.OnDeleteConfirmedListener;
 
 // Zezo Version 0.91
-public class MainActivity extends ActionBarActivity implements SearchListener, OnDeleteConfirmedListener {
+public class MainActivity extends AppCompatActivity implements SearchListener, OnDeleteConfirmedListener {
 
+	public static final String PACKAGE_NAME = "com.zezo.zezomusicplayer";
+	public static final String KEY_DIRECTORY_SELECTED = PACKAGE_NAME + ".DIRECTORY_SELECTED";
+	private SharedPreferences sharedPreferences;
 	private FrameLayout controllerFrame;
 	private TextView currentArtistView;
 	private TextView currentTitleView;
@@ -202,22 +207,23 @@ public class MainActivity extends ActionBarActivity implements SearchListener, O
 
 			Toast.makeText(this, "Select music folder.", Toast.LENGTH_SHORT).show();
 			FolderSelector folderSelector = new FolderSelector();
-			folderSelector.showFileListDialog(Environment.getExternalStorageDirectory().toString(), MainActivity.this);
-			
-			folderSelector.setDialogResult(new MusicFolderUpdatedListener(){
-			    public void onMusicFolderUpdated(String musicFolderPath){
-			        
-			    	Toast.makeText(MainActivity.this, "Selected music folder:" + musicFolderPath, Toast.LENGTH_SHORT).show();
-			    	
-			    	loadSongsIntoPlaylist(getAllSongsInFolder(musicFolderPath));
-			    	songListView.setAdapter(songAdapter);
-			    	
-			    	// prefs.edit().putString(KEY_DIRECTORY_SELECTED,
-					// directory).commit();
-			    	
-			    }
+			String musicFolder = sharedPreferences.getString(KEY_DIRECTORY_SELECTED,
+				    Environment.getExternalStorageDirectory().toString());
+			folderSelector.showFileListDialog(musicFolder, MainActivity.this);
+
+			folderSelector.setDialogResult(new MusicFolderUpdatedListener() {
+				public void onMusicFolderUpdated(String musicFolderPath) {
+
+					Toast.makeText(MainActivity.this, "Selected music folder:" + musicFolderPath, Toast.LENGTH_SHORT)
+							.show();
+
+					loadSongsIntoPlaylist(getAllSongsInFolder(musicFolderPath));
+					songListView.setAdapter(songAdapter);
+					sharedPreferences.edit().putString(KEY_DIRECTORY_SELECTED, musicFolderPath).commit();
+
+				}
 			});
-			
+
 			break;
 
 		case R.id.action_shuffle:
@@ -325,16 +331,17 @@ public class MainActivity extends ActionBarActivity implements SearchListener, O
 		return songs;
 
 	}
-	
+
 	private ArrayList<Song> getAllSongsInFolder(String folderPath) {
 
 		ArrayList<Song> songs = new ArrayList<Song>();
 
 		ContentResolver musicResolver = getContentResolver();
 		Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-		
-		Cursor musicCursor = musicResolver.query(musicUri, null, android.provider.MediaStore.Audio.Media.DATA +  " like ? ", 
-                new String[] {"%"+folderPath+"%"}, null);
+
+		Cursor musicCursor = musicResolver.query(musicUri, null,
+				android.provider.MediaStore.Audio.Media.DATA + " like ? ", new String[] { "%" + folderPath + "%" },
+				null);
 
 		if (musicCursor != null && musicCursor.moveToFirst()) {
 
@@ -357,7 +364,6 @@ public class MainActivity extends ActionBarActivity implements SearchListener, O
 
 		musicCursor.close();
 
-		
 		// returns empty list
 		return songs;
 
@@ -427,7 +433,6 @@ public class MainActivity extends ActionBarActivity implements SearchListener, O
 
 	private void loadSongsIntoPlaylist(ArrayList<Song> songs) {
 
-		
 		songLibrary = songs;
 
 		Collections.sort(songLibrary, new Comparator<Song>() {
@@ -519,6 +524,8 @@ public class MainActivity extends ActionBarActivity implements SearchListener, O
 
 		super.onCreate(savedInstanceState);
 
+		sharedPreferences = getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
+
 		SpannableString s = new SpannableString("Zezo -");
 
 		s.setSpan(new TypefaceSpan(this, "electrical.ttf"), 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -533,7 +540,9 @@ public class MainActivity extends ActionBarActivity implements SearchListener, O
 
 		}
 
-		loadSongsIntoPlaylist(getAllSongsOnDevice());
+		String musicFolder = sharedPreferences.getString(KEY_DIRECTORY_SELECTED,
+			    Environment.getExternalStorageDirectory().toString());
+		loadSongsIntoPlaylist(getAllSongsInFolder(musicFolder));
 		initViews();
 
 		musicController = new MusicController(this);
