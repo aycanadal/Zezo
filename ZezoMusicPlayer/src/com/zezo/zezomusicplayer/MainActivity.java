@@ -296,41 +296,6 @@ public class MainActivity extends AppCompatActivity implements SearchListener, O
 
 	}
 
-	private ArrayList<Song> getAllSongsOnDevice() {
-
-		ArrayList<Song> songs = new ArrayList<Song>();
-
-		ContentResolver musicResolver = getContentResolver();
-		Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-		Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
-
-		if (musicCursor != null && musicCursor.moveToFirst()) {
-
-			int titleColumn = musicCursor.getColumnIndex(MediaColumns.TITLE);
-			int idColumn = musicCursor.getColumnIndex(BaseColumns._ID);
-			int artistColumn = musicCursor.getColumnIndex(AudioColumns.ARTIST);
-			int durationColumn = musicCursor.getColumnIndex(AudioColumns.DURATION);
-			int dataColumn = musicCursor.getColumnIndex(AudioColumns.DATA);
-
-			do {
-
-				long thisId = musicCursor.getLong(idColumn);
-				String thisTitle = musicCursor.getString(titleColumn);
-				String thisArtist = musicCursor.getString(artistColumn);
-				String duration = Util.getTimeStringFromMs(musicCursor.getInt(durationColumn));
-				String data = musicCursor.getString(dataColumn);
-				songs.add(new Song(thisId, thisTitle, thisArtist, duration));
-
-			} while (musicCursor.moveToNext());
-
-		}
-
-		musicCursor.close();
-
-		return songs;
-
-	}
-
 	private ArrayList<Song> getAllSongsInFolder(String folderPath) {
 
 		ArrayList<Song> songs = new ArrayList<Song>();
