@@ -29,13 +29,20 @@ public class YesNoDialogFragment extends DialogFragment {
 
 	@Override
 	public void onAttach(Activity activity) {
+		
 		super.onAttach(activity);
+		
 		try {
+			
 			onDeleteConfirmedListener = (OnDeleteConfirmedListener) activity;
+			
 		} catch (ClassCastException e) {
+			
 			throw new ClassCastException(activity.toString()
 					+ " must implement OnDeleteConfirmedListener");
+			
 		}
+		
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
