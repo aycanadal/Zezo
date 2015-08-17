@@ -13,5 +13,6 @@
     <string name="No">No</string>
     <string name="AddToQueue">Add To Queue</string>
     <string name="Talk">Talk</string>
+    <string name="SetFolder">Set Folder</string>
 
 </resources>

@@ -15,11 +15,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
@@ -28,7 +30,9 @@ import android.provider.MediaStore.MediaColumns;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog.Builder;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
@@ -46,13 +50,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zezo.zezomusicplayer.FolderSelector.MusicFolderUpdatedListener;
 import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 import com.zezo.zezomusicplayer.SearchFragment.SearchListener;
 import com.zezo.zezomusicplayer.YesNoDialogFragment.OnDeleteConfirmedListener;
 
 // Zezo Version 0.91
-public class MainActivity extends ActionBarActivity implements SearchListener,
-		OnDeleteConfirmedListener {
+public class MainActivity extends ActionBarActivity implements SearchListener, OnDeleteConfirmedListener {
 
 	private FrameLayout controllerFrame;
 	private TextView currentArtistView;
@@ -120,45 +124,39 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 	}
 
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 
 		super.onCreateContextMenu(menu, v, menuInfo);
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.context, menu);
 
-		menu.add(R.string.AddToQueue).setOnMenuItemClickListener(
-				new OnMenuItemClickListener() {
+		menu.add(R.string.AddToQueue).setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
-					@Override
-					public boolean onMenuItemClick(MenuItem item) {
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
 
-						AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-								.getMenuInfo();
+				AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 
-						musicService.addToQueue(musicService
-								.getSongById(info.id));
+				musicService.addToQueue(musicService.getSongById(info.id));
 
-						return true;
+				return true;
 
-					}
-				});
+			}
+		});
 
-		menu.add(R.string.Delete).setOnMenuItemClickListener(
-				new OnMenuItemClickListener() {
+		menu.add(R.string.Delete).setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
-					@Override
-					public boolean onMenuItemClick(MenuItem item) {
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
 
-						AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-								.getMenuInfo();
+				AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 
-						showDeleteDialog(musicService.getSongById(info.id));
+				showDeleteDialog(musicService.getSongById(info.id));
 
-						return true;
+				return true;
 
-					}
-				});
+			}
+		});
 
 	}
 
@@ -183,8 +181,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		songAdapter.getFilteredSongs().remove(song);
 		songAdapter.notifyDataSetChanged();
 
-		Uri uri = ContentUris.withAppendedId(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.getId());
+		Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.getId());
 
 		getContentResolver().delete(uri, null, null);
 
@@ -200,6 +197,28 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
+
+		case R.id.action_set_folder:
+
+			Toast.makeText(this, "Select music folder.", Toast.LENGTH_SHORT).show();
+			FolderSelector folderSelector = new FolderSelector();
+			folderSelector.showFileListDialog(Environment.getExternalStorageDirectory().toString(), MainActivity.this);
+			
+			folderSelector.setDialogResult(new MusicFolderUpdatedListener(){
+			    public void onMusicFolderUpdated(String musicFolderPath){
+			        
+			    	Toast.makeText(MainActivity.this, "Selected music folder:" + musicFolderPath, Toast.LENGTH_SHORT).show();
+			    	
+			    	loadSongsIntoPlaylist(getAllSongsInFolder(musicFolderPath));
+			    	songListView.setAdapter(songAdapter);
+			    	
+			    	// prefs.edit().putString(KEY_DIRECTORY_SELECTED,
+					// directory).commit();
+			    	
+			    }
+			});
+			
+			break;
 
 		case R.id.action_shuffle:
 
@@ -245,8 +264,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		processingPick = true;
 
-		Song song = songAdapter.getItem(Integer.parseInt(((View) view
-				.getParent()).getTag().toString()));
+		Song song = songAdapter.getItem(Integer.parseInt(((View) view.getParent()).getTag().toString()));
 
 		// Song song = songAdapter.getItem(Integer.parseInt(view.getTag()
 		// .toString()));
@@ -262,8 +280,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 	public void scrollToCurrent(View view) {
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
-			songListView.setSelection(songListView
-					.getCheckedItemPosition());
+			songListView.setSelection(songListView.getCheckedItemPosition());
 
 	}
 
@@ -283,24 +300,23 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		ContentResolver musicResolver = getContentResolver();
 		Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-		Cursor musicCursor = musicResolver.query(musicUri, null, null, null,
-				null);
+		Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
 
 		if (musicCursor != null && musicCursor.moveToFirst()) {
 
 			int titleColumn = musicCursor.getColumnIndex(MediaColumns.TITLE);
 			int idColumn = musicCursor.getColumnIndex(BaseColumns._ID);
 			int artistColumn = musicCursor.getColumnIndex(AudioColumns.ARTIST);
-			int durationColumn = musicCursor
-					.getColumnIndex(AudioColumns.DURATION);
+			int durationColumn = musicCursor.getColumnIndex(AudioColumns.DURATION);
+			int dataColumn = musicCursor.getColumnIndex(AudioColumns.DATA);
 
 			do {
 
 				long thisId = musicCursor.getLong(idColumn);
 				String thisTitle = musicCursor.getString(titleColumn);
 				String thisArtist = musicCursor.getString(artistColumn);
-				String duration = Util.getTimeStringFromMs(musicCursor
-						.getInt(durationColumn));
+				String duration = Util.getTimeStringFromMs(musicCursor.getInt(durationColumn));
+				String data = musicCursor.getString(dataColumn);
 				songs.add(new Song(thisId, thisTitle, thisArtist, duration));
 
 			} while (musicCursor.moveToNext());
@@ -309,6 +325,43 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		musicCursor.close();
 
+		return songs;
+
+	}
+	
+	private ArrayList<Song> getAllSongsInFolder(String folderPath) {
+
+		ArrayList<Song> songs = new ArrayList<Song>();
+
+		ContentResolver musicResolver = getContentResolver();
+		Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+		
+		Cursor musicCursor = musicResolver.query(musicUri, null, android.provider.MediaStore.Audio.Media.DATA +  " like ? ", 
+                new String[] {"%"+folderPath+"%"}, null);
+
+		if (musicCursor != null && musicCursor.moveToFirst()) {
+
+			int titleColumn = musicCursor.getColumnIndex(MediaColumns.TITLE);
+			int idColumn = musicCursor.getColumnIndex(BaseColumns._ID);
+			int artistColumn = musicCursor.getColumnIndex(AudioColumns.ARTIST);
+			int durationColumn = musicCursor.getColumnIndex(AudioColumns.DURATION);
+
+			do {
+
+				long thisId = musicCursor.getLong(idColumn);
+				String thisTitle = musicCursor.getString(titleColumn);
+				String thisArtist = musicCursor.getString(artistColumn);
+				String duration = Util.getTimeStringFromMs(musicCursor.getInt(durationColumn));
+				songs.add(new Song(thisId, thisTitle, thisArtist, duration));
+
+			} while (musicCursor.moveToNext());
+
+		}
+
+		musicCursor.close();
+
+		
+		// returns empty list
 		return songs;
 
 	}
@@ -326,16 +379,14 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		InputMethodManager inputMethodManager = (InputMethodManager) this
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-		inputMethodManager.hideSoftInputFromWindow(
-				findViewById(android.R.id.content).getWindowToken(), 0);
+		inputMethodManager.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0);
 
 	}
 
 	private void hideSearch() {
 
 		searchFragment.hide(getSupportFragmentManager(),
-				(InputMethodManager) this
-						.getSystemService(Context.INPUT_METHOD_SERVICE));
+				(InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE));
 
 		showController();
 
@@ -349,18 +400,15 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		InputMethodManager inputMethodManager = (InputMethodManager) this
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-		inputMethodManager.toggleSoftInputFromWindow(
-				findViewById(android.R.id.content).getWindowToken(), 0, 0);
+		inputMethodManager.toggleSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0, 0);
 
-		inputMethodManager.hideSoftInputFromWindow(
-				findViewById(android.R.id.content).getWindowToken(), 0);
+		inputMethodManager.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0);
 
 	}
 
 	private void initMusicService() {
 
-		LocalBroadcastManager.getInstance(this).registerReceiver(
-				onMediaPlayerPlayingReceiver,
+		LocalBroadcastManager.getInstance(this).registerReceiver(onMediaPlayerPlayingReceiver,
 				new IntentFilter("MEDIA_PLAYER_PLAYING"));
 
 		if (musicServiceIntent == null) {
@@ -372,8 +420,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 			musicServiceIntent = new Intent(this, MusicService.class);
 
-			bindService(musicServiceIntent, musicServiceConnection,
-					Context.BIND_AUTO_CREATE);
+			bindService(musicServiceIntent, musicServiceConnection, Context.BIND_AUTO_CREATE);
 
 			startService(musicServiceIntent);
 
@@ -381,10 +428,10 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	}
 
-	private void initSongAdapter() {
+	private void loadSongsIntoPlaylist(ArrayList<Song> songs) {
 
-		if (songLibrary == null || songLibrary.size() < 1)
-			songLibrary = getAllSongsOnDevice();
+		
+		songLibrary = songs;
 
 		Collections.sort(songLibrary, new Comparator<Song>() {
 			@Override
@@ -423,8 +470,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		DialogFragment dialog = new YesNoDialogFragment();
 		Bundle args = new Bundle();
 		args.putString("title", "Delete File?");
-		args.putString("message",
-				"Do you really wish to delete the song from the device?");
+		args.putString("message", "Do you really wish to delete the song from the device?");
 		args.putLong("songId", song.getId());
 		dialog.setArguments(args);
 		dialog.show(getSupportFragmentManager(), "deleteDialog");
@@ -433,19 +479,15 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 	private void showExitDialog() {
 
-		new AlertDialog.Builder(this)
-				.setTitle("Exit")
-				.setMessage("Do you really wish to end the application?")
+		new AlertDialog.Builder(this).setTitle("Exit").setMessage("Do you really wish to end the application?")
 				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setPositiveButton(android.R.string.yes,
-						new DialogInterface.OnClickListener() {
+				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int whichButton) {
-								exit();
-							}
-						}).setNegativeButton(android.R.string.no, null).show();
+					@Override
+					public void onClick(DialogInterface dialog, int whichButton) {
+						exit();
+					}
+				}).setNegativeButton(android.R.string.no, null).show();
 
 	}
 
@@ -454,8 +496,7 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		hideController();
 
 		searchFragment.show(getSupportFragmentManager(),
-				(InputMethodManager) this
-						.getSystemService(Context.INPUT_METHOD_SERVICE));
+				(InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE));
 	}
 
 	private void toggleShuffle() {
@@ -465,12 +506,10 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 
 		if (musicService.isShuffling()) {
 			shuffleIcon = getResources().getDrawable(R.drawable.shufflegrey40);
-			Toast.makeText(this, "Shuffle is now off.", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(this, "Shuffle is now off.", Toast.LENGTH_SHORT).show();
 		} else {
 			shuffleIcon = getResources().getDrawable(R.drawable.shufflewhite40);
-			Toast.makeText(this, "Shuffle is now on.", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(this, "Shuffle is now on.", Toast.LENGTH_SHORT).show();
 		}
 
 		item.setIcon(shuffleIcon);
@@ -484,23 +523,20 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 		super.onCreate(savedInstanceState);
 
 		SpannableString s = new SpannableString("Zezo -");
-		
-		s.setSpan(new TypefaceSpan(this, "electrical.ttf"), 0, s.length(),
-				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		
-		s.setSpan(new RelativeSizeSpan(0.6f), 0, s.length(),
-				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		
+
+		s.setSpan(new TypefaceSpan(this, "electrical.ttf"), 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+		s.setSpan(new RelativeSizeSpan(0.6f), 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 
 			// Update the action bar title with the TypefaceSpan instance
-			android.app.ActionBar actionBar = getActionBar();
+			ActionBar actionBar = getSupportActionBar();
 			actionBar.setTitle(s);
 
 		}
 
-		initSongAdapter();
+		loadSongsIntoPlaylist(getAllSongsOnDevice());
 		initViews();
 
 		musicController = new MusicController(this);
@@ -526,10 +562,8 @@ public class MainActivity extends ActionBarActivity implements SearchListener,
 			searchFragment.setArguments(getIntent().getExtras());
 
 			// Add the fragment to the 'fragment_container' FrameLayout
-			getSupportFragmentManager()
-					.beginTransaction()
-					.add(R.id.fragmentContainer, searchFragment,
-							"searchFragment").commit();
+			getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, searchFragment, "searchFragment")
+					.commit();
 
 			FragmentManager fm = getSupportFragmentManager();
 			fm.beginTransaction().hide(searchFragment).commit();
