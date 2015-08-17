@@ -57,7 +57,6 @@ import com.zezo.zezomusicplayer.MusicService.MusicBinder;
 import com.zezo.zezomusicplayer.SearchFragment.SearchListener;
 import com.zezo.zezomusicplayer.YesNoDialogFragment.OnDeleteConfirmedListener;
 
-// Zezo Version 0.91
 public class MainActivity extends AppCompatActivity implements SearchListener, OnDeleteConfirmedListener {
 
 	public static final String PACKAGE_NAME = "com.zezo.zezomusicplayer";
