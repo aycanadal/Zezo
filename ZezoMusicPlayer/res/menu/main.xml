@@ -3,7 +3,7 @@
     
     <item
         android:id="@+id/action_set_folder"
-        android:icon="@drawable/magnifierwhite40"
+        android:icon="@drawable/folderwhite40"
         android:orderInCategory="1"
         android:title="@string/SetFolder"
         zezo:showAsAction="always"/>
