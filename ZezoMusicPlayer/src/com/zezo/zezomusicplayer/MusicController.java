@@ -8,14 +8,8 @@ import android.widget.MediaController.MediaPlayerControl;
 public class MusicController extends MediaController implements
 		MediaPlayerControl {
 
-	private boolean musicBound = false;
+	private boolean isMusicBound = false;
 	private MusicService musicService;
-
-	// public MusicController(Context context, AttributeSet attributeSet){
-	//
-	// super(context, attributeSet);
-	//
-	// }
 
 	public MusicController(Context context) {
 
@@ -106,7 +100,7 @@ public class MusicController extends MediaController implements
 	}
 
 	public boolean isMusicBound() {
-		return musicBound;
+		return isMusicBound;
 	}
 
 	@Override
@@ -137,7 +131,7 @@ public class MusicController extends MediaController implements
 	}
 
 	public void setMusicBound(boolean musicBound) {
-		this.musicBound = musicBound;
+		this.isMusicBound = musicBound;
 	}
 
 	@Override
