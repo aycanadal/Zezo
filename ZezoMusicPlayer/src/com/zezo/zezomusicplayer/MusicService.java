@@ -1,7 +1,11 @@
 package com.zezo.zezomusicplayer;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
+
+import com.zezo.zezomusicplayer.MediaButtonReceiver.MediaButtonReceiverListener;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -26,14 +30,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import com.zezo.zezomusicplayer.MediaButtonReceiver.MediaButtonReceiverListener;
-
 // Service to play music even after application loses focus.
 
-public class MusicService extends Service implements
-		MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
-		MediaPlayer.OnCompletionListener, MediaButtonReceiverListener,
-		OnAudioFocusChangeListener {
+public class MusicService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
+		MediaPlayer.OnCompletionListener, MediaButtonReceiverListener, OnAudioFocusChangeListener {
 
 	public class MusicBinder extends Binder {
 		MusicService getService() {
@@ -44,8 +44,7 @@ public class MusicService extends Service implements
 	private class HeadsetStateReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)
-					&& !isInitialStickyBroadcast()) {
+			if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG) && !isInitialStickyBroadcast()) {
 				int state = intent.getIntExtra("state", -1);
 				switch (state) {
 				case 0:
@@ -61,6 +60,7 @@ public class MusicService extends Service implements
 	private static final int NOTIFY_ID = 1;
 
 	private Song currentSong;
+	private LinkedList<Long> history = new LinkedList<Long>();
 	private HeadsetStateReceiver headsetStateReceiver;
 	private final IBinder musicBind = new MusicBinder();
 	private final BroadcastReceiver onBluetoothStateChangeReceiver = new BroadcastReceiver() {
@@ -80,10 +80,8 @@ public class MusicService extends Service implements
 				Log.d("Z", "Received: Bluetooth Connected");
 
 			}
-			if (action
-					.equals("android.bluetooth.device.action.ACL_DISCONNECTED")
-					|| action
-							.equals("android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED")) {
+			if (action.equals("android.bluetooth.device.action.ACL_DISCONNECTED")
+					|| action.equals("android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED")) {
 
 				pause();
 				Log.d("Z", "Received: Bluetooth Disconnected");
@@ -119,8 +117,7 @@ public class MusicService extends Service implements
 
 		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
-		int result = am.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
-				AudioManager.AUDIOFOCUS_GAIN);
+		int result = am.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 
 		if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
 			return false;
@@ -164,25 +161,23 @@ public class MusicService extends Service implements
 
 	public void initMusicPlayer() {
 
-		player.setWakeMode(getApplicationContext(),
-				PowerManager.PARTIAL_WAKE_LOCK);
+		player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
 		player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
 		player.setOnPreparedListener(this);
 		player.setOnCompletionListener(this);
 		player.setOnErrorListener(this);
 
-		IntentFilter receiverFilter = new IntentFilter(
-				Intent.ACTION_HEADSET_PLUG);
+		IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
 		headsetStateReceiver = new HeadsetStateReceiver();
 		registerReceiver(headsetStateReceiver, receiverFilter);
-		
+
 		IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
-        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        this.registerReceiver(onBluetoothStateChangeReceiver, filter1);
-        this.registerReceiver(onBluetoothStateChangeReceiver, filter2);
-        this.registerReceiver(onBluetoothStateChangeReceiver, filter3);
+		IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+		IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+		this.registerReceiver(onBluetoothStateChangeReceiver, filter1);
+		this.registerReceiver(onBluetoothStateChangeReceiver, filter2);
+		this.registerReceiver(onBluetoothStateChangeReceiver, filter3);
 
 		audioFocusGranted();
 
@@ -205,8 +200,8 @@ public class MusicService extends Service implements
 
 		if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
 			pause();
-			ComponentName mRemoteControlResponder = new ComponentName(
-					getPackageName(), MediaButtonReceiver.class.getName());
+			ComponentName mRemoteControlResponder = new ComponentName(getPackageName(),
+					MediaButtonReceiver.class.getName());
 			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
 			MediaButtonReceiver.removeBroadcastReceiveListener(this);
 			am.abandonAudioFocus(this);
@@ -216,8 +211,8 @@ public class MusicService extends Service implements
 
 		} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
 
-			ComponentName mRemoteControlResponder = new ComponentName(
-					getPackageName(), MediaButtonReceiver.class.getName());
+			ComponentName mRemoteControlResponder = new ComponentName(getPackageName(),
+					MediaButtonReceiver.class.getName());
 			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
 			MediaButtonReceiver.removeBroadcastReceiveListener(this);
 			am.abandonAudioFocus(this);
@@ -303,21 +298,15 @@ public class MusicService extends Service implements
 		Intent notIntent = new Intent(this, MainActivity.class);
 		notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-		PendingIntent pendInt = PendingIntent.getActivity(this, 0, notIntent,
-				PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent pendInt = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 
 			Notification.Builder builder = new Notification.Builder(this);
 
-			builder.setContentIntent(pendInt)
-					.setSmallIcon(R.drawable.ic_launcher)
-					.setTicker(
-							getCurrentSong().getArtist() + " - "
-									+ getCurrentSong().getTitle())
-					.setOngoing(true)
-					.setContentTitle(getCurrentSong().getTitle())
-					.setContentText(getCurrentSong().getArtist());
+			builder.setContentIntent(pendInt).setSmallIcon(R.drawable.ic_launcher)
+					.setTicker(getCurrentSong().getArtist() + " - " + getCurrentSong().getTitle()).setOngoing(true)
+					.setContentTitle(getCurrentSong().getTitle()).setContentText(getCurrentSong().getArtist());
 
 			Notification not = builder.build();
 
@@ -357,7 +346,7 @@ public class MusicService extends Service implements
 
 		if (!audioFocusGranted() || currentSong == null)
 			return;
-		
+
 		if (isPlayerPrepared)
 			player.start();
 		else
@@ -410,27 +399,23 @@ public class MusicService extends Service implements
 
 	public void playPrevious() {
 
-		if (songLibrary.size() <= 0)
+		if (songLibrary.size() <= 0 || history.size() <= 1)
 			return;
 
-		// Song song = getSongById(songId);
-		int songIndex = songLibrary.indexOf(getCurrentSong());
+		history.pollLast();
+		Song song = getSongById(history.pollLast());
 
-		songIndex--;
-		if (songIndex < 0)
-			songIndex = songLibrary.size() - 1;
+		playSong(song);
 
-		// songId = songs.get(songIndex).getID();
-		playSong(songLibrary.get(songIndex));
 	}
 
 	public void playSong(Song song) {
 
 		player.reset();
-		this.setSong(song);
+		setCurrentSong(song);
+		history.add(song.getId());
 
-		Uri trackUri = ContentUris.withAppendedId(
-				android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+		Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				song.getId());
 
 		try {
@@ -472,14 +457,14 @@ public class MusicService extends Service implements
 		this.shuffle = shuffle;
 	}
 
-	public void setSong(Song song) {
+	public void setCurrentSong(Song song) {
 		this.currentSong = song;
 	}
 
 	public void setSongLibrary(ArrayList<Song> songs) {
 		this.songLibrary = songs;
 		if (songs != null && songs.size() > 0)
-			setSong(songs.get(0));
+			setCurrentSong(songs.get(0));
 	}
 
 	public void toggleShuffle() {
@@ -493,8 +478,8 @@ public class MusicService extends Service implements
 
 		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
-		ComponentName mRemoteControlResponder = new ComponentName(
-				getPackageName(), MediaButtonReceiver.class.getName());
+		ComponentName mRemoteControlResponder = new ComponentName(getPackageName(),
+				MediaButtonReceiver.class.getName());
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
 			am.registerMediaButtonEventReceiver(mRemoteControlResponder);
@@ -504,8 +489,8 @@ public class MusicService extends Service implements
 	}
 
 	public void setPlayerPrepared(boolean isPlayerPrepared) {
-		
+
 		this.isPlayerPrepared = isPlayerPrepared;
-		
+
 	}
 }

@@ -316,11 +316,11 @@ public class MainActivity extends AppCompatActivity implements SearchListener, O
 
 			do {
 
-				long thisId = musicCursor.getLong(idColumn);
-				String thisTitle = musicCursor.getString(titleColumn);
-				String thisArtist = musicCursor.getString(artistColumn);
+				long id = musicCursor.getLong(idColumn);
+				String title = musicCursor.getString(titleColumn);
+				String artist = musicCursor.getString(artistColumn);
 				String duration = Util.getTimeStringFromMs(musicCursor.getInt(durationColumn));
-				songs.add(new Song(thisId, thisTitle, thisArtist, duration));
+				songs.add(new Song(id, title, artist, duration));
 
 			} while (musicCursor.moveToNext());
 
