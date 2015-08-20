@@ -598,12 +598,11 @@ public class MainActivity extends AppCompatActivity implements SearchListener, O
 	@Override
 	protected void onDestroy() {
 
-		// stopService(playIntent);
-		// musicService = null;
-		// hideKeyboard();
-		// unregisterReceiver(onPrepareReceiver);
-
+		hideKeyboard();
 		unbindService(musicServiceConnection);
+		stopService(musicServiceIntent);
+		musicService = null;
+		
 		super.onDestroy();
 
 	}
