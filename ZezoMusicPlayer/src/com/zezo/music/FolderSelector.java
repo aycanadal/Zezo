@@ -1,4 +1,4 @@
-package com.zezo.zezomusicplayer;
+package com.zezo.music;
 
 import java.io.File;
 import java.io.FilenameFilter;

@@ -1,6 +1,8 @@
-package com.zezo.zezomusicplayer;
+package com.zezo.music;
 
 import java.util.ArrayList;
+
+import com.zezo.music.R;
 
 import android.app.Activity;
 import android.content.Intent;

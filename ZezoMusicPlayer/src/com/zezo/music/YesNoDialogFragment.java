@@ -1,4 +1,4 @@
-package com.zezo.zezomusicplayer;
+package com.zezo.music;
 
 import android.annotation.TargetApi;
 import android.app.Activity;

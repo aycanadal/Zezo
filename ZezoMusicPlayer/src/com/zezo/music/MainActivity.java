@@ -1,8 +1,14 @@
-package com.zezo.zezomusicplayer;
+package com.zezo.music;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import com.zezo.music.FolderSelector.MusicFolderUpdatedListener;
+import com.zezo.music.MusicService.MusicBinder;
+import com.zezo.music.SearchFragment.SearchListener;
+import com.zezo.music.YesNoDialogFragment.OnDeleteConfirmedListener;
+import com.zezo.music.R;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -52,14 +58,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.zezo.zezomusicplayer.FolderSelector.MusicFolderUpdatedListener;
-import com.zezo.zezomusicplayer.MusicService.MusicBinder;
-import com.zezo.zezomusicplayer.SearchFragment.SearchListener;
-import com.zezo.zezomusicplayer.YesNoDialogFragment.OnDeleteConfirmedListener;
-
 public class MainActivity extends AppCompatActivity implements SearchListener, OnDeleteConfirmedListener {
 
-	public static final String PACKAGE_NAME = "com.zezo.zezomusicplayer";
+	public static final String PACKAGE_NAME = "com.zezo.music";
 	public static final String KEY_DIRECTORY_SELECTED = PACKAGE_NAME + ".DIRECTORY_SELECTED";
 	private SharedPreferences sharedPreferences;
 	private FrameLayout controllerFrame;

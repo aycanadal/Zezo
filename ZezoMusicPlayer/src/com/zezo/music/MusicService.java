@@ -1,11 +1,10 @@
-package com.zezo.zezomusicplayer;
+package com.zezo.music;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Random;
 
-import com.zezo.zezomusicplayer.MediaButtonReceiver.MediaButtonReceiverListener;
+import com.zezo.music.MediaButtonReceiver.MediaButtonReceiverListener;
 
 import android.app.Notification;
 import android.app.PendingIntent;
