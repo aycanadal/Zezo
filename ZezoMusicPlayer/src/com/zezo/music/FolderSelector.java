@@ -111,7 +111,7 @@ public class FolderSelector {
 			public void onClick(DialogInterface dialog, int which) {
 				
 				if( musicFolderUpdatedListener != null ){
-					musicFolderUpdatedListener.onMusicFolderUpdated(directory);
+					musicFolderUpdatedListener.onMusicFolderUpdated(directory + "/");
 	            }
 			}
 		});

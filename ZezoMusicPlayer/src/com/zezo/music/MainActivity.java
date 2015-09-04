@@ -306,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements SearchListener, O
 
 		Cursor musicCursor = musicResolver.query(musicUri, null,
 				android.provider.MediaStore.Audio.Media.DATA + " like ? ", new String[] { "%" + folderPath + "%" },
-				null);
+				android.provider.MediaStore.Audio.Media.DATA + " ASC");
 
 		if (musicCursor != null && musicCursor.moveToFirst()) {
 
@@ -314,6 +314,8 @@ public class MainActivity extends AppCompatActivity implements SearchListener, O
 			int idColumn = musicCursor.getColumnIndex(BaseColumns._ID);
 			int artistColumn = musicCursor.getColumnIndex(AudioColumns.ARTIST);
 			int durationColumn = musicCursor.getColumnIndex(AudioColumns.DURATION);
+			
+			int dataColumn = musicCursor.getColumnIndex(MediaColumns.DATA);
 
 			do {
 
@@ -321,15 +323,15 @@ public class MainActivity extends AppCompatActivity implements SearchListener, O
 				String title = musicCursor.getString(titleColumn);
 				String artist = musicCursor.getString(artistColumn);
 				String duration = Util.getTimeStringFromMs(musicCursor.getInt(durationColumn));
-				songs.add(new Song(id, title, artist, duration));
+				String data = musicCursor.getString(dataColumn);
+				
+				songs.add(new Song(id, title, artist, duration, data));
 
 			} while (musicCursor.moveToNext());
 
 		}
 
 		musicCursor.close();
-
-		// returns empty list
 		return songs;
 
 	}
@@ -400,12 +402,12 @@ public class MainActivity extends AppCompatActivity implements SearchListener, O
 
 		songLibrary = songs;
 
-		Collections.sort(songLibrary, new Comparator<Song>() {
-			@Override
-			public int compare(Song a, Song b) {
-				return a.getTitle().compareTo(b.getTitle());
-			}
-		});
+//		Collections.sort(songLibrary, new Comparator<Song>() {
+//			@Override
+//			public int compare(Song a, Song b) {
+//				return a.getTitle().compareTo(b.getTitle());
+//			}
+//		});
 
 		songAdapter = new SongAdapter(this, songLibrary);
 

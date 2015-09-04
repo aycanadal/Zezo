@@ -6,13 +6,15 @@ public class Song {
 	private String duration;
 	private long id;
 	private String title;
+	private String data;
 
-	public Song(long id, String title, String artist, String duration) {
+	public Song(long id, String title, String artist, String duration, String data) {
 
 		this.id = id;
 		this.title = title;
 		this.artist = artist;
 		this.setDuration(duration);
+		this.data = data;
 
 	}
 
