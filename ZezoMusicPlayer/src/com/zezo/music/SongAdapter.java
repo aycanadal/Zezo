@@ -2,8 +2,6 @@ package com.zezo.music;
 
 import java.util.ArrayList;
 
-import com.zezo.music.R;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
