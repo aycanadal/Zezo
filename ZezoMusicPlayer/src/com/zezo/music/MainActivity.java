@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements SearchListener, O
 			musicService.setPlayerPrepared(true);
 			processingPick = false;
 		}
-	};
+	};	
 	private boolean processingPick = false;
 	private final SearchFragment searchFragment = new SearchFragment();;
 
