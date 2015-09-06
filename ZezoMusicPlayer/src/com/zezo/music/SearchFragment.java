@@ -46,7 +46,7 @@ public class SearchFragment extends Fragment {
 
 		fragmentManager.beginTransaction().hide(this).commit();
 		
-		isOn = true;
+		isOn = false;
 
 	}
 
