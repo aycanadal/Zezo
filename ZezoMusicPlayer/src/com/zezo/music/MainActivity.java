@@ -1,14 +1,11 @@
 package com.zezo.music;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import com.zezo.music.FolderSelector.MusicFolderUpdatedListener;
 import com.zezo.music.MusicService.MusicBinder;
 import com.zezo.music.SearchFragment.SearchListener;
 import com.zezo.music.YesNoDialogFragment.OnDeleteConfirmedListener;
-import com.zezo.music.R;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -22,7 +19,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -38,8 +34,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AlertDialog.Builder;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -112,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements SearchListener, O
 		}
 	};
 	private boolean processingPick = false;
-	private SearchFragment searchFragment;
+	private final SearchFragment searchFragment = new SearchFragment();;
 
 	private SongAdapter songAdapter;
 
@@ -123,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements SearchListener, O
 	public void onBackPressed() {
 
 		// super.onBackPressed();
-		//
+		
 		if (searchFragment.isOn())
 			hideSearch();
 	}
@@ -493,10 +487,9 @@ public class MainActivity extends AppCompatActivity implements SearchListener, O
 
 		sharedPreferences = getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
 
-		SpannableString s = new SpannableString("Zezo -");
+		SpannableString s = new SpannableString("Zezo");
 
 		s.setSpan(new TypefaceSpan(this, "electrical.ttf"), 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
 		s.setSpan(new RelativeSizeSpan(0.6f), 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -527,7 +520,7 @@ public class MainActivity extends AppCompatActivity implements SearchListener, O
 			}
 
 			// Create a new Fragment to be placed in the activity layout
-			searchFragment = new SearchFragment();
+			//searchFragment = new SearchFragment();
 
 			// In case this activity was started with special instructions from
 			// an

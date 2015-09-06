@@ -19,12 +19,9 @@
     </style>
 
     <style name="MyActionBar" parent="style/Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/Red</item>
-        <item name="titleTextStyle">@style/MyActionBarTitleText</item>
+        <item name="android:background">@color/White</item>
+        <item name="android:text">"@string/zezo"</item>
     </style>
 
-    <style name="MyActionBarTitleText" parent="style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">#ff0000</item>
-    </style>
 
 </resources>
