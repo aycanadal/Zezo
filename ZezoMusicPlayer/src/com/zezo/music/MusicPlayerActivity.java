@@ -3,6 +3,7 @@ package com.zezo.music;
 import java.util.ArrayList;
 
 import com.zezo.music.MusicService.MusicBinder;
+import com.zezo.music.SearchFragment.SearchListener;
 import com.zezo.music.domain.Song;
 import com.zezo.music.tabs.PlaylistFragment;
 import com.zezo.music.tabs.TabPagerAdapter;
@@ -58,7 +59,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteConfirmedListener {
+public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteConfirmedListener, SearchListener {
 
 	public static final String PACKAGE_NAME = "com.zezo.music";
 	public static final String KEY_DIRECTORY_SELECTED = PACKAGE_NAME + ".DIRECTORY_SELECTED";
@@ -505,6 +506,12 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		musicService = null;
 		System.exit(0);
 
+	}
+
+	@Override
+	public void onSearchTextChanged(CharSequence cs) {
+		tabPagerAdapter.getPlaylistFragment().onSearchTextChanged(cs);
+		
 	}
 
 }

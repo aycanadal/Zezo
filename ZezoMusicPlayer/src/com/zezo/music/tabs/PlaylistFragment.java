@@ -71,7 +71,6 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Sea
 
 	}
 
-	@Override
 	public void onSearchTextChanged(CharSequence cs) {
 
 		songAdapter.getFilter().filter(cs);
