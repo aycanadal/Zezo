@@ -1,72 +1,30 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#000000"
-    android:orientation="vertical"
-    android:windowSoftInputMode="adjustPan"
-    tools:context=".MainActivity" >
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/currentTitle"
+    <include
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:onClick="scrollToCurrent"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        layout="@layout/playing" />
 
-    <TextView
-        android:id="@+id/currentArtist"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:onClick="scrollToCurrent"
-        android:textColor="@color/gray"
-        android:textSize="14sp" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/DarkRed" />
-
-    <FrameLayout
-        android:id="@+id/fragmentContainer"
+    <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-    </FrameLayout>
 
-    <ListView
-        android:id="@+id/song_list"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".95"
-        android:choiceMode="singleChoice"
-        android:fastScrollAlwaysVisible="true"
-        android:fastScrollEnabled="true"
-        android:listSelector="#660000" >
-    </ListView>
-
-    <!-- <com.zezo.zezomusicplayer.MusicController -->
-    <!-- android:id="@+id/musiccontroller" -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="150dp" -->
-    <!-- android:layout_alignParentBottom="true" -->
-    <!-- android:focusable="false" -->
-    <!-- android:focusableInTouchMode="false" -->
-    <!-- android:visibility="visible" -->
-    <!-- > -->
-    <!-- </com.zezo.zezomusicplayer.MusicController> -->
-
-    <FrameLayout
-        android:id="@+id/controllerFrame"
-        android:layout_width="fill_parent"
-        android:layout_height="75dp"
-        android:clickable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:windowSoftInputMode="stateHidden" >
-    </FrameLayout>
+        <android.support.v4.view.PagerTabStrip
+            android:id="@+id/pager_title_strip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="#000"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:textColor="#fff" />
+    </android.support.v4.view.ViewPager>
 
 </LinearLayout>

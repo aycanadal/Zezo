@@ -7,7 +7,7 @@
     android:orientation="horizontal"
     android:weightSum="1.0"
     android:windowSoftInputMode="adjustPan"
-    tools:context=".MainActivity" >
+    tools:context=".MusicPlayerActivity" >
 
     <EditText
         android:id="@+id/searchBox"

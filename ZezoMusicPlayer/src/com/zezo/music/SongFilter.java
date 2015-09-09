@@ -3,13 +3,15 @@ package com.zezo.music;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zezo.music.domain.Song;
+
 import android.widget.Filter;
 
 public class SongFilter extends Filter {
 
-	private SongAdapter songAdapter;
+	private PlaylistAdapter songAdapter;
 
-	public SongFilter(SongAdapter songAdapter) {
+	public SongFilter(PlaylistAdapter songAdapter) {
 
 		this.songAdapter = songAdapter;
 

@@ -23,7 +23,7 @@
         android:label="@string/app_name"
         android:theme="@style/MyTheme" >
         <activity
-            android:name="com.zezo.music.MainActivity"
+            android:name="com.zezo.music.MusicPlayerActivity"
             android:configChanges="orientation|screenSize"
             android:label="Zezo"
             android:launchMode="singleTop"

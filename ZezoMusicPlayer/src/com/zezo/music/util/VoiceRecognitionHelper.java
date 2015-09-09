@@ -1,4 +1,4 @@
-package com.zezo.music;
+package com.zezo.music.util;
 
 import android.content.Intent;
 import android.speech.RecognizerIntent;

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
-import com.zezo.music.MediaButtonReceiver.MediaButtonReceiverListener;
+import com.zezo.music.domain.Song;
+import com.zezo.music.util.MediaButtonReceiver;
+import com.zezo.music.util.MediaButtonReceiver.MediaButtonReceiverListener;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -101,7 +103,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
 	private boolean shuffle = false;
 
-	private ArrayList<Song> songLibrary;
+	private ArrayList<Song> playlist;
 
 	private boolean isPlayerPrepared = false;
 
@@ -146,7 +148,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 	}
 
 	public Song getSongById(long songId) {
-		for (Song song : songLibrary) {
+		for (Song song : playlist) {
 			if (song.getId() == songId) {
 				return song;
 			}
@@ -155,7 +157,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 	}
 
 	public Song getSongByIndex(int index) {
-		return songLibrary.get(index);
+		return playlist.get(index);
 	}
 
 	public void initMusicPlayer() {
@@ -294,7 +296,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
 		mp.start();
 
-		Intent notIntent = new Intent(this, MainActivity.class);
+		Intent notIntent = new Intent(this, MusicPlayerActivity.class);
 		notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
 		PendingIntent pendInt = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -355,7 +357,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
 	public void playNext() {
 
-		if (songLibrary.size() <= 0)
+		if (playlist.size() <= 0)
 			return;
 
 		if (playQueue.size() > 0) {
@@ -368,37 +370,37 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
 		}
 
-		int songIndex = songLibrary.indexOf(getCurrentSong());
+		int songIndex = playlist.indexOf(getCurrentSong());
 
 		if (isShuffling()) {
 
-			int newSongIndex = rand.nextInt(songLibrary.size());
+			int newSongIndex = rand.nextInt(playlist.size());
 			long newSongId = getCurrentSong().getId();
 
 			while (newSongId == getCurrentSong().getId()) {
 
-				newSongIndex = rand.nextInt(songLibrary.size());
-				newSongId = songLibrary.get(newSongIndex).getId();
+				newSongIndex = rand.nextInt(playlist.size());
+				newSongId = playlist.get(newSongIndex).getId();
 
 			}
 
-			playSong(songLibrary.get(newSongIndex));
+			playSong(playlist.get(newSongIndex));
 
 		} else {
 
 			songIndex++;
 
-			if (songIndex >= songLibrary.size())
-				playSong(songLibrary.get(0));
+			if (songIndex >= playlist.size())
+				playSong(playlist.get(0));
 			else
-				playSong(songLibrary.get(songIndex));
+				playSong(playlist.get(songIndex));
 
 		}
 	}
 
 	public void playPrevious() {
 
-		if (songLibrary.size() <= 0 || history.size() <= 1)
+		if (playlist.size() <= 0 || history.size() <= 1)
 			return;
 
 		history.pollLast();
@@ -440,7 +442,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
 	public void removeFromPlaylist(Song song) {
 
-		songLibrary.remove(song);
+		playlist.remove(song);
 
 	}
 
@@ -460,8 +462,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 		this.currentSong = song;
 	}
 
-	public void setSongLibrary(ArrayList<Song> songs) {
-		this.songLibrary = songs;
+	public void setPlaylist(ArrayList<Song> songs) {
+		this.playlist = songs;
 		if (songs != null && songs.size() > 0)
 			setCurrentSong(songs.get(0));
 	}

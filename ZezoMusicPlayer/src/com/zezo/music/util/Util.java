@@ -1,4 +1,4 @@
-package com.zezo.music;
+package com.zezo.music.util;
 
 public class Util {
 
