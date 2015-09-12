@@ -1,6 +1,9 @@
-package com.zezo.music.tabs;
+package com.zezo.music;
 
 import com.zezo.music.R;
+import com.zezo.music.browser.Browser;
+import com.zezo.music.playlist.Playlist;
+import com.zezo.music.queue.Queue;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -11,14 +14,14 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 
 	private final Context context;
 	
-	private final PlaylistFragment playlistFragment;
+	private final Playlist playlistFragment;
 
 	public TabPagerAdapter(FragmentManager fragmentManager, Context context) {
 
 		super(fragmentManager);
 		this.context = context;
 		
-		playlistFragment = new PlaylistFragment();
+		playlistFragment = new Playlist();
 		playlistFragment.setRetainInstance(true);
 
 	}
@@ -33,7 +36,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 		case 1:
 			return playlistFragment;
 		case 2:
-			return new PlayQueue();
+			return new Queue();
 			
 		}
 		
@@ -65,7 +68,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 		return null;
 	}
 
-	public PlaylistFragment getPlaylistFragment() {
+	public Playlist getPlaylistFragment() {
 		return playlistFragment;
 	}
 

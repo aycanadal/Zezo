@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import com.zezo.music.MusicService.MusicBinder;
 import com.zezo.music.SearchFragment.SearchListener;
 import com.zezo.music.domain.Song;
-import com.zezo.music.tabs.PlaylistFragment;
-import com.zezo.music.tabs.TabPagerAdapter;
+import com.zezo.music.playlist.Playlist;
 import com.zezo.music.util.FolderSelector;
 import com.zezo.music.util.FolderSelector.MusicFolderUpdatedListener;
 import com.zezo.music.util.TypefaceSpan;
@@ -108,7 +107,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 			if (viewPager.getCurrentItem() == 1) {
 
-				PlaylistFragment playlistFragment = (PlaylistFragment) getSupportFragmentManager()
+				Playlist playlistFragment = (Playlist) getSupportFragmentManager()
 						.findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
 				playlistFragment.setCurrentSong(song);
 

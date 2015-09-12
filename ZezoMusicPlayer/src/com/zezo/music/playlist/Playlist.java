@@ -1,4 +1,4 @@
-package com.zezo.music.tabs;
+package com.zezo.music.playlist;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-public class PlaylistFragment extends Fragment implements SongClickListener, SearchListener {
+public class Playlist extends Fragment implements SongClickListener, SearchListener {
 
 	private ListView songListView;
 	private PlaylistAdapter songAdapter;

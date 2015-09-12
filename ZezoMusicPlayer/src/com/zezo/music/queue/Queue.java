@@ -1,4 +1,4 @@
-package com.zezo.music.tabs;
+package com.zezo.music.queue;
 import com.zezo.music.R;
 
 import android.os.Bundle;
@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
  
-public class Browser extends Fragment {
+public class Queue extends Fragment {
     @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
  
-            View android = inflater.inflate(R.layout.browser, container, false);
+            View android = inflater.inflate(R.layout.playqueue, container, false);
             
             return android;
 }}
