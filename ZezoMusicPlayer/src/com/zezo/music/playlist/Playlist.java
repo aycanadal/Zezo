@@ -3,11 +3,10 @@ package com.zezo.music.playlist;
 import java.util.ArrayList;
 
 import com.zezo.music.MusicPlayerActivity;
-import com.zezo.music.PlaylistAdapter;
-import com.zezo.music.PlaylistAdapter.SongClickListener;
 import com.zezo.music.R;
 import com.zezo.music.SearchFragment.SearchListener;
 import com.zezo.music.domain.Song;
+import com.zezo.music.playlist.PlaylistAdapter.SongClickListener;
 
 import android.app.Activity;
 import android.os.Bundle;

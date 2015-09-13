@@ -1,4 +1,4 @@
-package com.zezo.music;
+package com.zezo.music.playlist;
 
 import java.util.ArrayList;
 import java.util.List;

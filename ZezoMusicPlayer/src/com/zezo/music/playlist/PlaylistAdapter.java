@@ -1,7 +1,10 @@
-package com.zezo.music;
+package com.zezo.music.playlist;
 
 import java.util.ArrayList;
 
+import com.zezo.music.R;
+import com.zezo.music.R.id;
+import com.zezo.music.R.layout;
 import com.zezo.music.domain.Song;
 
 import android.content.Context;
