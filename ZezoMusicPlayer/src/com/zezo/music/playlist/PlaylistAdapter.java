@@ -3,8 +3,6 @@ package com.zezo.music.playlist;
 import java.util.ArrayList;
 
 import com.zezo.music.R;
-import com.zezo.music.R.id;
-import com.zezo.music.R.layout;
 import com.zezo.music.domain.Song;
 
 import android.content.Context;
@@ -48,7 +46,7 @@ public class PlaylistAdapter extends BaseAdapter implements Filterable {
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		Song song = getFilteredSongs().get(position);
-		
+
 		LinearLayout songLayout = (LinearLayout) songInflater.inflate(R.layout.song, parent, false);
 		TextView songView = (TextView) songLayout.findViewById(R.id.song_title);
 		TextView artistView = (TextView) songLayout.findViewById(R.id.song_artist);
@@ -65,17 +63,16 @@ public class PlaylistAdapter extends BaseAdapter implements Filterable {
 
 		if (checkedItemId > 0 && checkedItemId == itemId)
 			((ListView) parent).setItemChecked(position, true);
-		
-		
-		LinearLayout songClickableArea = (LinearLayout)songLayout.findViewById(R.id.song);
+
+		LinearLayout songClickableArea = (LinearLayout) songLayout.findViewById(R.id.song);
 		songClickableArea.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View view) {
-				
+
 				View item = (View) view.getParent();
 				int songIndex = Integer.parseInt(item.getTag().toString());
-				Song song = getItem(songIndex );
+				Song song = getItem(songIndex);
 				songClickListener.songClicked(song);
 
 			}

@@ -170,7 +170,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		initKeyboard();
 
-		tabPagerAdapter.getPlaylistFragment().setPlaylist(playlist);
+		tabPagerAdapter.getPlaylistFragment().setInitialPlaylist(playlist);
 
 		currentTitleView = (TextView) findViewById(R.id.currentTitle);
 		currentArtistView = (TextView) findViewById(R.id.currentArtist);

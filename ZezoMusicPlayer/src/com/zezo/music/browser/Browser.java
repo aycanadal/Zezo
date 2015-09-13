@@ -49,7 +49,10 @@ public class Browser extends Fragment implements FileClickListener {
 
 	@Override
 	public void fileClicked(File file) {
-		// TODO Auto-generated method stub
+
+		File[] files = getFolders(file.getAbsolutePath());
+		fileListAdapter = new FileListAdapter(getActivity(), files, this);
+		fileListView.setAdapter(fileListAdapter);		
 
 	}
 	

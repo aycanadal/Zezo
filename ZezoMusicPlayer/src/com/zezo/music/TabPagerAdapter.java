@@ -57,7 +57,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 		switch (position) {
 		
 		case 0:
-			return context.getString(R.string.Browser);
+			return context.getString(R.string.Folders);
 		case 1:
 			return context.getString(R.string.Playlist);
 		case 2:

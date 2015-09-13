@@ -57,7 +57,7 @@ public class Playlist extends Fragment implements SongClickListener, SearchListe
 
 	}
 
-	public void setPlaylist(ArrayList<Song> songs) {
+	public void setInitialPlaylist(ArrayList<Song> songs) {
 
 		initialPlaylist = songs;
 
