@@ -61,7 +61,8 @@ import android.widget.Toast;
 public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteConfirmedListener, SearchListener {
 
 	public static final String PACKAGE_NAME = "com.zezo.music";
-	public static final String KEY_DIRECTORY_SELECTED = PACKAGE_NAME + ".DIRECTORY_SELECTED";
+	public static final String KEY_DIRECTORY_SELECTED = MusicPlayerActivity.PACKAGE_NAME + ".DIRECTORY_SELECTED";
+	
 
 	private TabPagerAdapter tabPagerAdapter;
 	private ViewPager viewPager;

@@ -44,14 +44,12 @@ public class PlaylistAdapter extends BaseAdapter implements Filterable {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
+		Song song = getFilteredSongs().get(position);
+		
 		LinearLayout songLayout = (LinearLayout) songInflater.inflate(R.layout.song, parent, false);
-
 		TextView songView = (TextView) songLayout.findViewById(R.id.song_title);
 		TextView artistView = (TextView) songLayout.findViewById(R.id.song_artist);
 		TextView durationView = (TextView) songLayout.findViewById(R.id.songDuration);
-
-		Song song = getFilteredSongs().get(position);
-
 		songView.setText(song.getTitle());
 		artistView.setText(song.getArtist());
 		durationView.setText(song.getDuration());
