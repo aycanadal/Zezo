@@ -1,9 +1,9 @@
 package com.zezo.music;
 
 import com.zezo.music.R;
-import com.zezo.music.browser.Browser;
-import com.zezo.music.playlist.Playlist;
-import com.zezo.music.queue.Queue;
+import com.zezo.music.tabs.browser.Browser;
+import com.zezo.music.tabs.playlist.Playlist;
+import com.zezo.music.tabs.queue.Queue;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;

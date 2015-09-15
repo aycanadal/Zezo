@@ -4,10 +4,9 @@ import java.util.ArrayList;
 
 import com.zezo.music.MusicService.MusicBinder;
 import com.zezo.music.SearchFragment.SearchListener;
-import com.zezo.music.browser.Browser;
 import com.zezo.music.domain.Song;
-import com.zezo.music.playlist.Playlist;
-import com.zezo.music.util.TypefaceSpan;
+import com.zezo.music.tabs.browser.Browser;
+import com.zezo.music.tabs.playlist.Playlist;
 import com.zezo.music.util.Util;
 import com.zezo.music.util.YesNoDialogFragment;
 import com.zezo.music.util.YesNoDialogFragment.OnDeleteConfirmedListener;
@@ -25,7 +24,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,17 +34,11 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AudioColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.RelativeSizeSpan;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
@@ -57,7 +49,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteConfirmedListener, SearchListener {
+public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteConfirmedListener {
 
 	public static final String PACKAGE_NAME = "com.zezo.music";
 	public static final String KEY_DIRECTORY_SELECTED = MusicPlayerActivity.PACKAGE_NAME + ".DIRECTORY_SELECTED";
@@ -67,7 +59,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 	private SharedPreferences sharedPreferences;
 	private TextView currentArtistView;
 	private TextView currentTitleView;
-	private Menu menu;
 	private FrameLayout controllerFrame;
 	private MusicController musicController;
 	private MusicService musicService;
@@ -118,7 +109,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		}
 	};
 
-	private final SearchFragment searchFragment = new SearchFragment();;
 	private ArrayList<Song> playlist;
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -128,11 +118,14 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		/*SpannableString s = new SpannableString("Zezo");
-		s.setSpan(new TypefaceSpan(this, "electrical.ttf"), 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		s.setSpan(new RelativeSizeSpan(0.6f), 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		final ActionBar actionBar = getSupportActionBar();
-		actionBar.setTitle(s);*/
+		/*
+		 * SpannableString s = new SpannableString("Zezo"); s.setSpan(new
+		 * TypefaceSpan(this, "electrical.ttf"), 0, s.length(),
+		 * Spanned.SPAN_EXCLUSIVE_EXCLUSIVE); s.setSpan(new
+		 * RelativeSizeSpan(0.6f), 0, s.length(),
+		 * Spanned.SPAN_EXCLUSIVE_EXCLUSIVE); final ActionBar actionBar =
+		 * getSupportActionBar(); actionBar.setTitle(s);
+		 */
 
 		sharedPreferences = getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
 		String musicFolder = sharedPreferences.getString(KEY_DIRECTORY_SELECTED,
@@ -146,21 +139,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		viewPager.setCurrentItem(1);
 
 		initMusicService();
-
-		if (findViewById(R.id.searchContainer) != null) {
-
-			if (savedInstanceState != null) {
-				return;
-			}
-
-			searchFragment.setArguments(getIntent().getExtras());
-
-			getSupportFragmentManager().beginTransaction().add(R.id.searchContainer, searchFragment, "searchFragment")
-					.commit();
-
-			FragmentManager fm = getSupportFragmentManager();
-			fm.beginTransaction().hide(searchFragment).commit();
-		}
 
 		controllerFrame = (FrameLayout) findViewById(R.id.controllerFrame);
 		musicController = new MusicController(this);
@@ -213,29 +191,12 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 	}
 
-	private void hideController() {
-
-		musicController.setVisibility(View.GONE);
-		musicController.hideSuper();
-		controllerFrame.setVisibility(View.GONE);
-
-	}
-
 	private void hideKeyboard() {
 
 		InputMethodManager inputMethodManager = (InputMethodManager) this
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		inputMethodManager.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0);
-
-	}
-
-	private void hideSearch() {
-
-		searchFragment.hide(getSupportFragmentManager(),
-				(InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE));
-
-		showController();
 
 	}
 
@@ -272,8 +233,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		// super.onBackPressed();
 
-		if (searchFragment.isOn())
-			hideSearch();
+		// if (searchFragment.isOn())
+		// hideSearch();
 	}
 
 	@Override
@@ -310,15 +271,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 			}
 		});
-
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		this.menu = menu;
-		getMenuInflater().inflate(R.menu.playlist, menu);
-		return true;
 
 	}
 
@@ -366,7 +318,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		switch (item.getItemId()) {
 
 		case R.id.action_set_folder:
-			
 			Browser browser = tabPagerAdapter.getBrowserFragment();
 			String musicFolderPath = browser.getCurrentFolderPath();
 
@@ -375,34 +326,19 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 			playlist = getAllSongsInFolder(musicFolderPath);
 			tabPagerAdapter.getPlaylistFragment().loadPlaylist(playlist);
-
 			sharedPreferences.edit().putString(KEY_DIRECTORY_SELECTED, musicFolderPath).commit();
-
 			break;
 
 		case R.id.action_shuffle:
-
 			toggleShuffle();
 			break;
 
 		case R.id.action_exit:
-
 			showExitDialog();
 			break;
 
 		case R.id.action_search:
-
-			if (searchFragment.isVisible()) {
-
-				hideSearch();
-
-			} else {
-
-				showSearch();
-
-			}
-
-			break;
+			return false;
 
 		}
 
@@ -416,14 +352,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 			musicService.playSong(song);
 			Toast.makeText(this, "Playing.", Toast.LENGTH_SHORT).show();
 		}
-
-	}
-
-	private void showController() {
-
-		musicController.show(0);
-		musicController.setVisibility(View.VISIBLE);
-		controllerFrame.setVisibility(View.VISIBLE);
 
 	}
 
@@ -453,28 +381,9 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 	}
 
-	private void showSearch() {
-
-		hideController();
-
-		searchFragment.show(getSupportFragmentManager(),
-				(InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE));
-	}
-
 	private void toggleShuffle() {
 
-		Drawable shuffleIcon;
-		MenuItem item = menu.findItem(R.id.action_shuffle);
-
-		if (musicService.isShuffling()) {
-			shuffleIcon = getResources().getDrawable(R.drawable.shufflegrey40);
-			Toast.makeText(this, "Shuffle is now off.", Toast.LENGTH_SHORT).show();
-		} else {
-			shuffleIcon = getResources().getDrawable(R.drawable.shufflewhite40);
-			Toast.makeText(this, "Shuffle is now on.", Toast.LENGTH_SHORT).show();
-		}
-
-		item.setIcon(shuffleIcon);
+		tabPagerAdapter.getPlaylistFragment().setShuffle(musicService.isShuffling());
 		musicService.toggleShuffle();
 	}
 
@@ -493,12 +402,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		stopService(musicServiceIntent);
 		musicService = null;
 		System.exit(0);
-
-	}
-
-	@Override
-	public void onSearchTextChanged(CharSequence cs) {
-		tabPagerAdapter.getPlaylistFragment().onSearchTextChanged(cs);
 
 	}
 

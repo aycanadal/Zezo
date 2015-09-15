@@ -1,8 +1,8 @@
-package com.zezo.music.browser;
+package com.zezo.music.tabs.browser;
 
 import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.R;
-import com.zezo.music.browser.FileListAdapter.FileClickListener;
+import com.zezo.music.tabs.browser.FileListAdapter.FileClickListener;
 
 import android.app.Activity;
 import android.content.Context;
@@ -42,11 +42,11 @@ public class Browser extends Fragment implements FileClickListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+		setHasOptionsMenu(true);
+		
 		View browserView = inflater.inflate(R.layout.browser, container, false);
 		fileListView = (ListView) browserView.findViewById(R.id.filelist);
 		fileListView.setAdapter(fileListAdapter);
-		
-		setHasOptionsMenu(true);
 
 		return browserView;
 	}

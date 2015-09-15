@@ -1,4 +1,4 @@
-package com.zezo.music.browser;
+package com.zezo.music.tabs.browser;
 
 import java.io.File;
 import java.io.FilenameFilter;

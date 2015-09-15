@@ -4,13 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    <FrameLayout
-        android:id="@+id/searchContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </FrameLayout>
-
+   
     <include
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -20,7 +14,9 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="0dp"
+        android:layout_weight=".95"
+         >
 
         <android.support.v4.view.PagerTabStrip
             android:id="@+id/pager_title_strip"

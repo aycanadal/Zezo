@@ -1,4 +1,4 @@
-package com.zezo.music.queue;
+package com.zezo.music.tabs.queue;
 import com.zezo.music.R;
 
 import android.os.Bundle;

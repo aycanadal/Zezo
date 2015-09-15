@@ -2,6 +2,7 @@ package com.zezo.music;
 
 import java.util.ArrayList;
 
+import com.zezo.music.R;
 import com.zezo.music.util.VoiceRecognitionHelper;
 
 import android.app.Activity;
@@ -76,7 +77,7 @@ public class SearchFragment extends Fragment {
 		super.onAttach(activity);
 
 		try {
-			searchListener = (SearchListener) activity;
+			searchListener = (SearchListener) getParentFragment();
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
 					+ " must implement SearchListener");
