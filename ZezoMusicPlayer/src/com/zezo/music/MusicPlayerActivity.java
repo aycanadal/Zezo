@@ -128,11 +128,11 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		SpannableString s = new SpannableString("Zezo");
+		/*SpannableString s = new SpannableString("Zezo");
 		s.setSpan(new TypefaceSpan(this, "electrical.ttf"), 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		s.setSpan(new RelativeSizeSpan(0.6f), 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		final ActionBar actionBar = getSupportActionBar();
-		actionBar.setTitle(s);
+		actionBar.setTitle(s);*/
 
 		sharedPreferences = getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
 		String musicFolder = sharedPreferences.getString(KEY_DIRECTORY_SELECTED,
