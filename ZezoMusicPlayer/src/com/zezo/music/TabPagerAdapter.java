@@ -14,15 +14,19 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 
 	private final Context context;
 	
-	private final Playlist playlistFragment;
+	private final Playlist playlist;
+	private final Browser browser;
 
 	public TabPagerAdapter(FragmentManager fragmentManager, Context context) {
 
 		super(fragmentManager);
 		this.context = context;
 		
-		playlistFragment = new Playlist();
-		playlistFragment.setRetainInstance(true);
+		playlist = new Playlist();
+		playlist.setRetainInstance(true);
+		
+		browser = new Browser();
+		browser.setRetainInstance(true);
 
 	}
 
@@ -32,9 +36,9 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 		switch (i) {
 
 		case 0:
-			return new Browser();
+			return browser;
 		case 1:
-			return playlistFragment;
+			return playlist;
 		case 2:
 			return new Queue();
 			
@@ -69,7 +73,11 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 	}
 
 	public Playlist getPlaylistFragment() {
-		return playlistFragment;
+		return playlist;
+	}
+
+	public Browser getBrowserFragment() {
+		return browser;
 	}
 
 }

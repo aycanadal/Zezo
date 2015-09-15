@@ -4,10 +4,9 @@ import java.util.ArrayList;
 
 import com.zezo.music.MusicService.MusicBinder;
 import com.zezo.music.SearchFragment.SearchListener;
+import com.zezo.music.browser.Browser;
 import com.zezo.music.domain.Song;
 import com.zezo.music.playlist.Playlist;
-import com.zezo.music.util.FolderSelector;
-import com.zezo.music.util.FolderSelector.MusicFolderUpdatedListener;
 import com.zezo.music.util.TypefaceSpan;
 import com.zezo.music.util.Util;
 import com.zezo.music.util.YesNoDialogFragment;
@@ -62,7 +61,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 	public static final String PACKAGE_NAME = "com.zezo.music";
 	public static final String KEY_DIRECTORY_SELECTED = MusicPlayerActivity.PACKAGE_NAME + ".DIRECTORY_SELECTED";
-	
 
 	private TabPagerAdapter tabPagerAdapter;
 	private ViewPager viewPager;
@@ -319,7 +317,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		this.menu = menu;
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.playlist, menu);
 		return true;
 
 	}
@@ -368,27 +366,17 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		switch (item.getItemId()) {
 
 		case R.id.action_set_folder:
+			
+			Browser browser = tabPagerAdapter.getBrowserFragment();
+			String musicFolderPath = browser.getCurrentFolderPath();
 
-			Toast.makeText(this, "Select music folder.", Toast.LENGTH_SHORT).show();
-			FolderSelector folderSelector = new FolderSelector();
-			String musicFolder = sharedPreferences.getString(KEY_DIRECTORY_SELECTED,
-					Environment.getExternalStorageDirectory().toString());
-			folderSelector.showFileListDialog(musicFolder, MusicPlayerActivity.this);
+			Toast.makeText(MusicPlayerActivity.this, "Selected music folder:" + musicFolderPath, Toast.LENGTH_SHORT)
+					.show();
 
-			folderSelector.setDialogResult(new MusicFolderUpdatedListener() {
-				@Override
-				public void onMusicFolderUpdated(String musicFolderPath) {
+			playlist = getAllSongsInFolder(musicFolderPath);
+			tabPagerAdapter.getPlaylistFragment().loadPlaylist(playlist);
 
-					Toast.makeText(MusicPlayerActivity.this, "Selected music folder:" + musicFolderPath,
-							Toast.LENGTH_SHORT).show();
-
-					playlist = getAllSongsInFolder(musicFolderPath);
-					tabPagerAdapter.getPlaylistFragment().loadPlaylist(playlist);
-
-					sharedPreferences.edit().putString(KEY_DIRECTORY_SELECTED, musicFolderPath).commit();
-
-				}
-			});
+			sharedPreferences.edit().putString(KEY_DIRECTORY_SELECTED, musicFolderPath).commit();
 
 			break;
 
@@ -495,7 +483,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
 			tabPagerAdapter.getPlaylistFragment().scrollToCurrent();
-		
+
 	}
 
 	private void exit() {
@@ -511,7 +499,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 	@Override
 	public void onSearchTextChanged(CharSequence cs) {
 		tabPagerAdapter.getPlaylistFragment().onSearchTextChanged(cs);
-		
+
 	}
 
 }
