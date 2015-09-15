@@ -1,8 +1,5 @@
 package com.zezo.music.browser;
 
-import java.io.File;
-import java.io.FilenameFilter;
-
 import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.R;
 import com.zezo.music.browser.FileListAdapter.FileClickListener;
@@ -30,10 +27,10 @@ public class Browser extends Fragment implements FileClickListener {
 
 		sharedPreferences = activity.getSharedPreferences(MusicPlayerActivity.PACKAGE_NAME, Context.MODE_PRIVATE);
 
-		String musicFolder = sharedPreferences.getString(MusicPlayerActivity.KEY_DIRECTORY_SELECTED,
+		String folderPath = sharedPreferences.getString(MusicPlayerActivity.KEY_DIRECTORY_SELECTED,
 				Environment.getExternalStorageDirectory().toString());
 
-		fileListAdapter = new FileListAdapter(getActivity(), getFolders(musicFolder), this);
+		fileListAdapter = new FileListAdapter(getActivity(), folderPath, this);
 
 	}
 
@@ -48,35 +45,11 @@ public class Browser extends Fragment implements FileClickListener {
 	}
 
 	@Override
-	public void fileClicked(File file) {
+	public void folderClicked(Folder folder) {
 
-		File[] files = getFolders(file.getAbsolutePath());
-		fileListAdapter = new FileListAdapter(getActivity(), files, this);
+		fileListAdapter = new FileListAdapter(getActivity(), folder.getAbsolutePath(), this);
 		fileListView.setAdapter(fileListAdapter);		
 
-	}
-	
-	private File[] getFolders(String directory) {
-
-		File path = new File(directory);
-
-		if (path.exists()) {
-			FilenameFilter filter = new FilenameFilter() {
-				public boolean accept(File dir, String filename) {
-					// add some filters here, for now return true to see all
-					// files
-					File file = new File(dir, filename);
-					// return filename.contains(".txt") || file.isDirectory();
-					return file.isDirectory();
-				}
-			};
-
-			// if null return an empty array instead
-			File[] list = path.listFiles(filter);
-			return list == null ? new File[0] : list;
-		} else {
-			return new File[0];
-		}
 	}
 	
 }
