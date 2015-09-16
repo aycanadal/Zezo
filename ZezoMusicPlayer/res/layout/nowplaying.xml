@@ -5,6 +5,11 @@
     android:background="#000000"
     android:orientation="vertical"
     android:windowSoftInputMode="adjustPan" >
+    
+     <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/White" />
 
     <TextView
         android:id="@+id/currentTitle"
@@ -24,10 +29,15 @@
         android:onClick="scrollToCurrent"
         android:textColor="@color/gray"
         android:textSize="14sp" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/DarkRed" />
+    
+    <FrameLayout
+        android:id="@+id/controllerFrame"
+        android:layout_width="fill_parent"
+        android:layout_height="75dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:windowSoftInputMode="stateHidden" >
+    </FrameLayout>
 
 </LinearLayout>

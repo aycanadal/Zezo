@@ -3,7 +3,6 @@ package com.zezo.music;
 import java.util.ArrayList;
 
 import com.zezo.music.MusicService.MusicBinder;
-import com.zezo.music.SearchFragment.SearchListener;
 import com.zezo.music.domain.Song;
 import com.zezo.music.tabs.browser.Browser;
 import com.zezo.music.tabs.playlist.Playlist;

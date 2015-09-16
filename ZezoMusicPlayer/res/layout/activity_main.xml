@@ -1,22 +1,16 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-   
-    <include
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/playing" />
+    android:layout_alignParentTop="true" >
 
     <android.support.v4.view.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".95"
-         >
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/nowplaying" >
 
         <android.support.v4.view.PagerTabStrip
             android:id="@+id/pager_title_strip"
@@ -28,15 +22,12 @@
             android:paddingTop="5dp"
             android:textColor="#fff" />
     </android.support.v4.view.ViewPager>
-    
-     <FrameLayout
-        android:id="@+id/controllerFrame"
-        android:layout_width="fill_parent"
-        android:layout_height="75dp"
-        android:clickable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:windowSoftInputMode="stateHidden" >
-    </FrameLayout>
 
-</LinearLayout>
+    <fragment
+        android:id="@+id/nowplaying"
+        android:name="com.zezo.music.NowPlayingFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>
