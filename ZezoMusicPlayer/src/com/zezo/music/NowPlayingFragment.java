@@ -37,6 +37,7 @@ public class NowPlayingFragment extends Fragment {
 
 		musicController.init(musicService);
 		musicController.setMusicBound(true);
+		musicController.show(0);
 		
 	}
 
@@ -50,7 +51,6 @@ public class NowPlayingFragment extends Fragment {
 
 		currentArtistView.setText(song.getArtist());
 		currentTitleView.setText(song.getTitle());
-		musicController.show(0);
 		
 	}
 
