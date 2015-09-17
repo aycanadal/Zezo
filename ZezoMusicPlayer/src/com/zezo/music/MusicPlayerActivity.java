@@ -23,6 +23,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,10 +43,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.FrameLayout;
-import android.widget.TextView;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteConfirmedListener {
@@ -53,13 +54,10 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 	public static final String PACKAGE_NAME = "com.zezo.music";
 	public static final String KEY_DIRECTORY_SELECTED = MusicPlayerActivity.PACKAGE_NAME + ".DIRECTORY_SELECTED";
 
+	private NowPlayingFragment nowPlayingFragment;
 	private TabPagerAdapter tabPagerAdapter;
 	private ViewPager viewPager;
 	private SharedPreferences sharedPreferences;
-	private TextView currentArtistView;
-	private TextView currentTitleView;
-	private FrameLayout controllerFrame;
-	private MusicController musicController;
 	private MusicService musicService;
 	private ServiceConnection musicServiceConnection = new ServiceConnection() {
 
@@ -69,15 +67,14 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 			MusicBinder binder = (MusicBinder) service;
 			musicService = binder.getService();
 			musicService.setPlaylist(playlist);
-			musicController.init(musicService);
-			musicController.setMusicBound(true);
+			nowPlayingFragment.initController(musicService);
 
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 
-			musicController.setMusicBound(false);
+			nowPlayingFragment.unbindController();
 
 		}
 	};
@@ -91,8 +88,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 				return;
 
 			Song song = musicService.getCurrentSong();
-			currentArtistView.setText(song.getArtist());
-			currentTitleView.setText(song.getTitle());
+
+			nowPlayingFragment.setCurrentSong(song);
 
 			if (viewPager.getCurrentItem() == 1) {
 
@@ -102,7 +99,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 			}
 
-			musicController.show(0);
 			musicService.setPlayerPrepared(true);
 
 		}
@@ -117,15 +113,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		/*
-		 * SpannableString s = new SpannableString("Zezo"); s.setSpan(new
-		 * TypefaceSpan(this, "electrical.ttf"), 0, s.length(),
-		 * Spanned.SPAN_EXCLUSIVE_EXCLUSIVE); s.setSpan(new
-		 * RelativeSizeSpan(0.6f), 0, s.length(),
-		 * Spanned.SPAN_EXCLUSIVE_EXCLUSIVE); final ActionBar actionBar =
-		 * getSupportActionBar(); actionBar.setTitle(s);
-		 */
-
 		sharedPreferences = getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
 		String musicFolder = sharedPreferences.getString(KEY_DIRECTORY_SELECTED,
 				Environment.getExternalStorageDirectory().toString());
@@ -139,16 +126,34 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		initMusicService();
 
-		controllerFrame = (FrameLayout) findViewById(R.id.controllerFrame);
-		musicController = new MusicController(this);
-		musicController.setAnchorView(controllerFrame);
-
 		initKeyboard();
 
+		nowPlayingFragment = (NowPlayingFragment) getSupportFragmentManager().findFragmentById(R.id.nowplaying);
+		nowPlayingFragment.setRetainInstance(true);
 		tabPagerAdapter.getPlaylistFragment().setInitialPlaylist(playlist);
 
-		currentTitleView = (TextView) findViewById(R.id.currentTitle);
-		currentArtistView = (TextView) findViewById(R.id.currentArtist);
+		ImageButton nowPlayingToggle = (ImageButton) findViewById(R.id.nowPlayingToggle);
+
+		nowPlayingToggle.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View nowPlayingToggle) {
+
+				if (nowPlayingFragment.isVisible()) {
+
+					((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsup);
+					nowPlayingFragment.hide();
+
+				} else {
+
+					((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsdown);
+					nowPlayingFragment.show();
+
+				}
+
+			}
+
+		});
 
 	}
 
@@ -230,10 +235,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 	@Override
 	public void onBackPressed() {
 
-		// super.onBackPressed();
-
-		// if (searchFragment.isOn())
-		// hideSearch();
 	}
 
 	@Override

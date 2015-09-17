@@ -20,9 +20,9 @@ public class FileListAdapter extends BaseAdapter {
 
 	private ArrayList<Folder> fileItems;
 	private LayoutInflater inflater;
-	private FileClickListener fileClickListener;
+	private FolderClickListener fileClickListener;
 
-	public FileListAdapter(Context c, String folderPath, FileClickListener fileClickListener) {
+	public FileListAdapter(Context c, String folderPath, FolderClickListener fileClickListener) {
 
 		inflater = LayoutInflater.from(c);
 		
@@ -44,7 +44,7 @@ public class FileListAdapter extends BaseAdapter {
 
 	}
 
-	public interface FileClickListener {
+	public interface FolderClickListener {
 
 		void folderClicked(Folder folder);
 

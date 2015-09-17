@@ -2,7 +2,7 @@ package com.zezo.music.tabs.browser;
 
 import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.R;
-import com.zezo.music.tabs.browser.FileListAdapter.FileClickListener;
+import com.zezo.music.tabs.browser.FileListAdapter.FolderClickListener;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,7 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-public class Browser extends Fragment implements FileClickListener {
+public class Browser extends Fragment implements FolderClickListener {
 
 	private SharedPreferences sharedPreferences;
 	private ListView fileListView;
