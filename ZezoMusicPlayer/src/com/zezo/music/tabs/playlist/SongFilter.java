@@ -65,8 +65,7 @@ public class SongFilter extends Filter {
 	}
 
 	@Override
-	protected void publishResults(CharSequence charSequence,
-			FilterResults filterResults) {
+	protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
 
 		songAdapter.setFilteredSongs((ArrayList<Song>) filterResults.values);
 		songAdapter.notifyDataSetChanged();

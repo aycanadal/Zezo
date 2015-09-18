@@ -34,7 +34,7 @@ public class Browser extends Fragment implements FolderClickListener {
 				Environment.getExternalStorageDirectory().toString());
 
 		fileListAdapter = new FileListAdapter(getActivity(), preferredFolderPath, this);
-		
+
 		currentFolderPath = preferredFolderPath;
 
 	}
@@ -43,20 +43,20 @@ public class Browser extends Fragment implements FolderClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		setHasOptionsMenu(true);
-		
+
 		View browserView = inflater.inflate(R.layout.browser, container, false);
 		fileListView = (ListView) browserView.findViewById(R.id.filelist);
 		fileListView.setAdapter(fileListAdapter);
 
 		return browserView;
 	}
-	
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		
+
 		menu.clear();
 		inflater.inflate(R.menu.browser, menu);
-		super.onCreateOptionsMenu(menu,inflater);
+		super.onCreateOptionsMenu(menu, inflater);
 
 	}
 
@@ -64,13 +64,13 @@ public class Browser extends Fragment implements FolderClickListener {
 	public void folderClicked(Folder folder) {
 
 		fileListAdapter = new FileListAdapter(getActivity(), folder.getAbsolutePath(), this);
-		fileListView.setAdapter(fileListAdapter);		
+		fileListView.setAdapter(fileListAdapter);
 		currentFolderPath = folder.getAbsolutePath();
 
 	}
-	
+
 	public String getCurrentFolderPath() {
 		return currentFolderPath;
 	}
-	
+
 }

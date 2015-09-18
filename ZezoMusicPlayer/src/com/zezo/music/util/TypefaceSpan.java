@@ -15,8 +15,7 @@ import android.text.style.MetricAffectingSpan;
  */
 public class TypefaceSpan extends MetricAffectingSpan {
 	/** An <code>LruCache</code> for previously loaded typefaces. */
-	private static LruCache<String, Typeface> sTypefaceCache = new LruCache<String, Typeface>(
-			12);
+	private static LruCache<String, Typeface> sTypefaceCache = new LruCache<String, Typeface>(12);
 
 	private Typeface mTypeface;
 
@@ -27,9 +26,8 @@ public class TypefaceSpan extends MetricAffectingSpan {
 		mTypeface = sTypefaceCache.get(typefaceName);
 
 		if (mTypeface == null) {
-			mTypeface = Typeface.createFromAsset(context
-					.getApplicationContext().getAssets(), String.format(
-					"fonts/%s", typefaceName));
+			mTypeface = Typeface.createFromAsset(context.getApplicationContext().getAssets(),
+					String.format("fonts/%s", typefaceName));
 
 			// Cache the loaded Typeface
 			sTypefaceCache.put(typefaceName, mTypeface);

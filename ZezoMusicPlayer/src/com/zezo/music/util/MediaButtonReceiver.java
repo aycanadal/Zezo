@@ -17,15 +17,13 @@ public class MediaButtonReceiver extends BroadcastReceiver {
 
 	private static ArrayList<MediaButtonReceiverListener> listeners = new ArrayList<MediaButtonReceiverListener>();
 
-	public static void addBroadcastReceiveListener(
-			MediaButtonReceiverListener listener) {
+	public static void addBroadcastReceiveListener(MediaButtonReceiverListener listener) {
 		if (!listeners.contains(listener)) {
 			listeners.add(listener);
 		}
 	}
 
-	public static void removeBroadcastReceiveListener(
-			MediaButtonReceiverListener listener) {
+	public static void removeBroadcastReceiveListener(MediaButtonReceiverListener listener) {
 		if (listeners.contains(listener)) {
 			listeners.remove(listener);
 		}
@@ -36,8 +34,7 @@ public class MediaButtonReceiver extends BroadcastReceiver {
 
 		if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
 
-			KeyEvent event = (KeyEvent) intent
-					.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+			KeyEvent event = (KeyEvent) intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
 
 			Log.i("Media Button Received", Integer.toString(event.getKeyCode()));
 

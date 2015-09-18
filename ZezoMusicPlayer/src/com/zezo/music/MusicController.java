@@ -5,8 +5,7 @@ import android.view.View;
 import android.widget.MediaController;
 import android.widget.MediaController.MediaPlayerControl;
 
-public class MusicController extends MediaController implements
-		MediaPlayerControl {
+public class MusicController extends MediaController implements MediaPlayerControl {
 
 	private boolean isMusicBound = false;
 	private MusicService musicService;

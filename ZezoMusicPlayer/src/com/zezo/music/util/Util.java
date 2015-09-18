@@ -15,8 +15,7 @@ public class Util {
 		int seconds = totalSeconds % 60;
 		int minutes = totalSeconds / 60;
 
-		return getNumberWithLeadingZero(minutes) + ":"
-				+ getNumberWithLeadingZero(seconds);
+		return getNumberWithLeadingZero(minutes) + ":" + getNumberWithLeadingZero(seconds);
 	}
 
 }

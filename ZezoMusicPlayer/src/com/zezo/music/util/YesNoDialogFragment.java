@@ -29,20 +29,19 @@ public class YesNoDialogFragment extends DialogFragment {
 
 	@Override
 	public void onAttach(Activity activity) {
-		
+
 		super.onAttach(activity);
-		
+
 		try {
-			
+
 			onDeleteConfirmedListener = (OnDeleteConfirmedListener) activity;
-			
+
 		} catch (ClassCastException e) {
-			
-			throw new ClassCastException(activity.toString()
-					+ " must implement OnDeleteConfirmedListener");
-			
+
+			throw new ClassCastException(activity.toString() + " must implement OnDeleteConfirmedListener");
+
 		}
-		
+
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
@@ -53,27 +52,19 @@ public class YesNoDialogFragment extends DialogFragment {
 		String message = args.getString("message", "");
 		final long songId = args.getLong("songId");
 
-		return new AlertDialog.Builder(getActivity())
-				.setTitle(title)
-				.setMessage(message)
-				.setPositiveButton(android.R.string.yes,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
+		return new AlertDialog.Builder(getActivity()).setTitle(title).setMessage(message)
+				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
 
-								onDeleteConfirmedListener
-										.onDeleteConfirmed(songId);
+						onDeleteConfirmedListener.onDeleteConfirmed(songId);
 
-							}
-						})
-				.setNegativeButton(android.R.string.no,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
+					}
+				}).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
 
-							}
-						}).create();
+					}
+				}).create();
 	}
 }

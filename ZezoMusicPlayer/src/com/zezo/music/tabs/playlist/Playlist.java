@@ -50,7 +50,7 @@ public class Playlist extends Fragment implements SongClickListener, SearchListe
 		songListView.setAdapter(songAdapter);
 		registerForContextMenu(songListView);
 
-		searchFragment = (SearchFragment)getChildFragmentManager().findFragmentById(R.id.search);
+		searchFragment = (SearchFragment) getChildFragmentManager().findFragmentById(R.id.search);
 		getChildFragmentManager().beginTransaction().hide(searchFragment).commit();
 
 		return playlistView;

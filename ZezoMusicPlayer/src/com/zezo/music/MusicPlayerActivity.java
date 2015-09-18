@@ -23,7 +23,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -320,6 +319,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		switch (item.getItemId()) {
 
 		case R.id.action_set_folder:
+
 			Browser browser = tabPagerAdapter.getBrowserFragment();
 			String musicFolderPath = browser.getCurrentFolderPath();
 
@@ -332,10 +332,12 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 			break;
 
 		case R.id.action_shuffle:
+
 			toggleShuffle();
 			break;
 
 		case R.id.action_exit:
+
 			showExitDialog();
 			break;
 

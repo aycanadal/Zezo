@@ -25,21 +25,21 @@ public class FileListAdapter extends BaseAdapter {
 	public FileListAdapter(Context c, String folderPath, FolderClickListener fileClickListener) {
 
 		inflater = LayoutInflater.from(c);
-		
-		fileItems = new ArrayList<Folder>();	
-		
+
+		fileItems = new ArrayList<Folder>();
+
 		if (!folderPath.equals("/")) {
-			
-			Folder parentFolder = new Folder(new File(getParentFolder(folderPath))); 
+
+			Folder parentFolder = new Folder(new File(getParentFolder(folderPath)));
 			parentFolder.setDisplayName("..");
 			fileItems.add(parentFolder);
-			
+
 		}
-		
+
 		for (File file : getFolders(folderPath)) {
-		   this.fileItems.add(new Folder(file));
+			this.fileItems.add(new Folder(file));
 		}
-		
+
 		this.fileClickListener = fileClickListener;
 
 	}
@@ -124,7 +124,7 @@ public class FileListAdapter extends BaseAdapter {
 	}
 
 	public String getParentFolder(String folder) {
-		
+
 		String[] dirs = folder.split("/");
 		StringBuilder stringBuilder = new StringBuilder("");
 
