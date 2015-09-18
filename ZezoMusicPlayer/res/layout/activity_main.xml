@@ -28,7 +28,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/arrowsdown"
         android:layout_above="@+id/nowplaying"
-        android:layout_alignWithParentIfMissing="true" />
+        android:layout_alignWithParentIfMissing="true"
+        android:background="@color/Black" />
 
     <fragment
         android:id="@+id/nowplaying"
