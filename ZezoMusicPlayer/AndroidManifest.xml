@@ -19,12 +19,13 @@
 
     <application
         android:allowBackup="true"
-        android:label=""
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
         android:theme="@style/MyTheme" >
         <activity
             android:name="com.zezo.music.MusicPlayerActivity"
             android:configChanges="orientation|screenSize"
-            android:label=""
+            android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor"
             android:windowSoftInputMode="stateHidden" >

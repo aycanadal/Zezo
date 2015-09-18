@@ -112,6 +112,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setIcon(R.drawable.ic_launcher);
+		getSupportActionBar().setTitle("");
 		setContentView(R.layout.activity_main);
 
 		sharedPreferences = getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
