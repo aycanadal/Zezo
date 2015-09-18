@@ -12,7 +12,7 @@ public class Queue extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		View android = inflater.inflate(R.layout.playqueue, container, false);
+		View android = inflater.inflate(R.layout.queue, container, false);
 
 		return android;
 	}

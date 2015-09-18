@@ -4,8 +4,7 @@
     android:layout_height="fill_parent"
     android:background="#000000"
     android:orientation="vertical"
-    android:windowSoftInputMode="adjustPan"
-    tools:context=".MusicPlayerActivity" >
+    android:windowSoftInputMode="adjustPan">
 
     <ListView
         android:id="@+id/filelist"
