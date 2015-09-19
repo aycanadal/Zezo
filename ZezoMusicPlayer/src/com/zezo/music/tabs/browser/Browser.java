@@ -24,6 +24,7 @@ public class Browser extends Fragment implements FolderClickListener {
 	private FileListAdapter fileListAdapter;
 	private String currentFolderPath;
 
+	@Override
 	public void onAttach(Activity activity) {
 
 		super.onAttach(activity);

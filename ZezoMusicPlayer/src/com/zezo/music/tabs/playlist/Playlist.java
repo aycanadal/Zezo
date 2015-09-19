@@ -32,6 +32,7 @@ public class Playlist extends Fragment implements SongClickListener, SearchListe
 	private SearchFragment searchFragment;
 	private Menu optionsMenu;
 
+	@Override
 	public void onAttach(Activity activity) {
 
 		super.onAttach(activity);

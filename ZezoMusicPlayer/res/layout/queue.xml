@@ -2,12 +2,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@color/Black"
+    android:paddingTop="5dp" >
  
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="50sp"/>
+        android:textSize="16sp"
+        android:text="Queue manager will come with the next update."/>
  
 </LinearLayout>

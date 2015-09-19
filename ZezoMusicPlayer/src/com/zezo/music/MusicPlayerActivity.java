@@ -58,6 +58,9 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 	private ViewPager viewPager;
 	private SharedPreferences sharedPreferences;
 	private MusicService musicService;
+	private ArrayList<Song> playlist;
+	private Intent musicServiceIntent;
+
 	private ServiceConnection musicServiceConnection = new ServiceConnection() {
 
 		@Override
@@ -77,7 +80,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		}
 	};
-	private Intent musicServiceIntent;
+
 	private BroadcastReceiver onMediaPlayerPlayingReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -102,8 +105,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		}
 	};
-
-	private ArrayList<Song> playlist;
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override

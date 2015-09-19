@@ -104,6 +104,7 @@ public class FileListAdapter extends BaseAdapter {
 		if (path.exists()) {
 
 			FilenameFilter folderFilter = new FilenameFilter() {
+				@Override
 				public boolean accept(File dir, String filename) {
 					// add some filters here, for now return true to see all
 					// files
