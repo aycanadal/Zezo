@@ -4,7 +4,7 @@
     android:gravity="center"
     android:orientation="vertical"
     android:background="@color/Black"
-    android:paddingTop="5dp" >
+    android:padding="5dp" >
  
     <TextView
         android:id="@+id/textView"
