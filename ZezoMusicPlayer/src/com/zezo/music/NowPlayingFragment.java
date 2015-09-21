@@ -70,4 +70,10 @@ public class NowPlayingFragment extends Fragment {
 
 	}
 
+	public void updateController() {
+		
+		musicController.show(0);
+		
+	}
+
 }

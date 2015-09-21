@@ -102,6 +102,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 			}
 
 			musicService.setPlayerPrepared(true);
+			nowPlayingFragment.updateController();
 
 		}
 	};
