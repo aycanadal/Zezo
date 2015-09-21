@@ -1,14 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#000000"
+    android:background="@color/VeryDarkGray"
     android:orientation="vertical"
     android:windowSoftInputMode="adjustPan" >
-    
-     <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/White" />
 
     <TextView
         android:id="@+id/currentTitle"

@@ -31,10 +31,12 @@
 
         <ImageButton
             android:id="@+id/nowPlayingToggle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:background="#00FFFFFF"
+            android:background="@color/VeryDarkGray"
+            android:padding="5dp"
             android:src="@drawable/arrowsdown" />
     </RelativeLayout>
 
