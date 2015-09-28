@@ -412,4 +412,12 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 	}
 
+	public void hideNowPlaying() {
+		
+		ImageButton nowPlayingToggle = (ImageButton) findViewById(R.id.nowPlayingToggle);
+		nowPlayingToggle.setImageResource(R.drawable.arrowsup);
+		nowPlayingFragment.hide();
+		
+	}
+
 }

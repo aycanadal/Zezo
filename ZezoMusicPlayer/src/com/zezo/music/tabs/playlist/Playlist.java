@@ -138,18 +138,17 @@ public class Playlist extends Fragment implements SongClickListener, SearchListe
 
 	private void showSearch() {
 
-		// hideController();
+		((MusicPlayerActivity) getActivity()).hideNowPlaying();
 
 		searchFragment.show(getChildFragmentManager(),
 				(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE));
+		
 	}
 
 	private void hideSearch() {
 
 		searchFragment.hide(getChildFragmentManager(),
 				(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE));
-
-		// showController();
 
 	}
 

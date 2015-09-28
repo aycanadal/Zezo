@@ -11,6 +11,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:text="Queue manager will come with the next update."/>
+        android:text="Next update: queue manager."/>
  
 </LinearLayout>
