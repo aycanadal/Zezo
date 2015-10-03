@@ -142,7 +142,7 @@ public class Playlist extends Fragment implements SongClickListener, SearchListe
 
 		searchFragment.show(getChildFragmentManager(),
 				(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE));
-		
+
 	}
 
 	private void hideSearch() {
