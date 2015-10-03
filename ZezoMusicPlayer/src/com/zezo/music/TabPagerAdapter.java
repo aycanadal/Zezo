@@ -8,62 +8,56 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.SparseArray;
 
 public class TabPagerAdapter extends FragmentPagerAdapter {
 
 	private final Context context;
 
-	private final Playlist playlist;
-	private final Browser browser;
+	public enum Tab {
+
+		FOLDERS, PLAYLIST, QUEUE
+
+	};
+
+	private SparseArray<Fragment> tabs = new SparseArray<Fragment>();
 
 	public TabPagerAdapter(FragmentManager fragmentManager, Context context) {
 
 		super(fragmentManager);
 		this.context = context;
 
-		playlist = new Playlist();
-		playlist.setRetainInstance(true);
-
-		browser = new Browser();
-		browser.setRetainInstance(true);
-
+		tabs.put(Tab.FOLDERS.ordinal(), new Browser());
+		tabs.put(Tab.PLAYLIST.ordinal(), new Playlist());
+		tabs.put(Tab.QUEUE.ordinal(), new Queue());
 	}
 
 	@Override
-	public Fragment getItem(int i) {
+	public Fragment getItem(int tabIndex) {
 
-		switch (i) {
-
-		case 0:
-			return browser;
-		case 1:
-			return playlist;
-		case 2:
-			return new Queue();
-
-		}
-
-		return null;
+		return tabs.get(tabIndex);
 
 	}
 
 	@Override
 	public int getCount() {
 
-		return 3; // Number of tabs.
+		return tabs.size();
 
 	}
 
 	@Override
 	public CharSequence getPageTitle(int position) {
 
-		switch (position) {
+		Tab tab = Tab.values()[position];
 
-		case 0:
+		switch (tab) {
+
+		case FOLDERS:
 			return context.getString(R.string.Folders);
-		case 1:
+		case PLAYLIST:
 			return context.getString(R.string.Playlist);
-		case 2:
+		case QUEUE:
 			return context.getString(R.string.Queue);
 
 		}
@@ -71,12 +65,16 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 		return null;
 	}
 
-	public Playlist getPlaylistFragment() {
-		return playlist;
+	public Browser getBrowserFragment() {
+
+		return (Browser) tabs.get(Tab.FOLDERS.ordinal());
+
 	}
 
-	public Browser getBrowserFragment() {
-		return browser;
+	public Playlist getPlaylistFragment() {
+
+		return (Playlist) tabs.get(Tab.PLAYLIST.ordinal());
+
 	}
 
 }
