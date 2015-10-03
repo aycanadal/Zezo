@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.zezo.music.MusicService.MusicBinder;
 import com.zezo.music.domain.Song;
-import com.zezo.music.tabs.browser.Browser;
+import com.zezo.music.tabs.browser.Folders;
 import com.zezo.music.tabs.playlist.Playlist;
 import com.zezo.music.util.Util;
 import com.zezo.music.util.YesNoDialogFragment;
@@ -343,7 +343,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		case R.id.action_set_folder:
 
-			Browser browser = tabPagerAdapter.getBrowserFragment();
+			Folders browser = tabPagerAdapter.getBrowserFragment();
 			String musicFolderPath = browser.getCurrentFolderPath();
 
 			Toast.makeText(MusicPlayerActivity.this, "Selected music folder:" + musicFolderPath, Toast.LENGTH_SHORT)

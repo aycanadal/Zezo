@@ -17,7 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-public class Browser extends Fragment implements FolderClickListener {
+public class Folders extends Fragment implements FolderClickListener {
 
 	private SharedPreferences sharedPreferences;
 	private ListView fileListView;
