@@ -128,6 +128,26 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		viewPager.setAdapter(tabPagerAdapter);
 		viewPager.setCurrentItem(1);
 
+		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+			@Override
+			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+			}
+
+			@Override
+			public void onPageSelected(int position) {
+
+				if (position != 1)
+					hideKeyboard();
+
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int state) {
+
+			}
+		});
+
 		initMusicService();
 
 		initKeyboard();
@@ -413,11 +433,11 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 	}
 
 	public void hideNowPlaying() {
-		
+
 		ImageButton nowPlayingToggle = (ImageButton) findViewById(R.id.nowPlayingToggle);
 		nowPlayingToggle.setImageResource(R.drawable.arrowsup);
 		nowPlayingFragment.hide();
-		
+
 	}
 
 }
