@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
 
-    <!-- Soft input delete button bug above target 13 and above min 8. -->
+    <!-- Soft input delete key not working bug above target 13 and above min 8. -->
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="23" />
@@ -56,8 +56,6 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-
-        <!-- <action android:name="android.intent.action.RECOGNIZE_SPEECH" /> -->
 
     </application>
 
