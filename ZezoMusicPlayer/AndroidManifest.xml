@@ -50,13 +50,13 @@
         </service>
 
         <receiver
-            android:name="MediaButtonReceiver"
+            android:name="com.zezo.music.util.MediaButtonReceiver"
             android:enabled="true" >
             <intent-filter android:priority="2147483647" >
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-
+        
     </application>
 
 </manifest>

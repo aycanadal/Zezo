@@ -482,9 +482,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 		ComponentName mRemoteControlResponder = new ComponentName(getPackageName(),
 				MediaButtonReceiver.class.getName());
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
-			am.registerMediaButtonEventReceiver(mRemoteControlResponder);
-
 		MediaButtonReceiver.addBroadcastReceiveListener(this);
 
 	}
