@@ -28,7 +28,7 @@ public class PlaylistAdapter extends BaseAdapter implements Filterable {
 
 	public interface SongClickListener {
 
-		void songClicked(Song song);
+		void onSongClicked(Song song);
 
 	}
 
@@ -73,7 +73,7 @@ public class PlaylistAdapter extends BaseAdapter implements Filterable {
 				View item = (View) view.getParent();
 				int songIndex = Integer.parseInt(item.getTag().toString());
 				Song song = getItem(songIndex);
-				songClickListener.songClicked(song);
+				songClickListener.onSongClicked(song);
 
 			}
 

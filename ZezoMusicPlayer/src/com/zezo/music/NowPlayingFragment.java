@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class NowPlayingFragment extends Fragment {
@@ -16,11 +17,33 @@ public class NowPlayingFragment extends Fragment {
 	private TextView currentTitleView;
 	private FrameLayout controllerFrame;
 	private MusicController musicController;
+	private NowPlayingClickListener nowPlayingClickListener; 
+	
+	public interface NowPlayingClickListener{
+		
+		public void onNowPlayingClicked();
+		
+	}
+	
+	public void setNowPlayingClickListener(NowPlayingClickListener nowPlayingClickListener) {
+		
+		this.nowPlayingClickListener = nowPlayingClickListener;
+	
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.nowplaying, container, false);
+		
+		LinearLayout nowPlayingFrame = (LinearLayout) view.findViewById(R.id.nowPlaying);
+		
+		nowPlayingFrame.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+		       nowPlayingClickListener.onNowPlayingClicked();
+		    }
+		});
 
 		currentTitleView = (TextView) view.findViewById(R.id.currentTitle);
 		currentArtistView = (TextView) view.findViewById(R.id.currentArtist);

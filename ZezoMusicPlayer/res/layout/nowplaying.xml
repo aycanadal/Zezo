@@ -5,25 +5,29 @@
     android:orientation="vertical"
     android:windowSoftInputMode="adjustPan" >
 
-    <TextView
-        android:id="@+id/currentTitle"
+    <LinearLayout
+        android:id="@+id/nowPlaying"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:onClick="scrollToCurrent"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/currentArtist"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:onClick="scrollToCurrent"
-        android:textColor="@color/gray"
-        android:textSize="14sp" />
-    
+        <TextView
+            android:id="@+id/currentTitle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/currentArtist"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray"
+            android:textSize="14sp" />
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/controllerFrame"
         android:layout_width="fill_parent"

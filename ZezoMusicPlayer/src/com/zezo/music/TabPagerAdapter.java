@@ -1,7 +1,7 @@
 package com.zezo.music;
 
 import com.zezo.music.tabs.browser.Folders;
-import com.zezo.music.tabs.playlist.Playlist;
+import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.tabs.queue.Queue;
 
 import android.content.Context;
@@ -28,7 +28,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 		this.context = context;
 
 		tabs.put(Tab.FOLDERS.ordinal(), new Folders());
-		tabs.put(Tab.PLAYLIST.ordinal(), new Playlist());
+		tabs.put(Tab.PLAYLIST.ordinal(), new PlaylistFragment());
 		tabs.put(Tab.QUEUE.ordinal(), new Queue());
 	}
 
@@ -71,9 +71,9 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 
 	}
 
-	public Playlist getPlaylistFragment() {
+	public PlaylistFragment getPlaylistFragment() {
 
-		return (Playlist) tabs.get(Tab.PLAYLIST.ordinal());
+		return (PlaylistFragment) tabs.get(Tab.PLAYLIST.ordinal());
 
 	}
 

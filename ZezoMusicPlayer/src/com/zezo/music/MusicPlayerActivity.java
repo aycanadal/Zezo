@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.zezo.music.MusicService.MusicBinder;
 import com.zezo.music.domain.Song;
 import com.zezo.music.tabs.browser.Folders;
-import com.zezo.music.tabs.playlist.Playlist;
+import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.util.Util;
 import com.zezo.music.util.YesNoDialogFragment;
 import com.zezo.music.util.YesNoDialogFragment.OnDeleteConfirmedListener;
@@ -95,7 +95,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 			if (viewPager.getCurrentItem() == 1) {
 
-				Playlist playlistFragment = (Playlist) getSupportFragmentManager()
+				PlaylistFragment playlistFragment = (PlaylistFragment) getSupportFragmentManager()
 						.findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
 				playlistFragment.setCurrentSong(song);
 
@@ -152,9 +152,12 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		initKeyboard();
 
+		PlaylistFragment playlistFragment = tabPagerAdapter.getPlaylistFragment(); 
+		playlistFragment.setInitialPlaylist(playlist);
+		
 		nowPlayingFragment = (NowPlayingFragment) getSupportFragmentManager().findFragmentById(R.id.nowplaying);
 		nowPlayingFragment.setRetainInstance(true);
-		tabPagerAdapter.getPlaylistFragment().setInitialPlaylist(playlist);
+		nowPlayingFragment.setNowPlayingClickListener(playlistFragment);
 
 		ImageButton nowPlayingToggle = (ImageButton) findViewById(R.id.nowPlayingToggle);
 

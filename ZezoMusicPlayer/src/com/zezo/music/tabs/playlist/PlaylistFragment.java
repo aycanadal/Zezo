@@ -3,6 +3,7 @@ package com.zezo.music.tabs.playlist;
 import java.util.ArrayList;
 
 import com.zezo.music.MusicPlayerActivity;
+import com.zezo.music.NowPlayingFragment.NowPlayingClickListener;
 import com.zezo.music.R;
 import com.zezo.music.SearchFragment;
 import com.zezo.music.SearchFragment.SearchListener;
@@ -24,7 +25,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class Playlist extends Fragment implements SongClickListener, SearchListener {
+public class PlaylistFragment extends Fragment implements SongClickListener, NowPlayingClickListener, SearchListener {
 
 	private ListView songListView;
 	private PlaylistAdapter songAdapter;
@@ -122,12 +123,13 @@ public class Playlist extends Fragment implements SongClickListener, SearchListe
 
 	public void scrollToCurrent() {
 
+		songListView.requestFocusFromTouch();
 		songListView.setSelection(songListView.getCheckedItemPosition());
 
 	}
 
 	@Override
-	public void songClicked(Song song) {
+	public void onSongClicked(Song song) {
 
 		Activity activity = getActivity();
 
@@ -178,6 +180,13 @@ public class Playlist extends Fragment implements SongClickListener, SearchListe
 
 		item.setIcon(shuffleIcon);
 
+	}
+
+	@Override
+	public void onNowPlayingClicked() {
+
+		scrollToCurrent();
+		
 	}
 
 }
