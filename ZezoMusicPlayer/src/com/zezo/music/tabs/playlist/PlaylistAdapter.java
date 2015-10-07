@@ -37,7 +37,7 @@ public class PlaylistAdapter extends BaseAdapter implements Filterable {
 		setSongs(songs);
 		setFilteredSongs(songs);
 		songInflater = LayoutInflater.from(c);
-		filter = new SongFilter(this);
+		filter = new PlaylistSearchFilter(this);
 		this.songClickListener = songClickListener;
 
 	}

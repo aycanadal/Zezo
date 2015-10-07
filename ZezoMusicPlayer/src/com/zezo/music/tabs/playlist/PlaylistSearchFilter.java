@@ -7,11 +7,11 @@ import com.zezo.music.domain.Song;
 
 import android.widget.Filter;
 
-public class SongFilter extends Filter {
+public class PlaylistSearchFilter extends Filter {
 
 	private PlaylistAdapter songAdapter;
 
-	public SongFilter(PlaylistAdapter songAdapter) {
+	public PlaylistSearchFilter(PlaylistAdapter songAdapter) {
 
 		this.songAdapter = songAdapter;
 
