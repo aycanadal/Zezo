@@ -29,7 +29,6 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 
 	private ListView songListView;
 	private PlaylistAdapter songAdapter;
-	private ArrayList<Song> initialPlaylist;
 	private SearchFragment searchFragment;
 	private Menu optionsMenu;
 
@@ -37,7 +36,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 	public void onAttach(Activity activity) {
 
 		super.onAttach(activity);
-		songAdapter = new PlaylistAdapter(getActivity(), initialPlaylist, this);
+		songAdapter = new PlaylistAdapter(getActivity(), ((MusicPlayerActivity)activity).getPlaylist(), this);
 
 	}
 
@@ -105,12 +104,6 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 		songAdapter.getSongs().remove(song);
 		songAdapter.getFilteredSongs().remove(song);
 		songAdapter.notifyDataSetChanged();
-
-	}
-
-	public void setInitialPlaylist(ArrayList<Song> songs) {
-
-		initialPlaylist = songs;
 
 	}
 

@@ -154,7 +154,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		initKeyboard();
 
 		PlaylistFragment playlistFragment = tabPagerAdapter.getPlaylistFragment(); 
-		playlistFragment.setInitialPlaylist(playlist);
 		
 		nowPlayingFragment = (NowPlayingFragment) getSupportFragmentManager().findFragmentById(R.id.nowplaying);
 		nowPlayingFragment.setRetainInstance(true);
@@ -443,6 +442,14 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		nowPlayingToggle.setImageResource(R.drawable.arrowsup);
 		nowPlayingFragment.hide();
 
+	}
+
+	public ArrayList<Song> getPlaylist() {
+		return playlist;
+	}
+
+	public void setPlaylist(ArrayList<Song> playlist) {
+		this.playlist = playlist;
 	}
 
 }
