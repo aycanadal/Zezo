@@ -34,6 +34,21 @@ import android.view.KeyEvent;
 
 public class MusicService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
 		MediaPlayer.OnCompletionListener, MediaButtonReceiverListener, OnAudioFocusChangeListener {
+	
+	private static final int NOTIFY_ID = 1;
+
+	private Song currentSong;
+	private LinkedList<Long> history = new LinkedList<Long>();
+	private HeadsetStateReceiver headsetStateReceiver;
+	private final IBinder musicBind = new MusicBinder();
+	private int pauseDuration = 0;
+	private int pausePosition = 0;
+	private MediaPlayer player;
+	private ArrayList<Song> playQueue = new ArrayList<Song>();
+	private Random rand;
+	private boolean shuffle = false;
+	private ArrayList<Song> playlist;
+	private boolean isPlayerPrepared = false;
 
 	public class MusicBinder extends Binder {
 		MusicService getService() {
@@ -57,12 +72,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 		}
 	}
 
-	private static final int NOTIFY_ID = 1;
-
-	private Song currentSong;
-	private LinkedList<Long> history = new LinkedList<Long>();
-	private HeadsetStateReceiver headsetStateReceiver;
-	private final IBinder musicBind = new MusicBinder();
 	private final BroadcastReceiver onBluetoothStateChangeReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -90,23 +99,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
 		}
 	};
-
-	private int pauseDuration = 0;
-
-	private int pausePosition = 0;
-
-	private MediaPlayer player;
-	private ArrayList<Song> playQueue = new ArrayList<Song>();
-
-	private Random rand;
-
-	private boolean shuffle = false;
-
-	private ArrayList<Song> playlist;
-
-	private boolean isPlayerPrepared = false;
-
-	// private OnAudioFocusChangeListener mOnAudioFocusChangeListener;
 
 	public void addToQueue(Song song) {
 		playQueue.add(song);
@@ -464,9 +456,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 	}
 
 	public void setPlaylist(ArrayList<Song> songs) {
+		
 		this.playlist = songs;
 		if (songs != null && songs.size() > 0)
 			setCurrentSong(songs.get(0));
+		
 	}
 
 	public void toggleShuffle() {

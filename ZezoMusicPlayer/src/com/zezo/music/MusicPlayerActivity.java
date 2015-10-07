@@ -355,6 +355,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 			playlist = getAllSongsInFolder(musicFolderPath);
 			tabPagerAdapter.getPlaylistFragment().loadPlaylist(playlist);
+			musicService.setPlaylist(playlist);
 			sharedPreferences.edit().putString(KEY_DIRECTORY_SELECTED, musicFolderPath).commit();
 			break;
 
