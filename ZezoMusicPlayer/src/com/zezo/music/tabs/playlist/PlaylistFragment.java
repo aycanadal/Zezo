@@ -28,7 +28,7 @@ import android.widget.Toast;
 public class PlaylistFragment extends Fragment implements SongClickListener, NowPlayingClickListener, SearchListener {
 
 	private ListView songListView;
-	private PlaylistAdapter songAdapter;
+	private PlaylistAdapter playlistAdapter;
 	private SearchFragment searchFragment;
 	private Menu optionsMenu;
 
@@ -36,7 +36,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 	public void onAttach(Activity activity) {
 
 		super.onAttach(activity);
-		songAdapter = new PlaylistAdapter(getActivity(), ((MusicPlayerActivity)activity).getPlaylist(), this);
+		playlistAdapter = new PlaylistAdapter(getActivity(), ((MusicPlayerActivity)activity).getPlaylist(), this);
 
 	}
 
@@ -48,7 +48,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 		View playlistView = inflater.inflate(R.layout.playlist, container, false);
 
 		songListView = (ListView) playlistView.findViewById(R.id.song_list);
-		songListView.setAdapter(songAdapter);
+		songListView.setAdapter(playlistAdapter);
 		registerForContextMenu(songListView);
 
 		searchFragment = (SearchFragment) getChildFragmentManager().findFragmentById(R.id.search);
@@ -94,23 +94,23 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 
 	public void setCurrentSong(Song song) {
 
-		songAdapter.setItemChecked(song.getId());
-		songListView.setItemChecked(songAdapter.getFilteredSongs().indexOf(song), true);
+		playlistAdapter.setItemChecked(song.getId());
+		songListView.setItemChecked(playlistAdapter.getFilteredSongs().indexOf(song), true);
 
 	}
 
 	public void remove(Song song) {
 
-		songAdapter.getSongs().remove(song);
-		songAdapter.getFilteredSongs().remove(song);
-		songAdapter.notifyDataSetChanged();
+		playlistAdapter.getSongs().remove(song);
+		playlistAdapter.getFilteredSongs().remove(song);
+		playlistAdapter.notifyDataSetChanged();
 
 	}
 
 	public void loadPlaylist(ArrayList<Song> songs) {
 
-		songAdapter = new PlaylistAdapter(getActivity(), songs, this);
-		songListView.setAdapter(songAdapter);
+		playlistAdapter = new PlaylistAdapter(getActivity(), songs, this);
+		songListView.setAdapter(playlistAdapter);
 
 	}
 
@@ -150,7 +150,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 	@Override
 	public void onSearchTextChanged(CharSequence cs) {
 
-		songAdapter.getFilter().filter(cs);
+		playlistAdapter.getFilter().filter(cs);
 
 	}
 

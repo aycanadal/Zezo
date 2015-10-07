@@ -279,6 +279,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 				AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 
 				musicService.addToQueue(musicService.getSongById(info.id));
+				tabPagerAdapter.getQueueFragment().addToQueue(musicService.getSongById(info.id));
 
 				return true;
 
