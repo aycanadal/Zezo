@@ -1,8 +1,9 @@
-package com.zezo.music.tabs.browser;
+package com.zezo.music.tabs.folders;
 
 import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.R;
-import com.zezo.music.tabs.browser.FileListAdapter.FolderClickListener;
+import com.zezo.music.domain.Folder;
+import com.zezo.music.tabs.folders.FoldersAdapter.FolderClickListener;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,11 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-public class Folders extends Fragment implements FolderClickListener {
+public class FoldersFragment extends Fragment implements FolderClickListener {
 
 	private SharedPreferences sharedPreferences;
 	private ListView fileListView;
-	private FileListAdapter fileListAdapter;
+	private FoldersAdapter fileListAdapter;
 	private String currentFolderPath;
 
 	@Override
@@ -34,7 +35,7 @@ public class Folders extends Fragment implements FolderClickListener {
 		String preferredFolderPath = sharedPreferences.getString(MusicPlayerActivity.KEY_DIRECTORY_SELECTED,
 				Environment.getExternalStorageDirectory().toString());
 
-		fileListAdapter = new FileListAdapter(getActivity(), preferredFolderPath, this);
+		fileListAdapter = new FoldersAdapter(getActivity(), preferredFolderPath, this);
 
 		currentFolderPath = preferredFolderPath;
 
@@ -64,7 +65,7 @@ public class Folders extends Fragment implements FolderClickListener {
 	@Override
 	public void folderClicked(Folder folder) {
 
-		fileListAdapter = new FileListAdapter(getActivity(), folder.getAbsolutePath(), this);
+		fileListAdapter = new FoldersAdapter(getActivity(), folder.getAbsolutePath(), this);
 		fileListView.setAdapter(fileListAdapter);
 		currentFolderPath = folder.getAbsolutePath();
 

@@ -1,4 +1,4 @@
-package com.zezo.music.tabs.browser;
+package com.zezo.music.domain;
 
 import java.io.File;
 

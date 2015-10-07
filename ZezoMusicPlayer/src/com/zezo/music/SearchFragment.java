@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.zezo.music.util.VoiceRecognitionHelper;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -12,9 +13,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -35,22 +38,6 @@ public class SearchFragment extends Fragment {
 	private SearchListener searchListener;
 
 	private VoiceRecognitionHelper voiceRecognitionHelper;
-
-	public void hide(FragmentManager fragmentManager, InputMethodManager inputMethodManager) {
-
-		searchBox.setText("");
-
-		inputMethodManager.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
-
-		fragmentManager.beginTransaction().hide(this).commit();
-
-		isOn = false;
-
-	}
-
-	public boolean isOn() {
-		return isOn;
-	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -77,14 +64,28 @@ public class SearchFragment extends Fragment {
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString() + " must implement SearchListener");
 		}
-
+		
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.search, container, false);
-
+		
+		view.setOnKeyListener( new OnKeyListener()
+		{
+		    @Override
+		    public boolean onKey( View v, int keyCode, KeyEvent event )
+		    {
+		        if( keyCode == KeyEvent.KEYCODE_BACK )
+		        {
+		            hide(getParentFragment().getChildFragmentManager(),
+		    				(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE));
+		        }
+		        return false;
+		    }
+		} );
+		
 		searchBox = (EditText) view.findViewById(R.id.searchBox);
 		voiceRecognitionHelper = new VoiceRecognitionHelper(searchBox);
 
@@ -125,6 +126,24 @@ public class SearchFragment extends Fragment {
 
 		isOn = true;
 
+	}
+	
+	public void hide(FragmentManager fragmentManager, InputMethodManager inputMethodManager) {
+
+		searchBox.setText("");
+
+		inputMethodManager.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
+
+		fragmentManager.beginTransaction().hide(this).commit();
+
+		isOn = false;
+
+	}
+	
+	public boolean isOn() {
+		
+		return isOn;
+		
 	}
 
 }

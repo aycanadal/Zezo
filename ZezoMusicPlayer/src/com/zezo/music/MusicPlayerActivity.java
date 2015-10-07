@@ -3,8 +3,9 @@ package com.zezo.music;
 import java.util.ArrayList;
 
 import com.zezo.music.MusicService.MusicBinder;
+import com.zezo.music.TabPagerAdapter.Tab;
 import com.zezo.music.domain.Song;
-import com.zezo.music.tabs.browser.Folders;
+import com.zezo.music.tabs.folders.FoldersFragment;
 import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.util.Util;
 import com.zezo.music.util.YesNoDialogFragment;
@@ -126,7 +127,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		tabPagerAdapter = new TabPagerAdapter(getSupportFragmentManager(), this);
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		viewPager.setAdapter(tabPagerAdapter);
-		viewPager.setCurrentItem(1);
+		viewPager.setCurrentItem(Tab.PLAYLIST.ordinal());
 
 		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
@@ -346,7 +347,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		case R.id.action_set_folder:
 
-			Folders browser = tabPagerAdapter.getBrowserFragment();
+			FoldersFragment browser = tabPagerAdapter.getBrowserFragment();
 			String musicFolderPath = browser.getCurrentFolderPath();
 
 			Toast.makeText(MusicPlayerActivity.this, "Selected music folder:" + musicFolderPath, Toast.LENGTH_SHORT)

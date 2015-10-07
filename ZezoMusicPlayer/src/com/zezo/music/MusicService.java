@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
+import com.zezo.music.MediaButtonReceiver.MediaButtonReceiverListener;
 import com.zezo.music.domain.Song;
-import com.zezo.music.util.MediaButtonReceiver;
-import com.zezo.music.util.MediaButtonReceiver.MediaButtonReceiverListener;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -200,12 +199,14 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
 		if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+			
 			pause();
 			ComponentName mRemoteControlResponder = new ComponentName(getPackageName(),
 					MediaButtonReceiver.class.getName());
 			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
 			MediaButtonReceiver.removeBroadcastReceiveListener(this);
 			am.abandonAudioFocus(this);
+			
 		} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
 
 			registerMediaButtonListener();
@@ -481,6 +482,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
 		ComponentName mRemoteControlResponder = new ComponentName(getPackageName(),
 				MediaButtonReceiver.class.getName());
+		
+		am.registerMediaButtonEventReceiver(mRemoteControlResponder);
 
 		MediaButtonReceiver.addBroadcastReceiveListener(this);
 

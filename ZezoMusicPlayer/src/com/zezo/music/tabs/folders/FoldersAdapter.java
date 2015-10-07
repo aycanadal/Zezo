@@ -1,4 +1,4 @@
-package com.zezo.music.tabs.browser;
+package com.zezo.music.tabs.folders;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.zezo.music.R;
+import com.zezo.music.domain.Folder;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,28 +17,28 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class FileListAdapter extends BaseAdapter {
+public class FoldersAdapter extends BaseAdapter {
 
-	private ArrayList<Folder> fileItems;
+	private ArrayList<Folder> folders;
 	private LayoutInflater inflater;
 	private FolderClickListener fileClickListener;
 
-	public FileListAdapter(Context c, String folderPath, FolderClickListener fileClickListener) {
+	public FoldersAdapter(Context c, String folderPath, FolderClickListener fileClickListener) {
 
 		inflater = LayoutInflater.from(c);
 
-		fileItems = new ArrayList<Folder>();
+		folders = new ArrayList<Folder>();
 
 		if (!folderPath.equals("/")) {
 
 			Folder parentFolder = new Folder(new File(getParentFolder(folderPath)));
 			parentFolder.setDisplayName("..");
-			fileItems.add(parentFolder);
+			folders.add(parentFolder);
 
 		}
 
 		for (File file : getFolders(folderPath)) {
-			this.fileItems.add(new Folder(file));
+			this.folders.add(new Folder(file));
 		}
 
 		this.fileClickListener = fileClickListener;
@@ -80,14 +81,14 @@ public class FileListAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 
-		return fileItems.size();
+		return folders.size();
 
 	}
 
 	@Override
 	public Folder getItem(int position) {
 
-		return fileItems.get(position);
+		return folders.get(position);
 
 	}
 
