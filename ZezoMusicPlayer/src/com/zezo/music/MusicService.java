@@ -38,16 +38,16 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 	private static final int NOTIFY_ID = 1;
 
 	private Song currentSong;
+	private ArrayList<Song> playlist;
+	private ArrayList<Song> queue = new ArrayList<Song>();
 	private LinkedList<Long> history = new LinkedList<Long>();
 	private HeadsetStateReceiver headsetStateReceiver;
 	private final IBinder musicBind = new MusicBinder();
 	private int pauseDuration = 0;
 	private int pausePosition = 0;
 	private MediaPlayer player;
-	private ArrayList<Song> playQueue = new ArrayList<Song>();
 	private Random rand;
 	private boolean shuffle = false;
-	private ArrayList<Song> playlist;
 	private boolean isPlayerPrepared = false;
 
 	public class MusicBinder extends Binder {
@@ -101,7 +101,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 	};
 
 	public void addToQueue(Song song) {
-		playQueue.add(song);
+		queue.add(song);
 
 	}
 
@@ -353,10 +353,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 		if (playlist.size() <= 0)
 			return;
 
-		if (playQueue.size() > 0) {
+		if (queue.size() > 0) {
 
-			currentSong = playQueue.get(0);
-			playQueue.remove(0);
+			currentSong = queue.get(0);
+			queue.remove(0);
 			playSong(currentSong);
 
 			return;
