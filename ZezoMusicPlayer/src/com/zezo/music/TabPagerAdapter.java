@@ -1,6 +1,5 @@
 package com.zezo.music;
 
-import com.zezo.music.TabPagerAdapter.Tab;
 import com.zezo.music.tabs.folders.FoldersFragment;
 import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.tabs.queue.QueueFragment;
@@ -77,7 +76,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 		return (PlaylistFragment) tabs.get(Tab.PLAYLIST.ordinal());
 
 	}
-	
+
 	public QueueFragment getQueueFragment() {
 
 		return (QueueFragment) tabs.get(Tab.QUEUE.ordinal());

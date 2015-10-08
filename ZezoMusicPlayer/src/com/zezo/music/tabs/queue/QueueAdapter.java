@@ -13,11 +13,11 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class QueueAdapter extends BaseAdapter{
-	
+public class QueueAdapter extends BaseAdapter {
+
 	private ArrayList<Song> queue = new ArrayList<Song>();
 	private LayoutInflater songInflater;
-	
+
 	public QueueAdapter(Context c) {
 
 		songInflater = LayoutInflater.from(c);
@@ -28,28 +28,28 @@ public class QueueAdapter extends BaseAdapter{
 	public int getCount() {
 
 		return queue.size();
-		
+
 	}
 
 	@Override
 	public Object getItem(int position) {
-		
+
 		return queue.get(position);
-		
+
 	}
 
 	@Override
 	public long getItemId(int position) {
 
 		return queue.get(position).getId();
-		
+
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		
+
 		Song song = queue.get(position);
-		
+
 		LinearLayout songLayout = (LinearLayout) songInflater.inflate(R.layout.song, parent, false);
 		TextView songView = (TextView) songLayout.findViewById(R.id.song_title);
 		TextView artistView = (TextView) songLayout.findViewById(R.id.song_artist);
@@ -59,21 +59,21 @@ public class QueueAdapter extends BaseAdapter{
 		durationView.setText(song.getDuration());
 		songLayout.setTag(song.getId());
 		return songLayout;
-		
+
 	}
 
 	public void addToQueue(Song song) {
 
 		queue.add(song);
 		notifyDataSetChanged();
-		
+
 	}
 
 	public void removeFromQueue(Song song) {
-		
+
 		queue.remove(song);
 		notifyDataSetChanged();
-		
+
 	}
 
 	public ArrayList<Song> getQueue() {

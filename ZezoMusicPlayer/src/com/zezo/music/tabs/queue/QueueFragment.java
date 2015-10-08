@@ -10,23 +10,23 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.MenuItem.OnMenuItemClickListener;
-import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ListView;
 
 public class QueueFragment extends Fragment {
-	
+
 	private ListView queueListView;
 	private QueueAdapter queueAdapter;
 	private Menu optionsMenu;
-	
+
 	@Override
 	public void onAttach(Activity activity) {
 
@@ -34,7 +34,7 @@ public class QueueFragment extends Fragment {
 		queueAdapter = new QueueAdapter(getActivity());
 
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -48,7 +48,7 @@ public class QueueFragment extends Fragment {
 
 		return queueView;
 	}
-	
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
@@ -58,7 +58,7 @@ public class QueueFragment extends Fragment {
 		super.onCreateOptionsMenu(optionsMenu, inflater);
 
 	}
-	
+
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 
@@ -83,22 +83,10 @@ public class QueueFragment extends Fragment {
 
 	}
 
-	public void addToQueue(Song song) {
-
-		queueAdapter.addToQueue(song);
-		
-	}
-
-	public void removeFromQueue(Song song) {
-
-		queueAdapter.removeFromQueue(song);
-		
-	}
-
 	public void setQueue(ArrayList<Song> queue) {
-		
+
 		queueAdapter.setQueue(queue);
 		queueAdapter.notifyDataSetChanged();
-		
+
 	}
 }

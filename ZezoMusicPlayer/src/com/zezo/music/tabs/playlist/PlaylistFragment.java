@@ -27,7 +27,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class PlaylistFragment extends Fragment implements SongClickListener, NowPlayingClickListener, SearchListener {
 
@@ -205,16 +204,17 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 	}
 
 	public void updateShuffleIcon() {
-		
-		MenuItem item = optionsMenu.findItem(R.id.action_shuffle);
-		int shuffleIconIndex = R.drawable.shufflegrey40;;
 
-		if (((MusicPlayerActivity)getActivity()).isShuffling()) 
+		MenuItem item = optionsMenu.findItem(R.id.action_shuffle);
+		int shuffleIconIndex = R.drawable.shufflegrey40;
+		;
+
+		if (((MusicPlayerActivity) getActivity()).isShuffling())
 			shuffleIconIndex = R.drawable.shufflewhite40;
 
 		Drawable shuffleIcon = getResources().getDrawable(shuffleIconIndex);
 		item.setIcon(shuffleIcon);
-		
+
 	}
 
 }

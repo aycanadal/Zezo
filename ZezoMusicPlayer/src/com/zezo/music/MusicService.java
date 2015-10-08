@@ -34,7 +34,7 @@ import android.view.KeyEvent;
 
 public class MusicService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
 		MediaPlayer.OnCompletionListener, MediaButtonReceiverListener, OnAudioFocusChangeListener {
-	
+
 	private static final int NOTIFY_ID = 1;
 
 	private Song currentSong;
@@ -104,7 +104,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 		queue.add(song);
 
 	}
-	
+
 	public void removeFromQueue(Song song) {
 		queue.remove(song);
 
@@ -144,19 +144,19 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 	}
 
 	public Song getSongById(long songId) {
-		
+
 		for (Song song : playlist) {
 			if (song.getId() == songId) {
 				return song;
 			}
 		}
-		
+
 		for (Song song : queue) {
 			if (song.getId() == songId) {
 				return song;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -204,14 +204,14 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
 		if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
-			
+
 			pause();
 			ComponentName mRemoteControlResponder = new ComponentName(getPackageName(),
 					MediaButtonReceiver.class.getName());
 			am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
 			MediaButtonReceiver.removeBroadcastReceiveListener(this);
 			am.abandonAudioFocus(this);
-			
+
 		} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
 
 			registerMediaButtonListener();
@@ -469,20 +469,20 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 	}
 
 	public void setPlaylist(ArrayList<Song> songs) {
-		
+
 		this.playlist = songs;
 		if (songs != null && songs.size() > 0)
 			setCurrentSong(songs.get(0));
-		
+
 	}
 
 	public void toggleShuffle() {
-		
+
 		if (isShuffling())
 			setShuffle(false);
 		else
 			setShuffle(true);
-		
+
 	}
 
 	private void registerMediaButtonListener() {
@@ -491,7 +491,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
 		ComponentName mRemoteControlResponder = new ComponentName(getPackageName(),
 				MediaButtonReceiver.class.getName());
-		
+
 		am.registerMediaButtonEventReceiver(mRemoteControlResponder);
 
 		MediaButtonReceiver.addBroadcastReceiveListener(this);

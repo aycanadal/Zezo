@@ -99,7 +99,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 			musicService.setPlayerPrepared(true);
 			nowPlayingFragment.updateController();
-			
+
 			tabPagerAdapter.getQueueFragment().setQueue(musicService.getQueue());
 
 		}
@@ -349,8 +349,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 	private void toggleShuffle() {
 
 		musicService.toggleShuffle();
-		tabPagerAdapter.getPlaylistFragment().updateShuffleIcon();		
-		
+		tabPagerAdapter.getPlaylistFragment().updateShuffleIcon();
+
 	}
 
 	@TargetApi(Build.VERSION_CODES.FROYO)
@@ -434,11 +434,11 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 				}).setNegativeButton(android.R.string.no, null).show();
 
 	}
-	
-	public boolean isShuffling(){
-		
+
+	public boolean isShuffling() {
+
 		return musicService.isShuffling();
-		
+
 	}
 
 }
