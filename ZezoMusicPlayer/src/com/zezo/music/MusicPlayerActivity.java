@@ -100,7 +100,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 			musicService.setPlayerPrepared(true);
 			nowPlayingFragment.updateController();
 			
-			//update queue
+			tabPagerAdapter.getQueueFragment().setQueue(musicService.getQueue());
 
 		}
 	};
@@ -391,7 +391,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		Song song = musicService.getSongById(songId);
 		musicService.addToQueue(song);
-		tabPagerAdapter.getQueueFragment().addToQueue(song);
+		tabPagerAdapter.getQueueFragment().setQueue(musicService.getQueue());
 
 	}
 
@@ -399,7 +399,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		Song song = musicService.getSongById(songId);
 		musicService.removeFromQueue(song);
-		tabPagerAdapter.getQueueFragment().removeFromQueue(song);
+		tabPagerAdapter.getQueueFragment().setQueue(musicService.getQueue());
 
 	}
 

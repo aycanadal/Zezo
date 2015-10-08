@@ -1,5 +1,7 @@
 package com.zezo.music.tabs.queue;
 
+import java.util.ArrayList;
+
 import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.R;
 import com.zezo.music.domain.Song;
@@ -90,6 +92,13 @@ public class QueueFragment extends Fragment {
 	public void removeFromQueue(Song song) {
 
 		queueAdapter.removeFromQueue(song);
+		
+	}
+
+	public void setQueue(ArrayList<Song> queue) {
+		
+		queueAdapter.setQueue(queue);
+		queueAdapter.notifyDataSetChanged();
 		
 	}
 }

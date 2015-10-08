@@ -76,4 +76,12 @@ public class QueueAdapter extends BaseAdapter{
 		
 	}
 
+	public ArrayList<Song> getQueue() {
+		return queue;
+	}
+
+	public void setQueue(ArrayList<Song> queue) {
+		this.queue = queue;
+	}
+
 }

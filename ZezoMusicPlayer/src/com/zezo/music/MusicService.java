@@ -503,4 +503,12 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 		this.isPlayerPrepared = isPlayerPrepared;
 
 	}
+
+	public ArrayList<Song> getQueue() {
+		return queue;
+	}
+
+	public void setQueue(ArrayList<Song> queue) {
+		this.queue = queue;
+	}
 }
