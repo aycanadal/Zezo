@@ -15,13 +15,17 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -36,7 +40,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 	public void onAttach(Activity activity) {
 
 		super.onAttach(activity);
-		playlistAdapter = new PlaylistAdapter(getActivity(), ((MusicPlayerActivity)activity).getPlaylist(), this);
+		playlistAdapter = new PlaylistAdapter(getActivity(), ((MusicPlayerActivity) activity).getPlaylist(), this);
 
 	}
 
@@ -65,6 +69,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 		optionsMenu.clear();
 		inflater.inflate(R.menu.playlist, optionsMenu);
 		super.onCreateOptionsMenu(optionsMenu, inflater);
+		updateShuffleIcon();
 
 	}
 
@@ -90,6 +95,44 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+
+		super.onCreateContextMenu(menu, v, menuInfo);
+		final MusicPlayerActivity activity = (MusicPlayerActivity) getActivity();
+		MenuInflater inflater = activity.getMenuInflater();
+		inflater.inflate(R.menu.context, menu);
+
+		menu.add(R.string.AddToQueue).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+
+				AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+
+				activity.addToQueue(info.id);
+
+				return true;
+
+			}
+		});
+
+		menu.add(R.string.Delete).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+
+				AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+
+				activity.showDeleteDialog(info.id);
+
+				return true;
+
+			}
+		});
+
 	}
 
 	public void setCurrentSong(Song song) {
@@ -154,31 +197,23 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 
 	}
 
-	public void setShuffle(boolean shuffle) {
-
-		Drawable shuffleIcon;
-		MenuItem item = optionsMenu.findItem(R.id.action_shuffle);
-
-		if (shuffle) {
-
-			shuffleIcon = getResources().getDrawable(R.drawable.shufflegrey40);
-			Toast.makeText(getActivity(), "Shuffle is now off.", Toast.LENGTH_SHORT).show();
-
-		} else {
-
-			shuffleIcon = getResources().getDrawable(R.drawable.shufflewhite40);
-			Toast.makeText(getActivity(), "Shuffle is now on.", Toast.LENGTH_SHORT).show();
-
-		}
-
-		item.setIcon(shuffleIcon);
-
-	}
-
 	@Override
 	public void onNowPlayingClicked() {
 
 		scrollToCurrent();
+
+	}
+
+	public void updateShuffleIcon() {
+		
+		MenuItem item = optionsMenu.findItem(R.id.action_shuffle);
+		int shuffleIconIndex = R.drawable.shufflegrey40;;
+
+		if (((MusicPlayerActivity)getActivity()).isShuffling()) 
+			shuffleIconIndex = R.drawable.shufflewhite40;
+
+		Drawable shuffleIcon = getResources().getDrawable(shuffleIconIndex);
+		item.setIcon(shuffleIcon);
 		
 	}
 

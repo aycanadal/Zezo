@@ -57,7 +57,7 @@ public class FoldersFragment extends Fragment implements FolderClickListener {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
 		menu.clear();
-		inflater.inflate(R.menu.browser, menu);
+		inflater.inflate(R.menu.folders, menu);
 		super.onCreateOptionsMenu(menu, inflater);
 
 	}

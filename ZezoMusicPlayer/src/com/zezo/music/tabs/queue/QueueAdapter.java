@@ -69,4 +69,11 @@ public class QueueAdapter extends BaseAdapter{
 		
 	}
 
+	public void removeFromQueue(Song song) {
+		
+		queue.remove(song);
+		notifyDataSetChanged();
+		
+	}
+
 }

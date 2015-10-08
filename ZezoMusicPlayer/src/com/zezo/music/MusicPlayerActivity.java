@@ -37,15 +37,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -104,6 +99,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 			musicService.setPlayerPrepared(true);
 			nowPlayingFragment.updateController();
+			
+			//update queue
 
 		}
 	};
@@ -153,8 +150,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		initKeyboard();
 
-		PlaylistFragment playlistFragment = tabPagerAdapter.getPlaylistFragment(); 
-		
+		PlaylistFragment playlistFragment = tabPagerAdapter.getPlaylistFragment();
+
 		nowPlayingFragment = (NowPlayingFragment) getSupportFragmentManager().findFragmentById(R.id.nowplaying);
 		nowPlayingFragment.setRetainInstance(true);
 		nowPlayingFragment.setNowPlayingClickListener(playlistFragment);
@@ -265,44 +262,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 	}
 
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-
-		super.onCreateContextMenu(menu, v, menuInfo);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.context, menu);
-
-		menu.add(R.string.AddToQueue).setOnMenuItemClickListener(new OnMenuItemClickListener() {
-
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-
-				AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-
-				musicService.addToQueue(musicService.getSongById(info.id));
-				tabPagerAdapter.getQueueFragment().addToQueue(musicService.getSongById(info.id));
-
-				return true;
-
-			}
-		});
-
-		menu.add(R.string.Delete).setOnMenuItemClickListener(new OnMenuItemClickListener() {
-
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-
-				AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-
-				showDeleteDialog(musicService.getSongById(info.id));
-
-				return true;
-
-			}
-		});
-
-	}
-
-	@Override
 	public void onDeleteConfirmed(long songId) {
 
 		Song song = musicService.getSongById(songId);
@@ -387,36 +346,11 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 	}
 
-	private void showDeleteDialog(Song song) {
-
-		DialogFragment dialog = new YesNoDialogFragment();
-		Bundle args = new Bundle();
-		args.putString("title", "Delete File?");
-		args.putString("message", "Do you really wish to delete the song from the device?");
-		args.putLong("songId", song.getId());
-		dialog.setArguments(args);
-		dialog.show(getSupportFragmentManager(), "deleteDialog");
-
-	}
-
-	private void showExitDialog() {
-
-		new AlertDialog.Builder(this).setTitle("Exit").setMessage("Do you really wish to quit the application?")
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int whichButton) {
-						exit();
-					}
-				}).setNegativeButton(android.R.string.no, null).show();
-
-	}
-
 	private void toggleShuffle() {
 
-		tabPagerAdapter.getPlaylistFragment().setShuffle(musicService.isShuffling());
 		musicService.toggleShuffle();
+		tabPagerAdapter.getPlaylistFragment().updateShuffleIcon();		
+		
 	}
 
 	@TargetApi(Build.VERSION_CODES.FROYO)
@@ -451,6 +385,60 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 	public void setPlaylist(ArrayList<Song> playlist) {
 		this.playlist = playlist;
+	}
+
+	public void addToQueue(long songId) {
+
+		Song song = musicService.getSongById(songId);
+		musicService.addToQueue(song);
+		tabPagerAdapter.getQueueFragment().addToQueue(song);
+
+	}
+
+	public void removeFromQueue(long songId) {
+
+		Song song = musicService.getSongById(songId);
+		musicService.removeFromQueue(song);
+		tabPagerAdapter.getQueueFragment().removeFromQueue(song);
+
+	}
+
+	public void showDeleteDialog(long songId) {
+
+		showDeleteDialog(musicService.getSongById(songId));
+
+	}
+
+	private void showDeleteDialog(Song song) {
+
+		DialogFragment dialog = new YesNoDialogFragment();
+		Bundle args = new Bundle();
+		args.putString("title", "Delete File?");
+		args.putString("message", "Do you really wish to delete the song from the device?");
+		args.putLong("songId", song.getId());
+		dialog.setArguments(args);
+		dialog.show(getSupportFragmentManager(), "deleteDialog");
+
+	}
+
+	private void showExitDialog() {
+
+		new AlertDialog.Builder(this).setTitle("Exit").setMessage("Do you really wish to quit the application?")
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int whichButton) {
+						exit();
+					}
+				}).setNegativeButton(android.R.string.no, null).show();
+
+	}
+	
+	public boolean isShuffling(){
+		
+		return musicService.isShuffling();
+		
 	}
 
 }

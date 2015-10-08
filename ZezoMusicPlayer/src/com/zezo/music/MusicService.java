@@ -104,6 +104,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 		queue.add(song);
 
 	}
+	
+	public void removeFromQueue(Song song) {
+		queue.remove(song);
+
+	}
 
 	public boolean audioFocusGranted() {
 
@@ -139,11 +144,19 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 	}
 
 	public Song getSongById(long songId) {
+		
 		for (Song song : playlist) {
 			if (song.getId() == songId) {
 				return song;
 			}
 		}
+		
+		for (Song song : queue) {
+			if (song.getId() == songId) {
+				return song;
+			}
+		}
+		
 		return null;
 	}
 
@@ -464,10 +477,12 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 	}
 
 	public void toggleShuffle() {
+		
 		if (isShuffling())
 			setShuffle(false);
 		else
 			setShuffle(true);
+		
 	}
 
 	private void registerMediaButtonListener() {
