@@ -1,6 +1,7 @@
 package com.zezo.music.tabs.nowplaying;
 
 import com.zezo.music.MusicController;
+import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.MusicService;
 import com.zezo.music.R;
 import com.zezo.music.domain.Song;
@@ -67,6 +68,7 @@ public class NowPlayingFragment extends Fragment {
 		menu.clear();
 		inflater.inflate(R.menu.nowplaying, menu);
 		super.onCreateOptionsMenu(menu, inflater);
+		((MusicPlayerActivity)getActivity()).updateShuffleIcon();
 
 	}
 
@@ -95,7 +97,7 @@ public class NowPlayingFragment extends Fragment {
 		musicController.setVisibility(View.GONE);
 		musicController.hideSuper();
 		controllerFrame.setVisibility(View.GONE);
-		getActivity().getSupportFragmentManager().beginTransaction().hide(this).commit();
+		//getActivity().getSupportFragmentManager().beginTransaction().hide(this).commit();
 
 	}
 
@@ -106,7 +108,7 @@ public class NowPlayingFragment extends Fragment {
 		musicController.setFocusable(false);
 		musicController.setFocusableInTouchMode(false);
 		controllerFrame.setVisibility(View.VISIBLE);
-		getActivity().getSupportFragmentManager().beginTransaction().show(this).commit();
+		//getActivity().getSupportFragmentManager().beginTransaction().show(this).commit();
 
 	}
 

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.zezo.music.MusicService.MusicBinder;
 import com.zezo.music.domain.Song;
 import com.zezo.music.tabs.TabPagerAdapter;
-import com.zezo.music.tabs.TabPagerAdapter.Tab;
+import com.zezo.music.tabs.TabPagerAdapter.Tabs;
 import com.zezo.music.tabs.folders.FoldersFragment;
 import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.util.Util;
@@ -26,6 +26,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -125,7 +126,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		tabPagerAdapter = new TabPagerAdapter(getSupportFragmentManager(), this);
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		viewPager.setAdapter(tabPagerAdapter);
-		viewPager.setCurrentItem(Tab.PLAYLIST.ordinal());
+		viewPager.setCurrentItem(Tabs.PLAYLIST.ordinal());
+		viewPager.setOffscreenPageLimit(4);
 
 		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
@@ -135,11 +137,11 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 			@Override
 			public void onPageSelected(int position) {
-
-				if (position != Tab.NOWPLAYING.ordinal())
-					tabPagerAdapter.getNowPlayingFragment().hide();
-				else
+				
+				if (position == Tabs.NOWPLAYING.ordinal())
 					tabPagerAdapter.getNowPlayingFragment().show();
+				else 
+					tabPagerAdapter.getNowPlayingFragment().hide();
 
 			}
 
@@ -150,8 +152,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		});
 
 		initMusicService();
-
-		// initKeyboard();
 
 	}
 
@@ -169,7 +169,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			// handles a search query
 			String query = intent.getStringExtra(SearchManager.QUERY);
-			final MenuItem menuItem = optionsMenu.findItem(R.id.grid_default_search);
+			final MenuItem menuItem = optionsMenu.findItem(R.id.search);
 			View actionView = menuItem.getActionView();
 			final SearchView searchView = (SearchView) actionView;
 			searchView.setQuery(query, false);
@@ -289,17 +289,17 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 			tabPagerAdapter.getPlaylistFragment().loadPlaylist(playlist);
 			musicService.setPlaylist(playlist);
 			sharedPreferences.edit().putString(KEY_DIRECTORY_SELECTED, musicFolderPath).commit();
-			break;
+			return true;
 
 		case R.id.action_shuffle:
 
 			toggleShuffle();
-			break;
+			return true;
 
 		case R.id.action_exit:
 
 			showExitDialog();
-			break;
+			return true;
 
 		}
 
@@ -319,7 +319,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 	private void toggleShuffle() {
 
 		musicService.toggleShuffle();
-		tabPagerAdapter.getPlaylistFragment().updateShuffleIcon();
+		updateShuffleIcon();
 
 	}
 
@@ -400,6 +400,23 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 	public boolean isShuffling() {
 
 		return musicService.isShuffling();
+
+	}
+
+	public void updateShuffleIcon() {
+
+		MenuItem item = optionsMenu.findItem(R.id.action_shuffle);
+
+		if (item == null)
+			return;
+
+		int shuffleIconIndex = R.drawable.shufflegrey40;
+
+		if (isShuffling())
+			shuffleIconIndex = R.drawable.shufflewhite40;
+
+		Drawable shuffleIcon = getResources().getDrawable(shuffleIconIndex);
+		item.setIcon(shuffleIcon);
 
 	}
 

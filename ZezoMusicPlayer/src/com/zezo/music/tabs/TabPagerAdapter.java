@@ -17,7 +17,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 	private final Context context;
 
 	// Order has to match with tab indexes.
-	public enum Tab {
+	public enum Tabs {
 
 		NOWPLAYING, PLAYLIST, QUEUE, FOLDERS
 
@@ -30,10 +30,12 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 		super(fragmentManager);
 		this.context = context;
 
-		tabs.put(Tab.NOWPLAYING.ordinal(), new NowPlayingFragment());
-		tabs.put(Tab.FOLDERS.ordinal(), new FoldersFragment());
-		tabs.put(Tab.PLAYLIST.ordinal(), new PlaylistFragment());
-		tabs.put(Tab.QUEUE.ordinal(), new QueueFragment());
+		NowPlayingFragment nowPlayingFragment = new NowPlayingFragment();
+		nowPlayingFragment.setRetainInstance(true);
+		tabs.put(Tabs.NOWPLAYING.ordinal(), nowPlayingFragment);
+		tabs.put(Tabs.FOLDERS.ordinal(), new FoldersFragment());
+		tabs.put(Tabs.PLAYLIST.ordinal(), new PlaylistFragment());
+		tabs.put(Tabs.QUEUE.ordinal(), new QueueFragment());
 	}
 
 	@Override
@@ -53,7 +55,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 	@Override
 	public CharSequence getPageTitle(int position) {
 
-		Tab tab = Tab.values()[position];
+		Tabs tab = Tabs.values()[position];
 
 		switch (tab) {
 
@@ -73,25 +75,25 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 
 	public FoldersFragment getBrowserFragment() {
 
-		return (FoldersFragment) tabs.get(Tab.FOLDERS.ordinal());
+		return (FoldersFragment) tabs.get(Tabs.FOLDERS.ordinal());
 
 	}
 
 	public PlaylistFragment getPlaylistFragment() {
 
-		return (PlaylistFragment) tabs.get(Tab.PLAYLIST.ordinal());
+		return (PlaylistFragment) tabs.get(Tabs.PLAYLIST.ordinal());
 
 	}
 
 	public QueueFragment getQueueFragment() {
 
-		return (QueueFragment) tabs.get(Tab.QUEUE.ordinal());
+		return (QueueFragment) tabs.get(Tabs.QUEUE.ordinal());
 
 	}
 
 	public NowPlayingFragment getNowPlayingFragment() {
 
-		return (NowPlayingFragment) tabs.get(Tab.NOWPLAYING.ordinal());
+		return (NowPlayingFragment) tabs.get(Tabs.NOWPLAYING.ordinal());
 
 	}
 }

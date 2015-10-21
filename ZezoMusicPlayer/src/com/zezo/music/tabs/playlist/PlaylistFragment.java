@@ -12,12 +12,10 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
-import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -35,27 +33,13 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 
 	private ListView songListView;
 	private PlaylistAdapter playlistAdapter;
-	private Menu optionsMenu;
 
 	final private OnQueryTextListener queryListener = new OnQueryTextListener() {
 
 		@Override
-		public boolean onQueryTextChange(String newText) {
+		public boolean onQueryTextChange(String queryTextt) {
 
-			String query;
-
-			if (TextUtils.isEmpty(newText)) {
-				// ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle("List");
-				query = null;
-			} else {
-				// ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle("List
-				// - Searching for: " + newText);
-				query = newText;
-
-			}
-
-			playlistAdapter.getFilter().filter(query);
-
+			playlistAdapter.getFilter().filter(queryTextt);
 			return true;
 		}
 
@@ -92,13 +76,12 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-		optionsMenu = menu;
-		optionsMenu.clear();
-		inflater.inflate(R.menu.playlist, optionsMenu);
-		updateShuffleIcon();
+		menu.clear();
+		inflater.inflate(R.menu.playlist, menu);
+		
 
 		SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-		final MenuItem menuItem = optionsMenu.findItem(R.id.grid_default_search);
+		final MenuItem menuItem = menu.findItem(R.id.search);
 		View actionView = menuItem.getActionView();
 		final SearchView searchView = (SearchView) actionView;
 		final SearchableInfo searchableInfo = searchManager.getSearchableInfo(getActivity().getComponentName());
@@ -115,8 +98,9 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 				}
 			}
 		});
-
-		super.onCreateOptionsMenu(optionsMenu, inflater);
+		
+		super.onCreateOptionsMenu(menu, inflater);
+		((MusicPlayerActivity)getActivity()).updateShuffleIcon();
 
 	}
 
@@ -201,20 +185,6 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 	public void onNowPlayingClicked() {
 
 		scrollToCurrent();
-
-	}
-
-	public void updateShuffleIcon() {
-
-		MenuItem item = optionsMenu.findItem(R.id.action_shuffle);
-		int shuffleIconIndex = R.drawable.shufflegrey40;
-		;
-
-		if (((MusicPlayerActivity) getActivity()).isShuffling())
-			shuffleIconIndex = R.drawable.shufflewhite40;
-
-		Drawable shuffleIcon = getResources().getDrawable(shuffleIconIndex);
-		item.setIcon(shuffleIcon);
 
 	}
 

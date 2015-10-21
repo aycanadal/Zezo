@@ -2,6 +2,13 @@
     xmlns:zezo="http://schemas.android.com/apk/res-auto" >
     
     <item
+        android:id="@+id/action_shuffle"
+        android:icon="@drawable/shufflegrey40"
+        android:orderInCategory="3"
+        android:title="@string/Shuffle"
+        zezo:showAsAction="always"/>
+    
+    <item
         android:id="@+id/action_exit"
         android:icon="@drawable/opendoorwhite40"
         android:orderInCategory="4"
