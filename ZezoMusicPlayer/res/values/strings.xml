@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Zezo</string>
+    <string name="search_hint">Search songs</string>
     <string name="zezo">zezo</string>
     <string name="Settings">Settings</string>
     <string name="Exit">Exit</string>
@@ -18,5 +19,6 @@
     <string name="Folders">Folders</string>
     <string name="Playlist">Playlist</string>
     <string name="Queue">Queue</string>
+    <string name="NowPlaying">Now Playing</string>      
 
 </resources>

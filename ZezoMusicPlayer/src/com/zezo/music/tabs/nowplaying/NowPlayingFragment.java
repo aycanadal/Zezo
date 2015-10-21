@@ -1,10 +1,15 @@
-package com.zezo.music;
+package com.zezo.music.tabs.nowplaying;
 
+import com.zezo.music.MusicController;
+import com.zezo.music.MusicService;
+import com.zezo.music.R;
 import com.zezo.music.domain.Song;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -34,6 +39,8 @@ public class NowPlayingFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+		setHasOptionsMenu(true);
+		
 		View view = inflater.inflate(R.layout.nowplaying, container, false);
 
 		LinearLayout nowPlayingFrame = (LinearLayout) view.findViewById(R.id.nowPlaying);
@@ -53,12 +60,20 @@ public class NowPlayingFragment extends Fragment {
 
 		return view;
 	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+		menu.clear();
+		inflater.inflate(R.menu.nowplaying, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+
+	}
 
 	public void initController(MusicService musicService) {
 
 		musicController.init(musicService);
 		musicController.setMusicBound(true);
-		musicController.show(0);
 
 	}
 
@@ -88,6 +103,8 @@ public class NowPlayingFragment extends Fragment {
 
 		musicController.show(0);
 		musicController.setVisibility(View.VISIBLE);
+		musicController.setFocusable(false);
+		musicController.setFocusableInTouchMode(false);
 		controllerFrame.setVisibility(View.VISIBLE);
 		getActivity().getSupportFragmentManager().beginTransaction().show(this).commit();
 
