@@ -3,8 +3,9 @@ package com.zezo.music;
 import java.util.ArrayList;
 
 import com.zezo.music.MusicService.MusicBinder;
-import com.zezo.music.TabPagerAdapter.Tab;
 import com.zezo.music.domain.Song;
+import com.zezo.music.tabs.TabPagerAdapter;
+import com.zezo.music.tabs.TabPagerAdapter.Tab;
 import com.zezo.music.tabs.folders.FoldersFragment;
 import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.util.Util;
@@ -13,6 +14,7 @@ import com.zezo.music.util.YesNoDialogFragment.OnDeleteConfirmedListener;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -37,11 +39,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteConfirmedListener {
@@ -49,13 +50,13 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 	public static final String PACKAGE_NAME = "com.zezo.music";
 	public static final String KEY_DIRECTORY_SELECTED = MusicPlayerActivity.PACKAGE_NAME + ".DIRECTORY_SELECTED";
 
-	private NowPlayingFragment nowPlayingFragment;
 	private TabPagerAdapter tabPagerAdapter;
 	private ViewPager viewPager;
 	private SharedPreferences sharedPreferences;
 	private MusicService musicService;
 	private ArrayList<Song> playlist;
 	private Intent musicServiceIntent;
+	private Menu optionsMenu;
 
 	private ServiceConnection musicServiceConnection = new ServiceConnection() {
 
@@ -65,14 +66,14 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 			MusicBinder binder = (MusicBinder) service;
 			musicService = binder.getService();
 			musicService.setPlaylist(playlist);
-			nowPlayingFragment.initController(musicService);
+			tabPagerAdapter.getNowPlayingFragment().initController(musicService);
 
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 
-			nowPlayingFragment.unbindController();
+			tabPagerAdapter.getNowPlayingFragment().unbindController();
 
 		}
 	};
@@ -87,7 +88,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 			Song song = musicService.getCurrentSong();
 
-			nowPlayingFragment.setCurrentSong(song);
+			tabPagerAdapter.getNowPlayingFragment().setCurrentSong(song);
 
 			if (viewPager.getCurrentItem() == 1) {
 
@@ -98,7 +99,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 			}
 
 			musicService.setPlayerPrepared(true);
-			nowPlayingFragment.updateController();
+			tabPagerAdapter.getNowPlayingFragment().updateController();
 
 			tabPagerAdapter.getQueueFragment().setQueue(musicService.getQueue());
 
@@ -135,8 +136,10 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 			@Override
 			public void onPageSelected(int position) {
 
-				if (position != 1)
-					hideKeyboard();
+				if (position != Tab.NOWPLAYING.ordinal())
+					tabPagerAdapter.getNowPlayingFragment().hide();
+				else
+					tabPagerAdapter.getNowPlayingFragment().show();
 
 			}
 
@@ -148,37 +151,29 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		initMusicService();
 
-		initKeyboard();
+		// initKeyboard();
 
-		PlaylistFragment playlistFragment = tabPagerAdapter.getPlaylistFragment();
+	}
 
-		nowPlayingFragment = (NowPlayingFragment) getSupportFragmentManager().findFragmentById(R.id.nowplaying);
-		nowPlayingFragment.setRetainInstance(true);
-		nowPlayingFragment.setNowPlayingClickListener(playlistFragment);
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
 
-		ImageButton nowPlayingToggle = (ImageButton) findViewById(R.id.nowPlayingToggle);
+		optionsMenu = menu;
+		return true;
 
-		nowPlayingToggle.setOnClickListener(new OnClickListener() {
+	}
 
-			@Override
-			public void onClick(View nowPlayingToggle) {
+	@Override
+	protected void onNewIntent(Intent intent) {
 
-				if (nowPlayingFragment.isVisible()) {
-
-					((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsup);
-					nowPlayingFragment.hide();
-
-				} else {
-
-					((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsdown);
-					nowPlayingFragment.show();
-
-				}
-
-			}
-
-		});
-
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			// handles a search query
+			String query = intent.getStringExtra(SearchManager.QUERY);
+			final MenuItem menuItem = optionsMenu.findItem(R.id.grid_default_search);
+			View actionView = menuItem.getActionView();
+			final SearchView searchView = (SearchView) actionView;
+			searchView.setQuery(query, false);
+		}
 	}
 
 	private ArrayList<Song> getAllSongsInFolder(String folderPath) {
@@ -216,28 +211,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 		musicCursor.close();
 		return songs;
-
-	}
-
-	private void hideKeyboard() {
-
-		InputMethodManager inputMethodManager = (InputMethodManager) this
-				.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-		inputMethodManager.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0);
-
-	}
-
-	private void initKeyboard() {
-
-		// Show and hide keyboard once to work around the first time show
-		// doesn't work bug.
-
-		InputMethodManager inputMethodManager = (InputMethodManager) this
-				.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-		inputMethodManager.toggleSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0, 0);
-		inputMethodManager.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0);
 
 	}
 
@@ -286,7 +259,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 	@Override
 	protected void onDestroy() {
 
-		hideKeyboard();
+		// hideKeyboard();
 		unbindService(musicServiceConnection);
 		stopService(musicServiceIntent);
 		musicService = null;
@@ -328,12 +301,9 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 			showExitDialog();
 			break;
 
-		case R.id.action_search:
-			return false;
-
 		}
 
-		return super.onOptionsItemSelected(item);
+		return false;
 
 	}
 
@@ -363,19 +333,11 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 	private void exit() {
 
-		hideKeyboard();
+		// hideKeyboard();
 		unbindService(musicServiceConnection);
 		stopService(musicServiceIntent);
 		musicService = null;
 		System.exit(0);
-
-	}
-
-	public void hideNowPlaying() {
-
-		ImageButton nowPlayingToggle = (ImageButton) findViewById(R.id.nowPlayingToggle);
-		nowPlayingToggle.setImageResource(R.drawable.arrowsup);
-		nowPlayingFragment.hide();
 
 	}
 

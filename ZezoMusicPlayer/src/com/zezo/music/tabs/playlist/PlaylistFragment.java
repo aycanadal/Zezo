@@ -3,18 +3,21 @@ package com.zezo.music.tabs.playlist;
 import java.util.ArrayList;
 
 import com.zezo.music.MusicPlayerActivity;
-import com.zezo.music.NowPlayingFragment.NowPlayingClickListener;
 import com.zezo.music.R;
-import com.zezo.music.SearchFragment;
-import com.zezo.music.SearchFragment.SearchListener;
 import com.zezo.music.domain.Song;
+import com.zezo.music.tabs.nowplaying.NowPlayingFragment.NowPlayingClickListener;
 import com.zezo.music.tabs.playlist.PlaylistAdapter.SongClickListener;
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -24,16 +27,44 @@ import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
+import android.widget.Toast;
 
-public class PlaylistFragment extends Fragment implements SongClickListener, NowPlayingClickListener, SearchListener {
+public class PlaylistFragment extends Fragment implements SongClickListener, NowPlayingClickListener {
 
 	private ListView songListView;
 	private PlaylistAdapter playlistAdapter;
-	private SearchFragment searchFragment;
 	private Menu optionsMenu;
+
+	final private OnQueryTextListener queryListener = new OnQueryTextListener() {
+
+		@Override
+		public boolean onQueryTextChange(String newText) {
+
+			String query;
+
+			if (TextUtils.isEmpty(newText)) {
+				// ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle("List");
+				query = null;
+			} else {
+				// ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle("List
+				// - Searching for: " + newText);
+				query = newText;
+
+			}
+
+			playlistAdapter.getFilter().filter(query);
+
+			return true;
+		}
+
+		@Override
+		public boolean onQueryTextSubmit(String query) {
+			Toast.makeText(getActivity(), "Searching for: " + query + "...", Toast.LENGTH_SHORT).show();
+			return false;
+		}
+	};
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -54,9 +85,6 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 		songListView.setAdapter(playlistAdapter);
 		registerForContextMenu(songListView);
 
-		searchFragment = (SearchFragment) getChildFragmentManager().findFragmentById(R.id.search);
-		getChildFragmentManager().beginTransaction().hide(searchFragment).commit();
-
 		return playlistView;
 
 	}
@@ -67,33 +95,29 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 		optionsMenu = menu;
 		optionsMenu.clear();
 		inflater.inflate(R.menu.playlist, optionsMenu);
-		super.onCreateOptionsMenu(optionsMenu, inflater);
 		updateShuffleIcon();
 
-	}
+		SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+		final MenuItem menuItem = optionsMenu.findItem(R.id.grid_default_search);
+		View actionView = menuItem.getActionView();
+		final SearchView searchView = (SearchView) actionView;
+		final SearchableInfo searchableInfo = searchManager.getSearchableInfo(getActivity().getComponentName());
+		searchView.setSearchableInfo(searchableInfo);
+		searchView.setOnQueryTextListener(queryListener);
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-
-		switch (item.getItemId()) {
-
-		case R.id.action_search:
-
-			if (searchFragment.isVisible()) {
-
-				hideSearch();
-
-			} else {
-
-				showSearch();
-
+		searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View view, boolean queryTextFocused) {
+				if (!queryTextFocused) {
+					menuItem.collapseActionView();
+					searchView.setQuery("", false);
+					searchView.setIconified(true);
+				}
 			}
+		});
 
-			return true;
+		super.onCreateOptionsMenu(optionsMenu, inflater);
 
-		}
-
-		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -170,29 +194,6 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 
 		if (activity instanceof MusicPlayerActivity)
 			((MusicPlayerActivity) activity).play(song);
-
-	}
-
-	private void showSearch() {
-
-		((MusicPlayerActivity) getActivity()).hideNowPlaying();
-
-		searchFragment.show(getChildFragmentManager(),
-				(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE));
-
-	}
-
-	private void hideSearch() {
-
-		searchFragment.hide(getChildFragmentManager(),
-				(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE));
-
-	}
-
-	@Override
-	public void onSearchTextChanged(CharSequence cs) {
-
-		playlistAdapter.getFilter().filter(cs);
 
 	}
 
