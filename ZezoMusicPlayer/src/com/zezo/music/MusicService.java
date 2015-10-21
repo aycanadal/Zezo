@@ -30,7 +30,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.KeyEvent;
 
-// Service to play music even after application loses focus.
+// Service to play music even if activity is sent to stack.
 
 public class MusicService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
 		MediaPlayer.OnCompletionListener, MediaButtonReceiverListener, OnAudioFocusChangeListener {
