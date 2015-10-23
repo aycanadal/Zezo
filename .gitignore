@@ -35,3 +35,4 @@ proguard/
 gen-external-apklibs
 
 .idea/
+app/build/

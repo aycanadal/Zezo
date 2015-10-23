@@ -1,10 +1,5 @@
 package com.zezo.music.tabs.playlist;
 
-import java.util.ArrayList;
-
-import com.zezo.music.R;
-import com.zezo.music.domain.Song;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,133 +12,138 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.zezo.music.R;
+import com.zezo.music.domain.Song;
+
+import java.util.ArrayList;
+
 public class PlaylistAdapter extends BaseAdapter implements Filterable {
 
-	private long checkedItemId;
-	private Filter filter;
-	private ArrayList<Song> filteredSongs;
-	private LayoutInflater songInflater;
-	private ArrayList<Song> songs;
-	private SongClickListener songClickListener;
+    private long checkedItemId;
+    private Filter filter;
+    private ArrayList<Song> filteredSongs;
+    private LayoutInflater songInflater;
+    private ArrayList<Song> songs;
+    private SongClickListener songClickListener;
 
-	public interface SongClickListener {
+    public interface SongClickListener {
 
-		void onSongClicked(Song song);
+        void onSongClicked(Song song);
 
-	}
+    }
 
-	public PlaylistAdapter(Context c, ArrayList<Song> songs, SongClickListener songClickListener) {
+    public PlaylistAdapter(Context c, ArrayList<Song> songs, SongClickListener songClickListener) {
 
-		setSongs(songs);
-		setFilteredSongs(songs);
-		songInflater = LayoutInflater.from(c);
-		filter = new PlaylistSearchFilter(this);
-		this.songClickListener = songClickListener;
+        setSongs(songs);
+        setFilteredSongs(songs);
+        songInflater = LayoutInflater.from(c);
+        filter = new PlaylistSearchFilter(this);
+        this.songClickListener = songClickListener;
 
-	}
+    }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
 
-		Song song = getFilteredSongs().get(position);
+        Song song = getFilteredSongs().get(position);
 
-		LinearLayout songLayout = (LinearLayout) songInflater.inflate(R.layout.song, parent, false);
-		TextView songView = (TextView) songLayout.findViewById(R.id.song_title);
-		TextView artistView = (TextView) songLayout.findViewById(R.id.song_artist);
-		TextView durationView = (TextView) songLayout.findViewById(R.id.songDuration);
-		songView.setText(song.getTitle());
-		artistView.setText(song.getArtist());
-		durationView.setText(song.getDuration());
+        LinearLayout songLayout = (LinearLayout) songInflater.inflate(R.layout.song, parent, false);
+        TextView songView = (TextView) songLayout.findViewById(R.id.song_title);
+        TextView artistView = (TextView) songLayout.findViewById(R.id.song_artist);
+        TextView durationView = (TextView) songLayout.findViewById(R.id.songDuration);
+        songView.setText(song.getTitle());
+        artistView.setText(song.getArtist());
+        durationView.setText(song.getDuration());
 
-		songLayout.setTag(song.getId());
+        songLayout.setTag(song.getId());
 
-		long itemId = getItemId(position);
+        long itemId = getItemId(position);
 
-		((ListView) parent).setItemChecked(position, false);
+        ((ListView) parent).setItemChecked(position, false);
 
-		if (checkedItemId > 0 && checkedItemId == itemId)
-			((ListView) parent).setItemChecked(position, true);
+        if (checkedItemId > 0 && checkedItemId == itemId)
+            ((ListView) parent).setItemChecked(position, true);
 
-		LinearLayout songClickableArea = (LinearLayout) songLayout.findViewById(R.id.song);
-		songClickableArea.setOnClickListener(new OnClickListener() {
+        LinearLayout songClickableArea = (LinearLayout) songLayout.findViewById(R.id.song);
+        songClickableArea.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View view) {
+            @Override
+            public void onClick(View view) {
 
-				View item = (View) view.getParent();
-				int songIndex = Integer.parseInt(item.getTag().toString());
-				Song song = getItem(songIndex);
-				songClickListener.onSongClicked(song);
+                View item = (View) view.getParent();
+                int songIndex = Integer.parseInt(item.getTag().toString());
+                Song song = getItem(songIndex);
+                songClickListener.onSongClicked(song);
 
-			}
+            }
 
-		});
+        });
 
-		return songLayout;
+        return songLayout;
 
-	}
+    }
 
-	@Override
-	public Song getItem(int songId) {
+    @Override
+    public Song getItem(int songId) {
 
-		for (Song song : filteredSongs) {
+        for (Song song : filteredSongs) {
 
-			if (song.getId() == songId)
-				return song;
+            if (song.getId() == songId)
+                return song;
 
-		}
+        }
 
-		return null;
+        return null;
 
-	}
+    }
 
-	@Override
-	public int getCount() {
+    @Override
+    public int getCount() {
 
-		return getFilteredSongs().size();
-	}
+        return getFilteredSongs().size();
+    }
 
-	@Override
-	public Filter getFilter() {
+    @Override
+    public Filter getFilter() {
 
-		return filter;
+        return filter;
 
-	}
+    }
 
-	@Override
-	public long getItemId(int arg0) {
+    @Override
+    public long getItemId(int arg0) {
 
-		return getFilteredSongs().get(arg0).getId();
+        return getFilteredSongs().get(arg0).getId();
 
-	}
+    }
 
-	public ArrayList<Song> getFilteredSongs() {
+    public ArrayList<Song> getFilteredSongs() {
 
-		return filteredSongs;
+        return filteredSongs;
 
-	}
+    }
 
-	public ArrayList<Song> getSongs() {
+    public ArrayList<Song> getSongs() {
 
-		return songs;
+        return songs;
 
-	}
+    }
 
-	public void setFilteredSongs(ArrayList<Song> filteredSongs) {
+    public void setFilteredSongs(ArrayList<Song> filteredSongs) {
 
-		this.filteredSongs = filteredSongs;
+        this.filteredSongs = filteredSongs;
 
-	}
+    }
 
-	public void setItemChecked(long id) {
+    public void setItemChecked(long id) {
 
-		checkedItemId = id;
+        checkedItemId = id;
 
-	}
+    }
 
-	public void setSongs(ArrayList<Song> songs) {
+    public void setSongs(ArrayList<Song> songs) {
 
-		this.songs = songs;
+        this.songs = songs;
 
-	}
+    }
 }

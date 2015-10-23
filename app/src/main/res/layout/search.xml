@@ -7,7 +7,7 @@
     android:orientation="horizontal"
     android:weightSum="1.0"
     android:windowSoftInputMode="adjustPan"
-    tools:context=".MusicPlayerActivity" >
+    tools:context=".MusicPlayerActivity">
 
     <EditText
         android:id="@+id/searchBox"
@@ -19,8 +19,7 @@
         android:inputType="textVisiblePassword"
         android:longClickable="true"
         android:textColor="@color/white"
-        android:imeOptions="flagNoExtractUi"
-         >
+        android:imeOptions="flagNoExtractUi">
 
         <requestFocus />
     </EditText>

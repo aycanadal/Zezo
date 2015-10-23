@@ -1,75 +1,75 @@
 package com.zezo.music.tabs.playlist;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.widget.Filter;
 
 import com.zezo.music.domain.Song;
 
-import android.widget.Filter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlaylistSearchFilter extends Filter {
 
-	private PlaylistAdapter songAdapter;
+    private PlaylistAdapter songAdapter;
 
-	public PlaylistSearchFilter(PlaylistAdapter songAdapter) {
+    public PlaylistSearchFilter(PlaylistAdapter songAdapter) {
 
-		this.songAdapter = songAdapter;
+        this.songAdapter = songAdapter;
 
-	}
+    }
 
-	@Override
-	protected FilterResults performFiltering(CharSequence charSequence) {
+    @Override
+    protected FilterResults performFiltering(CharSequence charSequence) {
 
-		FilterResults results = new FilterResults();
+        FilterResults results = new FilterResults();
 
-		if (charSequence == null || charSequence.length() == 0) {
+        if (charSequence == null || charSequence.length() == 0) {
 
-			results.values = songAdapter.getSongs();
-			results.count = songAdapter.getSongs().size();
+            results.values = songAdapter.getSongs();
+            results.count = songAdapter.getSongs().size();
 
-		} else {
+        } else {
 
-			List<Song> filteredSongs = new ArrayList<Song>();
+            List<Song> filteredSongs = new ArrayList<Song>();
 
-			for (Song song : songAdapter.getSongs()) {
+            for (Song song : songAdapter.getSongs()) {
 
-				String songTitle = song.getTitle();
-				String songArtist = song.getArtist();
+                String songTitle = song.getTitle();
+                String songArtist = song.getArtist();
 
-				String songInfo = songArtist + songTitle;
+                String songInfo = songArtist + songTitle;
 
-				String[] words = charSequence.toString().split(" ");
+                String[] words = charSequence.toString().split(" ");
 
-				boolean isMatch = true;
+                boolean isMatch = true;
 
-				for (String word : words) {
+                for (String word : words) {
 
-					if (!songInfo.toUpperCase().contains(word.toUpperCase())) {
-						isMatch = false;
-						break;
-					}
+                    if (!songInfo.toUpperCase().contains(word.toUpperCase())) {
+                        isMatch = false;
+                        break;
+                    }
 
-				}
+                }
 
-				if (isMatch)
-					filteredSongs.add(song);
+                if (isMatch)
+                    filteredSongs.add(song);
 
-			}
+            }
 
-			results.values = filteredSongs;
-			results.count = filteredSongs.size();
+            results.values = filteredSongs;
+            results.count = filteredSongs.size();
 
-		}
+        }
 
-		return results;
-	}
+        return results;
+    }
 
-	@Override
-	protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+    @Override
+    protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
 
-		songAdapter.setFilteredSongs((ArrayList<Song>) filterResults.values);
-		songAdapter.notifyDataSetChanged();
+        songAdapter.setFilteredSongs((ArrayList<Song>) filterResults.values);
+        songAdapter.notifyDataSetChanged();
 
-	}
+    }
 
 }

@@ -1,26 +1,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:zezo="http://schemas.android.com/apk/res-auto" >
-    
-    <item     
+    xmlns:zezo="http://schemas.android.com/apk/res-auto">
+
+    <item
         android:id="@+id/search"
         android:icon="@drawable/magnifierwhite40"
         android:title="search"
         zezo:showAsAction="always"
         zezo:actionViewClass="android.support.v7.widget.SearchView"
-        android:orderInCategory="1" 
-    />
-    
+        android:orderInCategory="1" />
+
     <item
         android:id="@+id/action_shuffle"
         android:icon="@drawable/shufflegrey40"
         android:orderInCategory="3"
         android:title="@string/Shuffle"
-        zezo:showAsAction="always"/>
+        zezo:showAsAction="always" />
     <item
         android:id="@+id/action_exit"
         android:icon="@drawable/opendoorwhite40"
         android:orderInCategory="4"
         android:title="@string/Exit"
-        zezo:showAsAction="always"/>
+        zezo:showAsAction="always" />
 
 </menu>

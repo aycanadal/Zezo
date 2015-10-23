@@ -11,60 +11,60 @@ import android.support.v4.app.DialogFragment;
 
 public class YesNoDialogFragment extends DialogFragment {
 
-	public interface OnDeleteConfirmedListener {
-		public void onDeleteConfirmed(long songId);
-	}
+    public interface OnDeleteConfirmedListener {
+        public void onDeleteConfirmed(long songId);
+    }
 
-	private static final int REQUEST_CODE = 1235;
+    private static final int REQUEST_CODE = 1235;
 
-	public static int getRequestCode() {
-		return REQUEST_CODE;
-	}
+    public static int getRequestCode() {
+        return REQUEST_CODE;
+    }
 
-	private OnDeleteConfirmedListener onDeleteConfirmedListener;
+    private OnDeleteConfirmedListener onDeleteConfirmedListener;
 
-	public YesNoDialogFragment() {
+    public YesNoDialogFragment() {
 
-	}
+    }
 
-	@Override
-	public void onAttach(Activity activity) {
+    @Override
+    public void onAttach(Activity activity) {
 
-		super.onAttach(activity);
+        super.onAttach(activity);
 
-		try {
+        try {
 
-			onDeleteConfirmedListener = (OnDeleteConfirmedListener) activity;
+            onDeleteConfirmedListener = (OnDeleteConfirmedListener) activity;
 
-		} catch (ClassCastException e) {
+        } catch (ClassCastException e) {
 
-			throw new ClassCastException(activity.toString() + " must implement OnDeleteConfirmedListener");
+            throw new ClassCastException(activity.toString() + " must implement OnDeleteConfirmedListener");
 
-		}
+        }
 
-	}
+    }
 
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		Bundle args = getArguments();
-		String title = args.getString("title", "");
-		String message = args.getString("message", "");
-		final long songId = args.getLong("songId");
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Bundle args = getArguments();
+        String title = args.getString("title", "");
+        String message = args.getString("message", "");
+        final long songId = args.getLong("songId");
 
-		return new AlertDialog.Builder(getActivity()).setTitle(title).setMessage(message)
-				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+        return new AlertDialog.Builder(getActivity()).setTitle(title).setMessage(message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-						onDeleteConfirmedListener.onDeleteConfirmed(songId);
+                        onDeleteConfirmedListener.onDeleteConfirmed(songId);
 
-					}
-				}).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-					}
-				}).create();
-	}
+                    }
+                }).create();
+    }
 }

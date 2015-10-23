@@ -1,9 +1,9 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu>
 
-<!--     <item -->
-<!--     android:id="@+id/action_delete" -->
-<!--     android:icon="@drawable/skull" -->
-<!--     android:orderInCategory="1" -->
-<!--     android:title="@string/Delete"/> -->
-    
+    <!--     <item -->
+    <!--     android:id="@+id/action_delete" -->
+    <!--     android:icon="@drawable/skull" -->
+    <!--     android:orderInCategory="1" -->
+    <!--     android:title="@string/Delete"/> -->
+
 </menu>

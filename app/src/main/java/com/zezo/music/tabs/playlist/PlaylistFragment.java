@@ -1,13 +1,5 @@
 package com.zezo.music.tabs.playlist;
 
-import java.util.ArrayList;
-
-import com.zezo.music.MusicPlayerActivity;
-import com.zezo.music.R;
-import com.zezo.music.domain.Song;
-import com.zezo.music.tabs.nowplaying.NowPlayingFragment.NowPlayingClickListener;
-import com.zezo.music.tabs.playlist.PlaylistAdapter.SongClickListener;
-
 import android.app.Activity;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
@@ -29,163 +21,171 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.zezo.music.MusicPlayerActivity;
+import com.zezo.music.R;
+import com.zezo.music.domain.Song;
+import com.zezo.music.tabs.nowplaying.NowPlayingFragment.NowPlayingClickListener;
+import com.zezo.music.tabs.playlist.PlaylistAdapter.SongClickListener;
+
+import java.util.ArrayList;
+
 public class PlaylistFragment extends Fragment implements SongClickListener, NowPlayingClickListener {
 
-	private ListView songListView;
-	private PlaylistAdapter playlistAdapter;
+    private ListView songListView;
+    private PlaylistAdapter playlistAdapter;
 
-	final private OnQueryTextListener queryListener = new OnQueryTextListener() {
+    final private OnQueryTextListener queryListener = new OnQueryTextListener() {
 
-		@Override
-		public boolean onQueryTextChange(String queryTextt) {
+        @Override
+        public boolean onQueryTextChange(String queryTextt) {
 
-			playlistAdapter.getFilter().filter(queryTextt);
-			return true;
-		}
+            playlistAdapter.getFilter().filter(queryTextt);
+            return true;
+        }
 
-		@Override
-		public boolean onQueryTextSubmit(String query) {
-			Toast.makeText(getActivity(), "Searching for: " + query + "...", Toast.LENGTH_SHORT).show();
-			return false;
-		}
-	};
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            Toast.makeText(getActivity(), "Searching for: " + query + "...", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    };
 
-	@Override
-	public void onAttach(Activity activity) {
+    @Override
+    public void onAttach(Activity activity) {
 
-		super.onAttach(activity);
-		playlistAdapter = new PlaylistAdapter(getActivity(), ((MusicPlayerActivity) activity).getPlaylist(), this);
+        super.onAttach(activity);
+        playlistAdapter = new PlaylistAdapter(getActivity(), ((MusicPlayerActivity) activity).getPlaylist(), this);
 
-	}
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
 
-		View playlistView = inflater.inflate(R.layout.playlist, container, false);
+        View playlistView = inflater.inflate(R.layout.playlist, container, false);
 
-		songListView = (ListView) playlistView.findViewById(R.id.song_list);
-		songListView.setAdapter(playlistAdapter);
-		registerForContextMenu(songListView);
+        songListView = (ListView) playlistView.findViewById(R.id.song_list);
+        songListView.setAdapter(playlistAdapter);
+        registerForContextMenu(songListView);
 
-		return playlistView;
+        return playlistView;
 
-	}
+    }
 
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-		menu.clear();
-		inflater.inflate(R.menu.playlist, menu);
-		
+        menu.clear();
+        inflater.inflate(R.menu.playlist, menu);
 
-		SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-		final MenuItem menuItem = menu.findItem(R.id.search);
-		View actionView = menuItem.getActionView();
-		final SearchView searchView = (SearchView) actionView;
-		final SearchableInfo searchableInfo = searchManager.getSearchableInfo(getActivity().getComponentName());
-		searchView.setSearchableInfo(searchableInfo);
-		searchView.setOnQueryTextListener(queryListener);
 
-		searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View view, boolean queryTextFocused) {
-				if (!queryTextFocused) {
-					menuItem.collapseActionView();
-					searchView.setQuery("", false);
-					searchView.setIconified(true);
-				}
-			}
-		});
-		
-		super.onCreateOptionsMenu(menu, inflater);
-		((MusicPlayerActivity)getActivity()).updateShuffleIcon();
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        final MenuItem menuItem = menu.findItem(R.id.search);
+        View actionView = menuItem.getActionView();
+        final SearchView searchView = (SearchView) actionView;
+        final SearchableInfo searchableInfo = searchManager.getSearchableInfo(getActivity().getComponentName());
+        searchView.setSearchableInfo(searchableInfo);
+        searchView.setOnQueryTextListener(queryListener);
 
-	}
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean queryTextFocused) {
+                if (!queryTextFocused) {
+                    menuItem.collapseActionView();
+                    searchView.setQuery("", false);
+                    searchView.setIconified(true);
+                }
+            }
+        });
 
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateOptionsMenu(menu, inflater);
+        ((MusicPlayerActivity) getActivity()).updateShuffleIcon();
 
-		super.onCreateContextMenu(menu, v, menuInfo);
-		final MusicPlayerActivity activity = (MusicPlayerActivity) getActivity();
-		MenuInflater inflater = activity.getMenuInflater();
-		inflater.inflate(R.menu.context, menu);
+    }
 
-		menu.add(R.string.AddToQueue).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        final MusicPlayerActivity activity = (MusicPlayerActivity) getActivity();
+        MenuInflater inflater = activity.getMenuInflater();
+        inflater.inflate(R.menu.context, menu);
 
-				AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        menu.add(R.string.AddToQueue).setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
-				activity.addToQueue(info.id);
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
 
-				return true;
+                AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 
-			}
-		});
+                activity.addToQueue(info.id);
 
-		menu.add(R.string.Delete).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+                return true;
 
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
+            }
+        });
 
-				AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        menu.add(R.string.Delete).setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
-				activity.showDeleteDialog(info.id);
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
 
-				return true;
+                AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 
-			}
-		});
+                activity.showDeleteDialog(info.id);
 
-	}
+                return true;
 
-	public void setCurrentSong(Song song) {
+            }
+        });
 
-		playlistAdapter.setItemChecked(song.getId());
-		songListView.setItemChecked(playlistAdapter.getFilteredSongs().indexOf(song), true);
+    }
 
-	}
+    public void setCurrentSong(Song song) {
 
-	public void remove(Song song) {
+        playlistAdapter.setItemChecked(song.getId());
+        songListView.setItemChecked(playlistAdapter.getFilteredSongs().indexOf(song), true);
 
-		playlistAdapter.getSongs().remove(song);
-		playlistAdapter.getFilteredSongs().remove(song);
-		playlistAdapter.notifyDataSetChanged();
+    }
 
-	}
+    public void remove(Song song) {
 
-	public void loadPlaylist(ArrayList<Song> songs) {
+        playlistAdapter.getSongs().remove(song);
+        playlistAdapter.getFilteredSongs().remove(song);
+        playlistAdapter.notifyDataSetChanged();
 
-		playlistAdapter = new PlaylistAdapter(getActivity(), songs, this);
-		songListView.setAdapter(playlistAdapter);
+    }
 
-	}
+    public void loadPlaylist(ArrayList<Song> songs) {
 
-	public void scrollToCurrent() {
+        playlistAdapter = new PlaylistAdapter(getActivity(), songs, this);
+        songListView.setAdapter(playlistAdapter);
 
-		songListView.requestFocusFromTouch();
-		songListView.setSelection(songListView.getCheckedItemPosition());
+    }
 
-	}
+    public void scrollToCurrent() {
 
-	@Override
-	public void onSongClicked(Song song) {
+        songListView.requestFocusFromTouch();
+        songListView.setSelection(songListView.getCheckedItemPosition());
 
-		Activity activity = getActivity();
+    }
 
-		if (activity instanceof MusicPlayerActivity)
-			((MusicPlayerActivity) activity).play(song);
+    @Override
+    public void onSongClicked(Song song) {
 
-	}
+        Activity activity = getActivity();
 
-	@Override
-	public void onNowPlayingClicked() {
+        if (activity instanceof MusicPlayerActivity)
+            ((MusicPlayerActivity) activity).play(song);
 
-		scrollToCurrent();
+    }
 
-	}
+    @Override
+    public void onNowPlayingClicked() {
+
+        scrollToCurrent();
+
+    }
 
 }

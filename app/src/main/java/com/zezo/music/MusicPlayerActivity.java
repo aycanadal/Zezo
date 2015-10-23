@@ -1,17 +1,5 @@
 package com.zezo.music;
 
-import java.util.ArrayList;
-
-import com.zezo.music.MusicService.MusicBinder;
-import com.zezo.music.domain.Song;
-import com.zezo.music.tabs.TabPagerAdapter;
-import com.zezo.music.tabs.TabPagerAdapter.Tabs;
-import com.zezo.music.tabs.folders.FoldersFragment;
-import com.zezo.music.tabs.playlist.PlaylistFragment;
-import com.zezo.music.util.Util;
-import com.zezo.music.util.YesNoDialogFragment;
-import com.zezo.music.util.YesNoDialogFragment.OnDeleteConfirmedListener;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -45,6 +33,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.zezo.music.MusicService.MusicBinder;
+import com.zezo.music.domain.Song;
+import com.zezo.music.tabs.TabPagerAdapter;
+import com.zezo.music.tabs.TabPagerAdapter.Tabs;
+import com.zezo.music.tabs.folders.FoldersFragment;
+import com.zezo.music.tabs.playlist.PlaylistFragment;
+import com.zezo.music.util.Util;
+import com.zezo.music.util.YesNoDialogFragment;
+import com.zezo.music.util.YesNoDialogFragment.OnDeleteConfirmedListener;
+
+import java.util.ArrayList;
 
 public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteConfirmedListener {
 

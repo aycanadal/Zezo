@@ -6,7 +6,7 @@
     android:focusable="false"
     android:focusableInTouchMode="false"
     android:orientation="horizontal"
-    android:padding="5dp" >
+    android:padding="5dp">
 
     <ImageView
         android:id="@+id/DragHandleImageView"
@@ -17,8 +17,7 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:onClick="onOpenContextMenu"
-        android:src="@drawable/menuwhite40" >
-    </ImageView>
+        android:src="@drawable/menuwhite40"></ImageView>
 
     <LinearLayout
         android:id="@+id/song"
@@ -27,7 +26,7 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:orientation="vertical"
-        android:padding="5dp" >
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/song_title"
@@ -49,7 +48,7 @@
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:orientation="horizontal"
-            android:padding="5dp" >
+            android:padding="5dp">
 
             <TextView
                 android:id="@+id/song_artist"
@@ -61,8 +60,8 @@
                 android:focusableInTouchMode="false"
                 android:textColor="@drawable/list_item_text_selector"
                 android:textSize="10sp" />
-            
-             <TextView
+
+            <TextView
                 android:id="@+id/songDuration"
                 android:layout_width="match_parent"
                 android:gravity="right"
@@ -73,8 +72,7 @@
                 android:focusableInTouchMode="false"
                 android:textColor="@drawable/list_item_text_selector"
                 android:textSize="10sp"
-                android:paddingRight="5dp"
-                 />
-            </LinearLayout>
+                android:paddingRight="5dp" />
         </LinearLayout>
     </LinearLayout>
+</LinearLayout>
