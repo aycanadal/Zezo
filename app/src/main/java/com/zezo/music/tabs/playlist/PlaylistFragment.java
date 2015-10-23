@@ -34,22 +34,6 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
     private ListView songListView;
     private PlaylistAdapter playlistAdapter;
 
-    final private OnQueryTextListener queryListener = new OnQueryTextListener() {
-
-        @Override
-        public boolean onQueryTextChange(String queryTextt) {
-
-            playlistAdapter.getFilter().filter(queryTextt);
-            return true;
-        }
-
-        @Override
-        public boolean onQueryTextSubmit(String query) {
-            Toast.makeText(getActivity(), "Searching for: " + query + "...", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-    };
-
     @Override
     public void onAttach(Activity activity) {
 
@@ -81,9 +65,25 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
         final SearchView searchView = (SearchView) actionView;
         final SearchableInfo searchableInfo = searchManager.getSearchableInfo(getActivity().getComponentName());
         searchView.setSearchableInfo(searchableInfo);
-        searchView.setOnQueryTextListener(queryListener);
+
+        searchView.setOnQueryTextListener(new OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextChange(String queryTextt) {
+
+                playlistAdapter.getFilter().filter(queryTextt);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(getActivity(), "Searching for: " + query + "...", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
 
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+
             @Override
             public void onFocusChange(View view, boolean queryTextFocused) {
                 if (!queryTextFocused) {
@@ -92,6 +92,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
                     searchView.setIconified(true);
                 }
             }
+
         });
 
         super.onCreateOptionsMenu(menu, inflater);
