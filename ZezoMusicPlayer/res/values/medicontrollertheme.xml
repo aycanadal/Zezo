@@ -1,5 +1,0 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="MediaController">
-        <item name="android:background">@color/VeryDarkGray</item>
-    </style>
-</resources>
