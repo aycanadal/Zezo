@@ -23,8 +23,6 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 
     }
 
-    ;
-
     private SparseArray<Fragment> tabs = new SparseArray<Fragment>();
 
     public TabPagerAdapter(FragmentManager fragmentManager, Context context) {

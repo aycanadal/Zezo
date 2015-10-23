@@ -1,6 +1,5 @@
 package com.zezo.music.tabs.folders;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -28,11 +27,11 @@ public class FoldersFragment extends Fragment implements FolderClickListener {
     private String currentFolderPath;
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context context) {
 
-        super.onAttach(activity);
+        super.onAttach(context);
 
-        sharedPreferences = activity.getSharedPreferences(MusicPlayerActivity.PACKAGE_NAME, Context.MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences(MusicPlayerActivity.PACKAGE_NAME, Context.MODE_PRIVATE);
 
         String preferredFolderPath = sharedPreferences.getString(MusicPlayerActivity.KEY_DIRECTORY_SELECTED,
                 Environment.getExternalStorageDirectory().toString());

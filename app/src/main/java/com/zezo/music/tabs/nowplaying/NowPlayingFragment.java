@@ -97,7 +97,6 @@ public class NowPlayingFragment extends Fragment {
         musicController.setVisibility(View.GONE);
         musicController.hideSuper();
         controllerFrame.setVisibility(View.GONE);
-        //getActivity().getSupportFragmentManager().beginTransaction().hide(this).commit();
 
     }
 
@@ -108,7 +107,6 @@ public class NowPlayingFragment extends Fragment {
         musicController.setFocusable(false);
         musicController.setFocusableInTouchMode(false);
         controllerFrame.setVisibility(View.VISIBLE);
-        //getActivity().getSupportFragmentManager().beginTransaction().show(this).commit();
 
     }
 

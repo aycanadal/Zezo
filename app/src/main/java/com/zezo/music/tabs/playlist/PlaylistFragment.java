@@ -35,10 +35,10 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
     private PlaylistAdapter playlistAdapter;
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context context) {
 
-        super.onAttach(activity);
-        playlistAdapter = new PlaylistAdapter(getActivity(), ((MusicPlayerActivity) activity).getPlaylist(), this);
+        super.onAttach(context);
+        playlistAdapter = new PlaylistAdapter(getActivity(), ((MusicPlayerActivity) context).getPlaylist(), this);
 
     }
 

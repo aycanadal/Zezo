@@ -1,6 +1,6 @@
 package com.zezo.music.tabs.queue;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
@@ -28,9 +28,9 @@ public class QueueFragment extends Fragment {
     private Menu optionsMenu;
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context context) {
 
-        super.onAttach(activity);
+        super.onAttach(context);
         queueAdapter = new QueueAdapter(getActivity());
 
     }
