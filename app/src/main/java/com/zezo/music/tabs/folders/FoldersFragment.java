@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.R;
@@ -20,9 +21,10 @@ import com.zezo.music.tabs.folders.FoldersAdapter.FolderClickListener;
 
 public class FoldersFragment extends Fragment implements FolderClickListener {
 
-    private SharedPreferences sharedPreferences;
+    private TextView currentPathView;
     private ListView fileListView;
     private FoldersAdapter fileListAdapter;
+    private SharedPreferences sharedPreferences;
     private String currentFolderPath;
 
     @Override
@@ -45,11 +47,11 @@ public class FoldersFragment extends Fragment implements FolderClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         setHasOptionsMenu(true);
-
-        View browserView = inflater.inflate(R.layout.browser, container, false);
+        View browserView = inflater.inflate(R.layout.folders, container, false);
         fileListView = (ListView) browserView.findViewById(R.id.filelist);
         fileListView.setAdapter(fileListAdapter);
-
+        currentPathView = (TextView)browserView.findViewById(R.id.currentPath);
+        currentPathView.setText(currentFolderPath);
         return browserView;
     }
 
@@ -68,6 +70,7 @@ public class FoldersFragment extends Fragment implements FolderClickListener {
         fileListAdapter = new FoldersAdapter(getActivity(), folder.getAbsolutePath(), this);
         fileListView.setAdapter(fileListAdapter);
         currentFolderPath = folder.getAbsolutePath();
+        currentPathView.setText(currentFolderPath);
 
     }
 

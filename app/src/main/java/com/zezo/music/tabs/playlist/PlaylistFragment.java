@@ -61,14 +61,11 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        setHasOptionsMenu(true);
-
         View playlistView = inflater.inflate(R.layout.playlist, container, false);
-
         songListView = (ListView) playlistView.findViewById(R.id.song_list);
         songListView.setAdapter(playlistAdapter);
         registerForContextMenu(songListView);
-
+        setHasOptionsMenu(true);
         return playlistView;
 
     }
@@ -78,8 +75,6 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 
         menu.clear();
         inflater.inflate(R.menu.playlist, menu);
-
-
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         final MenuItem menuItem = menu.findItem(R.id.search);
         View actionView = menuItem.getActionView();
