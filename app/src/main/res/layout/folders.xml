@@ -10,8 +10,7 @@
         android:id="@+id/currentPath"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:textSize="14sp"
-        />
+        android:textSize="14sp" />
 
     <ListView
         android:id="@+id/filelist"
@@ -24,6 +23,6 @@
         android:choiceMode="singleChoice"
         android:fastScrollAlwaysVisible="true"
         android:fastScrollEnabled="true"
-        android:listSelector="#660000"></ListView>
+        android:listSelector="#660000"/>
 
 </LinearLayout>
