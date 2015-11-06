@@ -17,7 +17,7 @@
         zezo:showAsAction="always" />
     <item
         android:id="@+id/action_exit"
-        android:icon="@drawable/opendoorwhite40"
+        android:icon="@drawable/whitex"
         android:orderInCategory="4"
         android:title="@string/Exit"
         zezo:showAsAction="always" />
