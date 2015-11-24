@@ -111,9 +111,9 @@ public class PlaylistAdapter extends BaseAdapter implements Filterable {
     }
 
     @Override
-    public long getItemId(int arg0) {
+    public long getItemId(int position) {
 
-        return getFilteredSongs().get(arg0).getId();
+        return getFilteredSongs().get(position).getId();
 
     }
 

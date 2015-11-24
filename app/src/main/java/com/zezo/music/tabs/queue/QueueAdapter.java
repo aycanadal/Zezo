@@ -17,6 +17,7 @@ public class QueueAdapter extends BaseAdapter {
 
     private ArrayList<Song> queue = new ArrayList<Song>();
     private LayoutInflater songInflater;
+    final int INVALID_ID = -1;
 
     public QueueAdapter(Context c) {
 
@@ -40,6 +41,9 @@ public class QueueAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
+
+        if (position < 0 || position >= queue.size())
+            return INVALID_ID;
 
         return queue.get(position).getId();
 
