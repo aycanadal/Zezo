@@ -51,9 +51,11 @@ public class PlaylistAdapter extends BaseAdapter implements Filterable {
         TextView songView = (TextView) songLayout.findViewById(R.id.song_title);
         TextView artistView = (TextView) songLayout.findViewById(R.id.song_artist);
         TextView durationView = (TextView) songLayout.findViewById(R.id.songDuration);
+       //TextView sampleRateView = (TextView) songLayout.findViewById(R.id.songSampleRate);
         songView.setText(song.getTitle());
         artistView.setText(song.getArtist());
         durationView.setText(song.getDuration());
+        //sampleRateView.setText(song.getSampleRate());
 
         songLayout.setTag(song.getId());
 

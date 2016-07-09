@@ -13,8 +13,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.media.MediaExtractor;
+import android.media.MediaFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,6 +47,9 @@ import com.zezo.music.util.Util;
 import com.zezo.music.util.YesNoDialogFragment;
 import com.zezo.music.util.YesNoDialogFragment.OnDeleteConfirmedListener;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteConfirmedListener {
@@ -194,7 +200,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             int idColumn = musicCursor.getColumnIndex(BaseColumns._ID);
             int artistColumn = musicCursor.getColumnIndex(AudioColumns.ARTIST);
             int durationColumn = musicCursor.getColumnIndex(AudioColumns.DURATION);
-
             int dataColumn = musicCursor.getColumnIndex(MediaColumns.DATA);
 
             do {
@@ -205,7 +210,26 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
                 String duration = Util.getTimeStringFromMs(musicCursor.getInt(durationColumn));
                 String data = musicCursor.getString(dataColumn);
 
-                songs.add(new Song(id, title, artist, duration, data));
+                Song song = new Song(id, title, artist, duration, data);
+
+                /*MediaExtractor mex = new MediaExtractor();
+
+                try {
+
+                    AssetFileDescriptor afd = getContentResolver().openAssetFileDescriptor(song.getUri(), "r");
+                    mex.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                int count = mex.getTrackCount();
+
+                MediaFormat mf = mex.getTrackFormat(0);
+                song.setSampleRate(mf.getInteger(MediaFormat.KEY_SAMPLE_RATE));*/
+
+                songs.add(song);
 
             } while (musicCursor.moveToNext());
 
@@ -246,9 +270,9 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
         tabPagerAdapter.getPlaylistFragment().remove(song);
 
-        Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.getId());
+        //Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.getId());
 
-        getContentResolver().delete(uri, null, null);
+        getContentResolver().delete(song.getUri(), null, null);
 
         musicService.removeFromPlaylist(song);
 
@@ -374,7 +398,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         DialogFragment dialog = new YesNoDialogFragment();
         Bundle args = new Bundle();
         args.putString("title", "Delete File?");
-        args.putString("message", "Do you really wish to delete the song from the device?");
+        args.putString("message", "Do you really wish to delete " + song.getTitle() + " by " + song.getArtist() + " from the device?");
         args.putLong("songId", song.getId());
         dialog.setArguments(args);
         dialog.show(getSupportFragmentManager(), "deleteDialog");
