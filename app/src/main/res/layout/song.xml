@@ -37,7 +37,7 @@
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:textColor="@drawable/list_item_text_selector"
-            android:textSize="24sp"
+            android:textSize="@dimen/textSizeBig"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -59,7 +59,7 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:textColor="@drawable/list_item_text_selector"
-                android:textSize="20sp" />
+                android:textSize="@dimen/textSizeMedium" />
 
             <TextView
                 android:id="@+id/songDuration"
@@ -71,7 +71,7 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:textColor="@drawable/list_item_text_selector"
-                android:textSize="16sp"
+                android:textSize="@dimen/textSizeSmall"
                 android:paddingRight="5dp" />
         </LinearLayout>
     </LinearLayout>

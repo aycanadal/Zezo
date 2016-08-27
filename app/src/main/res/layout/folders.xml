@@ -10,7 +10,7 @@
         android:id="@+id/currentPath"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:textSize="14sp" />
+        android:textSize="@dimen/textSizeSmall" />
 
     <ListView
         android:id="@+id/filelist"
