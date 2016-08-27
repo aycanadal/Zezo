@@ -205,7 +205,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
 
-            pause();
+            //pause(); IllegalStateException
             ComponentName mRemoteControlResponder = new ComponentName(getPackageName(),
                     MediaButtonReceiver.class.getName());
             am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
@@ -342,6 +342,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public void pause() {
+
+        if (getCurrentSong()==null)
+            return;
 
         pauseDuration = getDuration();
         pausePosition = getPosition();
