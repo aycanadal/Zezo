@@ -298,9 +298,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     @Override
-    public void onPrepared(MediaPlayer mp) {
+    public void onPrepared(MediaPlayer mediaPlayer) {
 
-        mp.start();
+        mediaPlayer.start();
 
         Intent notIntent = new Intent(this, MusicPlayerActivity.class);
         notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -354,7 +354,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     public void play() {
 
-        if (!audioFocusGranted() || currentSong == null)
+        if (!audioFocusGranted() || getCurrentSong() == null)
             return;
 
         if (isPlayerPrepared)
@@ -422,7 +422,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void playSong(Song song) {
 
         player.reset();
-        setCurrentSong(song);
         history.add(song.getId());
 
         Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -434,6 +433,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
             try {
 
+                setCurrentSong(song); // Set this as late as possible otherwise illegal state exception.
                 player.prepareAsync();
 
             } catch (IllegalArgumentException e) {
