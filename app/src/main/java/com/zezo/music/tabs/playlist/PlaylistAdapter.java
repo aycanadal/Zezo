@@ -103,6 +103,7 @@ public class PlaylistAdapter extends BaseAdapter implements Filterable {
     public int getCount() {
 
         return getFilteredSongs().size();
+
     }
 
     @Override

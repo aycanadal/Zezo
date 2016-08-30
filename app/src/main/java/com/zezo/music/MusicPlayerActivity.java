@@ -61,7 +61,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     private ViewPager viewPager;
     private SharedPreferences sharedPreferences;
     private MusicService musicService;
-    private ArrayList<Song> playlist;
+    private ArrayList<Song> playlist = new ArrayList<Song>();
     private Intent musicServiceIntent;
     private Menu optionsMenu;
 
@@ -368,7 +368,9 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     }
 
     public void setPlaylist(ArrayList<Song> playlist) {
+
         this.playlist = playlist;
+
     }
 
     public void addToQueue(long songId) {

@@ -33,7 +33,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
         NowPlayingFragment nowPlayingFragment = new NowPlayingFragment();
         PlaylistFragment playlistFragment = new PlaylistFragment();
         nowPlayingFragment.setNowPlayingClickListener(playlistFragment);
-        nowPlayingFragment.setRetainInstance(true);
+        //nowPlayingFragment.setRetainInstance(true);
         tabs.put(Tabs.NOWPLAYING.ordinal(), nowPlayingFragment);
         tabs.put(Tabs.FOLDERS.ordinal(), new FoldersFragment());
         tabs.put(Tabs.PLAYLIST.ordinal(), playlistFragment);

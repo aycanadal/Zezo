@@ -38,12 +38,14 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
     public void onAttach(Context context) {
 
         super.onAttach(context);
-        playlistAdapter = new PlaylistAdapter(getActivity(), ((MusicPlayerActivity) context).getPlaylist(), this);
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        Activity activity = getActivity();
+        playlistAdapter = new PlaylistAdapter(activity, ((MusicPlayerActivity) activity).getPlaylist(), this);
 
         View playlistView = inflater.inflate(R.layout.playlist, container, false);
         songListView = (ListView) playlistView.findViewById(R.id.song_list);
