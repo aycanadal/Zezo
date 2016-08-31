@@ -42,6 +42,7 @@ import com.zezo.music.domain.Song;
 import com.zezo.music.tabs.TabPagerAdapter;
 import com.zezo.music.tabs.TabPagerAdapter.Tabs;
 import com.zezo.music.tabs.folders.FoldersFragment;
+import com.zezo.music.tabs.nowplaying.NowPlayingFragment;
 import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.util.Util;
 import com.zezo.music.util.YesNoDialogFragment;
@@ -145,6 +146,11 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
             @Override
             public void onPageSelected(int position) {
+
+                NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
+
+                if (nowPlayingFragment == null)
+                    return;
 
                 if (position == Tabs.NOWPLAYING.ordinal())
                     tabPagerAdapter.getNowPlayingFragment().show();

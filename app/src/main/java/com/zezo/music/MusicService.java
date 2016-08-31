@@ -224,6 +224,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
             MediaButtonReceiver.removeBroadcastReceiveListener(this);
             am.abandonAudioFocus(this);
 
+            Song cuSo = currentSong;
+
+            if (getCurrentSong() == null)
+                return;
+
             pause();
 
         }
@@ -256,7 +261,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onDestroy() {
+
+        unregisterReceiver(headsetStateReceiver);
+        unregisterReceiver(onBluetoothStateChangeReceiver);
         stopForeground(true);
+
     }
 
     @Override
@@ -342,9 +351,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public void pause() {
-
-        if (getCurrentSong()==null)
-            return;
 
         pauseDuration = getDuration();
         pausePosition = getPosition();
@@ -474,8 +480,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void setPlaylist(ArrayList<Song> songs) {
 
         this.playlist = songs;
-        if (songs != null && songs.size() > 0)
-            setCurrentSong(songs.get(0));
+        //if (songs != null && songs.size() > 0)
+          //  setCurrentSong(songs.get(0));
 
     }
 
