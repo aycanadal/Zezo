@@ -74,6 +74,9 @@ public class NowPlayingFragment extends Fragment {
 
     public void initController(MusicService musicService) {
 
+        if(musicController == null)
+            return;
+
         musicController.init(musicService);
         musicController.setMusicBound(true);
 
@@ -94,13 +97,25 @@ public class NowPlayingFragment extends Fragment {
 
     public void hide() {
 
+        if(musicController == null)
+            return;
+
         musicController.setVisibility(View.GONE);
         musicController.hideSuper();
         controllerFrame.setVisibility(View.GONE);
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        hide();
+    }
+
     public void show() {
+
+        if (musicController == null)
+            return;
 
         musicController.show(0);
         musicController.setVisibility(View.VISIBLE);

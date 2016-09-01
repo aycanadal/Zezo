@@ -264,6 +264,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         unregisterReceiver(headsetStateReceiver);
         unregisterReceiver(onBluetoothStateChangeReceiver);
+        setCurrentSong(null);
         stopForeground(true);
 
     }

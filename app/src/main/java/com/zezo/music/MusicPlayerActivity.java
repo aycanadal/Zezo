@@ -74,7 +74,11 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             MusicBinder binder = (MusicBinder) service;
             musicService = binder.getService();
             musicService.setPlaylist(playlist);
-            tabPagerAdapter.getNowPlayingFragment().initController(musicService);
+
+            NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
+
+            if ( nowPlayingFragment != null)
+                tabPagerAdapter.getNowPlayingFragment().initController(musicService);
 
         }
 
@@ -93,6 +97,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
             if (i.getAction() != "MEDIA_PLAYER_PLAYING")
                 return;
+
+            //if(musicService == null) return;
 
             Song song = musicService.getCurrentSong();
 
@@ -165,8 +171,14 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             }
         });
 
-        initMusicService();
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initMusicService();
     }
 
     @Override
@@ -254,8 +266,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         if (musicServiceIntent == null) {
 
             musicServiceIntent = new Intent(this, MusicService.class);
-            bindService(musicServiceIntent, musicServiceConnection, Context.BIND_AUTO_CREATE);
             startService(musicServiceIntent);
+            bindService(musicServiceIntent, musicServiceConnection, 0);
 
         }
 
@@ -288,6 +300,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     protected void onDestroy() {
 
         // hideKeyboard();
+        //LocalBroadcastManager.getInstance(this).unregisterReceiver(onMediaPlayerPlayingReceiver);
         unbindService(musicServiceConnection);
         stopService(musicServiceIntent);
         musicService = null;
