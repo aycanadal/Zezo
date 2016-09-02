@@ -80,6 +80,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             if ( nowPlayingFragment != null)
                 tabPagerAdapter.getNowPlayingFragment().initController(musicService);
 
+
+
         }
 
         @Override
@@ -97,8 +99,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
             if (i.getAction() != "MEDIA_PLAYER_PLAYING")
                 return;
-
-            //if(musicService == null) return;
 
             Song song = musicService.getCurrentSong();
 
@@ -300,7 +300,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     protected void onDestroy() {
 
         // hideKeyboard();
-        //LocalBroadcastManager.getInstance(this).unregisterReceiver(onMediaPlayerPlayingReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onMediaPlayerPlayingReceiver);
         unbindService(musicServiceConnection);
         stopService(musicServiceIntent);
         musicService = null;
