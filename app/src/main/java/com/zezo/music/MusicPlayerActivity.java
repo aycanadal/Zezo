@@ -6,25 +6,20 @@ import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
-import android.media.MediaExtractor;
-import android.media.MediaFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.provider.BaseColumns;
-import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AudioColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.support.v4.app.DialogFragment;
@@ -44,14 +39,10 @@ import com.zezo.music.tabs.TabPagerAdapter;
 import com.zezo.music.tabs.TabPagerAdapter.Tabs;
 import com.zezo.music.tabs.folders.FoldersFragment;
 import com.zezo.music.tabs.nowplaying.NowPlayingFragment;
-import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.util.Util;
 import com.zezo.music.util.YesNoDialogFragment;
 import com.zezo.music.util.YesNoDialogFragment.OnDeleteConfirmedListener;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteConfirmedListener {
@@ -147,33 +138,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         viewPager.setAdapter(tabPagerAdapter);
         viewPager.setCurrentItem(Tabs.PLAYLIST.ordinal());
         viewPager.setOffscreenPageLimit(4);
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-                NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
-
-                if (nowPlayingFragment == null)
-                    return;
-
-                if (position == Tabs.NOWPLAYING.ordinal())
-                    tabPagerAdapter.getNowPlayingFragment().show();
-                else
-                    tabPagerAdapter.getNowPlayingFragment().hide();
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        viewPager.addOnPageChangeListener(tabPagerAdapter);
 
         initMusicService();
 

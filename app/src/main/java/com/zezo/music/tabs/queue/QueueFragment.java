@@ -13,7 +13,6 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ListView;
 
 import com.zezo.music.DynamicListView;
 import com.zezo.music.MusicPlayerActivity;
