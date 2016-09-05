@@ -353,8 +353,9 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     public void play(Song song) {
 
         if (song != null && musicService.audioFocusGranted()) {
+
             musicService.playSong(song);
-            Toast.makeText(this, "Playing.", Toast.LENGTH_SHORT).show();
+
         }
 
     }

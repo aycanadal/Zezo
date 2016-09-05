@@ -22,6 +22,7 @@ import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 import com.zezo.music.MediaButtonReceiver.MediaButtonReceiverListener;
 import com.zezo.music.domain.Song;
@@ -271,8 +272,12 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
+
+        if(what == 1 && extra == -2147483648)
+        Toast.makeText(this, "File type not supported.", Toast.LENGTH_SHORT).show();
         mp.reset();
         return true;
+
     }
 
     @Override
