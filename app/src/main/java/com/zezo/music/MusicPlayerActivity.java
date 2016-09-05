@@ -73,6 +73,10 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
             MusicBinder binder = (MusicBinder) service;
             musicService = binder.getService();
+
+            LocalBroadcastManager.getInstance(MusicPlayerActivity.this).registerReceiver(onMediaPlayerPlayingReceiver,
+                    new IntentFilter("MEDIA_PLAYER_PLAYING"));
+
             musicService.setPlaylist(playlist);
 
             NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
@@ -82,12 +86,14 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
 
 
+
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
 
             tabPagerAdapter.getNowPlayingFragment().unbindController();
+            musicService = null;
 
         }
     };
@@ -259,9 +265,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     }
 
     private void initMusicService() {
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(onMediaPlayerPlayingReceiver,
-                new IntentFilter("MEDIA_PLAYER_PLAYING"));
 
         if (musicServiceIntent == null) {
 
