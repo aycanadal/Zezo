@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 
-import com.zezo.music.DynamicListView;
 import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.R;
 import com.zezo.music.domain.Song;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 
 public class QueueFragment extends Fragment {
 
-    private DynamicListView queueListView;
+    private ListView queueListView;
     private QueueAdapter queueAdapter;
     private Menu optionsMenu;
 
@@ -43,7 +42,7 @@ public class QueueFragment extends Fragment {
 
         View queueView = inflater.inflate(R.layout.queue, container, false);
 
-        queueListView = (DynamicListView) queueView.findViewById(R.id.song_list);
+        queueListView = (ListView) queueView.findViewById(R.id.song_list);
         queueListView.setAdapter(queueAdapter);
         registerForContextMenu(queueListView);
 
@@ -86,7 +85,6 @@ public class QueueFragment extends Fragment {
 
     public void setQueue(ArrayList<Song> queue) {
 
-        queueListView.setCheeseList(queue);
         queueAdapter.setQueue(queue);
         queueAdapter.notifyDataSetChanged();
 

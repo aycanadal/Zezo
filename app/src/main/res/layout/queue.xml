@@ -6,7 +6,7 @@
     android:windowSoftInputMode="adjustPan"
     android:paddingTop="5dp">
 
-    <com.zezo.music.DynamicListView
+    <ListView
         android:id="@+id/song_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,6 +17,6 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:listSelector="#660000">
-    </com.zezo.music.DynamicListView>
+    </ListView>
 
 </LinearLayout>

@@ -6,25 +6,20 @@ import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
-import android.media.MediaExtractor;
-import android.media.MediaFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.provider.BaseColumns;
-import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AudioColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.support.v4.app.DialogFragment;
@@ -32,6 +27,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,14 +39,10 @@ import com.zezo.music.tabs.TabPagerAdapter;
 import com.zezo.music.tabs.TabPagerAdapter.Tabs;
 import com.zezo.music.tabs.folders.FoldersFragment;
 import com.zezo.music.tabs.nowplaying.NowPlayingFragment;
-import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.util.Util;
 import com.zezo.music.util.YesNoDialogFragment;
 import com.zezo.music.util.YesNoDialogFragment.OnDeleteConfirmedListener;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteConfirmedListener {
@@ -112,9 +104,9 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
             if (viewPager.getCurrentItem() == 1) {
 
-                PlaylistFragment playlistFragment = (PlaylistFragment) getSupportFragmentManager()
-                        .findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
-                playlistFragment.setCurrentSong(song);
+                //PlaylistFragment playlistFragment = (PlaylistFragment) getSupportFragmentManager()
+                  //      .findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
+                tabPagerAdapter.getPlaylistFragment().setCurrentSong(song);
 
             }
 
@@ -132,7 +124,10 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        Log.d("Lifecycle", "onCreate");
+
         super.onCreate(savedInstanceState);
+
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_launcher);
         getSupportActionBar().setTitle("");
@@ -149,42 +144,32 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         viewPager.setAdapter(tabPagerAdapter);
         viewPager.setCurrentItem(Tabs.PLAYLIST.ordinal());
         viewPager.setOffscreenPageLimit(4);
+        viewPager.addOnPageChangeListener(tabPagerAdapter);
 
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-                NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
-
-                if (nowPlayingFragment == null)
-                    return;
-
-                if (position == Tabs.NOWPLAYING.ordinal())
-                    tabPagerAdapter.getNowPlayingFragment().show();
-                else
-                    tabPagerAdapter.getNowPlayingFragment().hide();
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
+        initMusicService();
 
 
     }
 
     @Override
     protected void onStart() {
+
+        Log.d("Lifecycle", "onStart");
+
         super.onStart();
-        initMusicService();
+
+
+    }
+
+    @Override
+    public void onResume(){
+
+        Log.d("Lifecycle", "onResume");
+
+        super.onResume();
+
+
+
     }
 
     @Override
@@ -291,8 +276,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
         tabPagerAdapter.getPlaylistFragment().remove(song);
 
-        //Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.getId());
-
         getContentResolver().delete(song.getUri(), null, null);
 
         musicService.removeFromPlaylist(song);
@@ -300,9 +283,28 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     }
 
     @Override
+    protected void onPause() {
+
+        Log.d("Lifecycle", "onPause");
+
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onStop() {
+
+        Log.d("Lifecycle", "onStop");
+
+        super.onStop();
+
+    }
+
+    @Override
     protected void onDestroy() {
 
-        // hideKeyboard();
+        Log.d("Lifecycle", "onDestroy");
+
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onMediaPlayerPlayingReceiver);
         unbindService(musicServiceConnection);
         stopService(musicServiceIntent);
@@ -354,8 +356,9 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     public void play(Song song) {
 
         if (song != null && musicService.audioFocusGranted()) {
+
             musicService.playSong(song);
-            Toast.makeText(this, "Playing.", Toast.LENGTH_SHORT).show();
+
         }
 
     }
@@ -377,7 +380,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
     private void exit() {
 
-        // hideKeyboard();
         unbindService(musicServiceConnection);
         stopService(musicServiceIntent);
         musicService = null;

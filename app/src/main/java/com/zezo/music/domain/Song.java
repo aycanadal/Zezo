@@ -1,13 +1,8 @@
 package com.zezo.music.domain;
 
 import android.content.ContentUris;
-import android.media.MediaExtractor;
-import android.media.MediaFormat;
 import android.net.Uri;
 import android.provider.MediaStore;
-
-import java.io.FileDescriptor;
-import java.io.IOException;
 
 public class Song {
 

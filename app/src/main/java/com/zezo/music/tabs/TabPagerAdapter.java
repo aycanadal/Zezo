@@ -3,7 +3,7 @@ package com.zezo.music.tabs;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.SparseArray;
 
 import com.zezo.music.R;
@@ -12,7 +12,7 @@ import com.zezo.music.tabs.nowplaying.NowPlayingFragment;
 import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.tabs.queue.QueueFragment;
 
-public class TabPagerAdapter extends FragmentPagerAdapter {
+public class TabPagerAdapter extends FragmentPagerAdapterExt implements ViewPager.OnPageChangeListener {
 
     private final Context context;
 
@@ -23,34 +23,39 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 
     }
 
-    private SparseArray<Fragment> tabs = new SparseArray<Fragment>();
-
     public TabPagerAdapter(FragmentManager fragmentManager, Context context) {
 
         super(fragmentManager);
         this.context = context;
 
-        NowPlayingFragment nowPlayingFragment = new NowPlayingFragment();
-        PlaylistFragment playlistFragment = new PlaylistFragment();
-        nowPlayingFragment.setNowPlayingClickListener(playlistFragment);
-        //nowPlayingFragment.setRetainInstance(true);
-        tabs.put(Tabs.NOWPLAYING.ordinal(), nowPlayingFragment);
-        tabs.put(Tabs.FOLDERS.ordinal(), new FoldersFragment());
-        tabs.put(Tabs.PLAYLIST.ordinal(), playlistFragment);
-        tabs.put(Tabs.QUEUE.ordinal(), new QueueFragment());
     }
 
     @Override
     public Fragment getItem(int tabIndex) {
 
-        return tabs.get(tabIndex);
+        Tabs tabName = Tabs.values()[tabIndex];
+
+        switch (tabName) {
+
+            case NOWPLAYING:
+                return new NowPlayingFragment();
+            case PLAYLIST:
+                return new PlaylistFragment();
+            case QUEUE:
+                return new QueueFragment();
+            case FOLDERS:
+                return new FoldersFragment();
+
+        }
+
+        return null;
 
     }
 
     @Override
     public int getCount() {
 
-        return tabs.size();
+        return Tabs.values().length;
 
     }
 
@@ -77,25 +82,50 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 
     public FoldersFragment getBrowserFragment() {
 
-        return (FoldersFragment) tabs.get(Tabs.FOLDERS.ordinal());
+        return (FoldersFragment) getFragments().get(Tabs.FOLDERS.ordinal());
 
     }
 
     public PlaylistFragment getPlaylistFragment() {
 
-        return (PlaylistFragment) tabs.get(Tabs.PLAYLIST.ordinal());
+        return (PlaylistFragment) getFragments().get(Tabs.PLAYLIST.ordinal());
 
     }
 
     public QueueFragment getQueueFragment() {
 
-        return (QueueFragment) tabs.get(Tabs.QUEUE.ordinal());
+        return (QueueFragment) getFragments().get(Tabs.QUEUE.ordinal());
 
     }
 
     public NowPlayingFragment getNowPlayingFragment() {
 
-        return (NowPlayingFragment) tabs.get(Tabs.NOWPLAYING.ordinal());
+        return (NowPlayingFragment) getFragments().get(Tabs.NOWPLAYING.ordinal());
+
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+
+        NowPlayingFragment nowPlayingFragment = getNowPlayingFragment();
+
+        if (nowPlayingFragment == null)
+            return;
+
+        if (position == Tabs.NOWPLAYING.ordinal())
+            getNowPlayingFragment().show();
+        else
+            getNowPlayingFragment().hide();
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
 
     }
 }
