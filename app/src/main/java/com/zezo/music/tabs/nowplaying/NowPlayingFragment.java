@@ -2,6 +2,7 @@ package com.zezo.music.tabs.nowplaying;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,7 +39,17 @@ public class NowPlayingFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState){
+
+        Log.d("NowPlaying Lifecycle", "onCreate");
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        Log.d("NowPlaying Lifecycle", "onCreateView");
 
         setHasOptionsMenu(true);
 
@@ -108,6 +119,8 @@ public class NowPlayingFragment extends Fragment {
 
     @Override
     public void onPause() {
+
+        Log.d("NowPlaying Lifecycle", "onPause");
         super.onPause();
         hide();
     }

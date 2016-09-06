@@ -39,7 +39,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private static final int NOTIFY_ID = 1;
 
     private Song currentSong;
-    private ArrayList<Song> playlist;
+
+    private ArrayList<Song> playlist = new ArrayList<Song>();
     private ArrayList<Song> queue = new ArrayList<Song>();
     private LinkedList<Long> history = new LinkedList<Long>();
     private HeadsetStateReceiver headsetStateReceiver;
@@ -202,6 +203,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onAudioFocusChange(int focusChange) {
 
+        Log.d("AudioFocus", "onAudioFocusChange");
+
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
@@ -237,11 +240,16 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public IBinder onBind(Intent intent) {
+
+        Log.d("Service Lifecycle", "onBind");
         return musicBind;
+
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
+
+        Log.d("MediaPlayer", "onCompletion");
 
         if (player.getCurrentPosition() > 0) {
             mp.reset();
@@ -251,6 +259,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onCreate() {
+
+        Log.d("Service LifeCycle", "onCreate");
 
         super.onCreate();
 
@@ -263,6 +273,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onDestroy() {
 
+        Log.d("Service LifeCycle", "onDestroy");
+
         unregisterReceiver(headsetStateReceiver);
         unregisterReceiver(onBluetoothStateChangeReceiver);
         setCurrentSong(null);
@@ -273,9 +285,12 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
 
+        Log.d("MediaPlayer", "onError");
+
         if(what == 1 && extra == -2147483648)
         Toast.makeText(this, "File type not supported.", Toast.LENGTH_SHORT).show();
         mp.reset();
+
         return true;
 
     }
@@ -351,9 +366,12 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public boolean onUnbind(Intent intent) {
-        player.stop();
-        player.release();
+
+        Log.d("Service LifeCycle", "onUnbind");
+        //player.stop();
+        //player.release();
         return false;
+
     }
 
     public void pause() {
@@ -523,7 +541,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return queue;
     }
 
-    public void setQueue(ArrayList<Song> queue) {
-        this.queue = queue;
+    public ArrayList<Song> getPlaylist() {
+
+        return playlist;
+
     }
 }

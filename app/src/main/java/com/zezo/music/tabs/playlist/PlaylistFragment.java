@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -35,8 +36,17 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
     private PlaylistAdapter playlistAdapter;
 
     @Override
+    public void onCreate(Bundle savedInstanceState){
+
+        Log.d("Playlist Lifecycle", "onCreate");
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
     public void onAttach(Context context) {
 
+        Log.d("Playlist Lifecycle", "onAttach");
         super.onAttach(context);
 
     }
@@ -44,15 +54,26 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        Log.d("Playlist Lifecycle", "onCreateView");
         Activity activity = getActivity();
-        playlistAdapter = new PlaylistAdapter(activity, ((MusicPlayerActivity) activity).getPlaylist(), this);
-
+        ArrayList<Song> playlist = ((MusicPlayerActivity) activity).getPlaylist();
+        playlistAdapter = new PlaylistAdapter(activity, playlist, this);
         View playlistView = inflater.inflate(R.layout.playlist, container, false);
         songListView = (ListView) playlistView.findViewById(R.id.song_list);
         songListView.setAdapter(playlistAdapter);
         registerForContextMenu(songListView);
         setHasOptionsMenu(true);
         return playlistView;
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle bundle) {
+
+        Log.d("Playlist Lifecycle", "onActivityCreated");
+        super.onActivityCreated(bundle);
+        ArrayList<Song> playlist = ((MusicPlayerActivity) getActivity()).getPlaylist();
+        loadPlaylist(playlist);
 
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.util.SparseArray;
 
 import com.zezo.music.R;
 import com.zezo.music.tabs.folders.FoldersFragment;
@@ -87,6 +88,7 @@ public class TabPagerAdapter extends FragmentPagerAdapterExt implements ViewPage
 
     public PlaylistFragment getPlaylistFragment() {
 
+        SparseArray<Fragment> sparse = getFragments();
         return (PlaylistFragment) getFragments().get(Tabs.PLAYLIST.ordinal());
 
     }

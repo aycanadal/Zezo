@@ -39,6 +39,7 @@ import com.zezo.music.tabs.TabPagerAdapter;
 import com.zezo.music.tabs.TabPagerAdapter.Tabs;
 import com.zezo.music.tabs.folders.FoldersFragment;
 import com.zezo.music.tabs.nowplaying.NowPlayingFragment;
+import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.util.Util;
 import com.zezo.music.util.YesNoDialogFragment;
 import com.zezo.music.util.YesNoDialogFragment.OnDeleteConfirmedListener;
@@ -54,7 +55,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     private ViewPager viewPager;
     private SharedPreferences sharedPreferences;
     private MusicService musicService;
-    private ArrayList<Song> playlist = new ArrayList<Song>();
     private Intent musicServiceIntent;
     private Menu optionsMenu;
 
@@ -63,21 +63,28 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
 
+            Log.d("Activity", "onServiceConnected");
+
             MusicBinder binder = (MusicBinder) service;
             musicService = binder.getService();
 
             LocalBroadcastManager.getInstance(MusicPlayerActivity.this).registerReceiver(onMediaPlayerPlayingReceiver,
                     new IntentFilter("MEDIA_PLAYER_PLAYING"));
 
-            musicService.setPlaylist(playlist);
+            String musicFolder = sharedPreferences.getString(KEY_DIRECTORY_SELECTED,
+                    Environment.getExternalStorageDirectory().toString());
+
+            musicService.setPlaylist(getAllSongsInFolder(musicFolder));
+
+            PlaylistFragment playlistFragment = tabPagerAdapter.getPlaylistFragment();
+
+            if ( playlistFragment != null)
+                playlistFragment.loadPlaylist(musicService.getPlaylist());
 
             NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
 
             if ( nowPlayingFragment != null)
-                tabPagerAdapter.getNowPlayingFragment().initController(musicService);
-
-
-
+                nowPlayingFragment.initController(musicService);
 
         }
 
@@ -102,13 +109,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
             tabPagerAdapter.getNowPlayingFragment().setCurrentSong(song);
 
-            if (viewPager.getCurrentItem() == 1) {
-
-                //PlaylistFragment playlistFragment = (PlaylistFragment) getSupportFragmentManager()
-                  //      .findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
+            if (viewPager.getCurrentItem() == 1)
                 tabPagerAdapter.getPlaylistFragment().setCurrentSong(song);
-
-            }
 
             musicService.setPlayerPrepared(true);
 
@@ -124,7 +126,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.d("Lifecycle", "onCreate");
+        Log.d("Activity Lifecycle", "onCreate");
 
         super.onCreate(savedInstanceState);
 
@@ -134,10 +136,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         setContentView(R.layout.activity_main);
 
         sharedPreferences = getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
-        String musicFolder = sharedPreferences.getString(KEY_DIRECTORY_SELECTED,
-                Environment.getExternalStorageDirectory().toString());
-
-        playlist = getAllSongsInFolder(musicFolder);
 
         tabPagerAdapter = new TabPagerAdapter(getSupportFragmentManager(), this);
         viewPager = (ViewPager) findViewById(R.id.pager);
@@ -146,8 +144,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         viewPager.setOffscreenPageLimit(4);
         viewPager.addOnPageChangeListener(tabPagerAdapter);
 
-        initMusicService();
-
+        startMusicService();
 
     }
 
@@ -155,7 +152,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     protected void onStart() {
 
         Log.d("Lifecycle", "onStart");
-
         super.onStart();
 
 
@@ -165,10 +161,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     public void onResume(){
 
         Log.d("Lifecycle", "onResume");
-
         super.onResume();
-
-
 
     }
 
@@ -184,12 +177,14 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     protected void onNewIntent(Intent intent) {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+
             // handles a search query
             String query = intent.getStringExtra(SearchManager.QUERY);
             final MenuItem menuItem = optionsMenu.findItem(R.id.search);
             View actionView = menuItem.getActionView();
             final SearchView searchView = (SearchView) actionView;
             searchView.setQuery(query, false);
+
         }
     }
 
@@ -221,6 +216,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
                 Song song = new Song(id, title, artist, duration, data);
 
+                // GET SAMPLERATE
+
                 /*MediaExtractor mex = new MediaExtractor();
 
                 try {
@@ -249,7 +246,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
     }
 
-    private void initMusicService() {
+    private void startMusicService() {
 
         if (musicServiceIntent == null) {
 
@@ -264,6 +261,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     @Override
     public void onBackPressed() {
 
+        // Do nothing.
+
     }
 
     @Override
@@ -275,9 +274,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             return;
 
         tabPagerAdapter.getPlaylistFragment().remove(song);
-
         getContentResolver().delete(song.getUri(), null, null);
-
         musicService.removeFromPlaylist(song);
 
     }
@@ -286,7 +283,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     protected void onPause() {
 
         Log.d("Lifecycle", "onPause");
-
         super.onPause();
 
     }
@@ -295,8 +291,9 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     protected void onStop() {
 
         Log.d("Lifecycle", "onStop");
-
         super.onStop();
+        unbindService(musicServiceConnection);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onMediaPlayerPlayingReceiver);
 
     }
 
@@ -304,18 +301,14 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     protected void onDestroy() {
 
         Log.d("Lifecycle", "onDestroy");
-
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(onMediaPlayerPlayingReceiver);
-        unbindService(musicServiceConnection);
-        stopService(musicServiceIntent);
-        musicService = null;
-
         super.onDestroy();
 
     }
 
-    public void onOpenContextMenu(View view) {
+    public void onContextMenuButtonClicked(View view) {
+
         openContextMenu(view);
+
     }
 
     @Override
@@ -331,10 +324,10 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
                 Toast.makeText(MusicPlayerActivity.this, "Selected music folder:" + musicFolderPath, Toast.LENGTH_SHORT)
                         .show();
 
-                playlist = getAllSongsInFolder(musicFolderPath);
-                tabPagerAdapter.getPlaylistFragment().loadPlaylist(playlist);
-                musicService.setPlaylist(playlist);
+                musicService.setPlaylist(getAllSongsInFolder(musicFolderPath));
+                tabPagerAdapter.getPlaylistFragment().loadPlaylist(musicService.getPlaylist());
                 sharedPreferences.edit().putString(KEY_DIRECTORY_SELECTED, musicFolderPath).commit();
+
                 return true;
 
             case R.id.action_shuffle:
@@ -382,18 +375,16 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
         unbindService(musicServiceConnection);
         stopService(musicServiceIntent);
-        musicService = null;
         System.exit(0);
 
     }
 
     public ArrayList<Song> getPlaylist() {
-        return playlist;
-    }
 
-    public void setPlaylist(ArrayList<Song> playlist) {
+        if (musicService == null)
+            return new ArrayList<Song>();
 
-        this.playlist = playlist;
+        return musicService.getPlaylist();
 
     }
 
