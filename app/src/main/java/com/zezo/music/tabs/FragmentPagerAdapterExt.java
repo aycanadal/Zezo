@@ -3,6 +3,7 @@ package com.zezo.music.tabs;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
@@ -20,6 +21,7 @@ abstract public class FragmentPagerAdapterExt extends FragmentPagerAdapter {
     }
 
     @Override public Object instantiateItem(ViewGroup container, int position) {
+        Log.d("FragmentPagerAdapter", "instantiateItem:" + position);
         Object object = super.instantiateItem(container, position);
         mFragments.put(position, (Fragment) object);
         return object;

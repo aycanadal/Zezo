@@ -40,7 +40,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 
         Log.d("Playlist Lifecycle", "onCreate");
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        //setRetainInstance(true);
     }
 
     @Override

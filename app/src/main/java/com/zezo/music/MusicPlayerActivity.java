@@ -31,6 +31,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import com.zezo.music.MusicService.MusicBinder;
@@ -77,6 +78,9 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             musicService.setPlaylist(getAllSongsInFolder(musicFolder));
 
             PlaylistFragment playlistFragment = tabPagerAdapter.getPlaylistFragment();
+
+            /*playlistFragment = (PlaylistFragment) getSupportFragmentManager()
+                    .findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());*/
 
             if ( playlistFragment != null)
                 playlistFragment.loadPlaylist(musicService.getPlaylist());
@@ -143,6 +147,18 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         viewPager.setCurrentItem(Tabs.PLAYLIST.ordinal());
         viewPager.setOffscreenPageLimit(4);
         viewPager.addOnPageChangeListener(tabPagerAdapter);
+        viewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                Log.d("Activity", "onGlobalLayout");
+
+                if ( musicService != null)
+                    tabPagerAdapter.getPlaylistFragment().loadPlaylist(musicService.getPlaylist());
+
+                viewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        } );
 
         startMusicService();
 
