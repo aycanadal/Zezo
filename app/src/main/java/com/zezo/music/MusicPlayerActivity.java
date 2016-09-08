@@ -113,7 +113,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
             tabPagerAdapter.getNowPlayingFragment().setCurrentSong(song);
 
-            if (viewPager.getCurrentItem() == 1)
+            //if (viewPager.getCurrentItem() == 1)
                 tabPagerAdapter.getPlaylistFragment().setCurrentSong(song);
 
             musicService.setPlayerPrepared(true);
