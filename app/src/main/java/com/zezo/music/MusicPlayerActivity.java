@@ -82,12 +82,12 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             /*playlistFragment = (PlaylistFragment) getSupportFragmentManager()
                     .findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());*/
 
-            if ( playlistFragment != null)
+            if (playlistFragment != null)
                 playlistFragment.loadPlaylist(musicService.getPlaylist());
 
             NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
 
-            if ( nowPlayingFragment != null)
+            if (nowPlayingFragment != null)
                 nowPlayingFragment.initController(musicService);
 
         }
@@ -113,8 +113,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
             tabPagerAdapter.getNowPlayingFragment().setCurrentSong(song);
 
-            //if (viewPager.getCurrentItem() == 1)
-                tabPagerAdapter.getPlaylistFragment().setCurrentSong(song);
+            tabPagerAdapter.getPlaylistFragment().setCurrentSong(song);
 
             musicService.setPlayerPrepared(true);
 
@@ -147,18 +146,24 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         viewPager.setCurrentItem(Tabs.PLAYLIST.ordinal());
         viewPager.setOffscreenPageLimit(4);
         viewPager.addOnPageChangeListener(tabPagerAdapter);
+
+        //For when activity is killed from background and then restarted.
         viewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
 
+                // Try binding the service here and do all initializations in onServiceConnected where everything will be (re)created and bound.
+
                 Log.d("Activity", "onGlobalLayout");
 
-                if ( musicService != null)
+                if (musicService != null) {
                     tabPagerAdapter.getPlaylistFragment().loadPlaylist(musicService.getPlaylist());
+                    tabPagerAdapter.getNowPlayingFragment().initController(musicService);
+                }
 
                 viewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
-        } );
+        });
 
         startMusicService();
 
@@ -174,7 +179,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
 
         Log.d("Lifecycle", "onResume");
         super.onResume();
