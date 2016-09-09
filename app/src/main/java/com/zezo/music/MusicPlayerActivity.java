@@ -85,16 +85,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             if (playlistFragment != null)
                 playlistFragment.loadPlaylist(musicService.getPlaylist());
 
-            NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
 
-            if (nowPlayingFragment != null){
-                nowPlayingFragment.initController(musicService);
-                if (viewPager.getCurrentItem() == Tabs.NOWPLAYING.ordinal())
-                    nowPlayingFragment.show();
-            }
-
-            updateShuffleIcon();
-            updateViewsWithCurrentSong();
+            updateViewsWithCurrentState();
 
         }
 
@@ -115,7 +107,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             if (i.getAction() != "MEDIA_PLAYER_PLAYING")
                 return;
 
-            updateViewsWithCurrentSong();
+            updateViewsWithCurrentState();
             musicService.setPlayerPrepared(true);
 
             if (viewPager.getCurrentItem() == Tabs.NOWPLAYING.ordinal())
@@ -161,8 +153,11 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             public void onGlobalLayout() {
 
                 Log.d("Activity", "onGlobalLayout");
-                startMusicService();
                 viewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                startMusicService();
+                if(musicService == null)
+                    return;
+               updateViewsWithCurrentState();
 
             }
 
@@ -170,8 +165,20 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
     }
 
+    private void startMusicService() {
+
+        if (musicServiceIntent == null) {
+
+            musicServiceIntent = new Intent(this, MusicService.class);
+            startService(musicServiceIntent);
+            bindService(musicServiceIntent, musicServiceConnection, 0);
+
+        }
+
+    }
+
     @Override
-    public void onResume() {
+    protected void onResume() {
 
         Log.d("Lifecycle", "onResume");
         super.onResume();
@@ -259,18 +266,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
     }
 
-    private void startMusicService() {
-
-        if (musicServiceIntent == null) {
-
-            musicServiceIntent = new Intent(this, MusicService.class);
-            startService(musicServiceIntent);
-            bindService(musicServiceIntent, musicServiceConnection, 0);
-
-        }
-
-    }
-
     @Override
     public void onBackPressed() {
 
@@ -305,8 +300,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
         Log.d("Lifecycle", "onStop");
         super.onStop();
-        unbindService(musicServiceConnection);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(onMediaPlayerPlayingReceiver);
 
     }
 
@@ -315,6 +308,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
         Log.d("Lifecycle", "onDestroy");
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onMediaPlayerPlayingReceiver);
+        unbindService(musicServiceConnection);
 
     }
 
@@ -386,8 +381,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
     private void exit() {
 
-        unbindService(musicServiceConnection);
-        stopService(musicServiceIntent);
+        Log.d("Activity", "exit");
+        stopService(new Intent(MusicPlayerActivity.this, MusicService.class));
         System.exit(0);
 
     }
@@ -472,7 +467,17 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
     }
 
-    public void updateViewsWithCurrentSong(){
+    public void updateViewsWithCurrentState(){
+
+        NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
+
+        if (nowPlayingFragment != null){
+            nowPlayingFragment.initController(musicService);
+            if (viewPager.getCurrentItem() == Tabs.NOWPLAYING.ordinal())
+                nowPlayingFragment.show();
+        }
+
+        updateShuffleIcon();
 
         Song song = musicService.getCurrentSong();
 
