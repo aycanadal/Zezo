@@ -87,8 +87,14 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
             NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
 
-            if (nowPlayingFragment != null)
+            if (nowPlayingFragment != null){
                 nowPlayingFragment.initController(musicService);
+                if (viewPager.getCurrentItem() == Tabs.NOWPLAYING.ordinal())
+                    nowPlayingFragment.show();
+            }
+
+            updateShuffleIcon();
+            updateViewsWithCurrentSong();
 
         }
 
@@ -109,12 +115,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             if (i.getAction() != "MEDIA_PLAYER_PLAYING")
                 return;
 
-            Song song = musicService.getCurrentSong();
-
-            tabPagerAdapter.getNowPlayingFragment().setCurrentSong(song);
-
-            tabPagerAdapter.getPlaylistFragment().setCurrentSong(song);
-
+            updateViewsWithCurrentSong();
             musicService.setPlayerPrepared(true);
 
             if (viewPager.getCurrentItem() == Tabs.NOWPLAYING.ordinal())
@@ -147,26 +148,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         viewPager.setOffscreenPageLimit(4);
         viewPager.addOnPageChangeListener(tabPagerAdapter);
 
-        //For when activity is killed from background and then restarted.
-        viewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-
-                // Try binding the service here and do all initializations in onServiceConnected where everything will be (re)created and bound.
-
-                Log.d("Activity", "onGlobalLayout");
-
-                if (musicService != null) {
-                    tabPagerAdapter.getPlaylistFragment().loadPlaylist(musicService.getPlaylist());
-                    tabPagerAdapter.getNowPlayingFragment().initController(musicService);
-                }
-
-                viewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-        });
-
-        startMusicService();
-
     }
 
     @Override
@@ -175,6 +156,17 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         Log.d("Lifecycle", "onStart");
         super.onStart();
 
+        viewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                Log.d("Activity", "onGlobalLayout");
+                startMusicService();
+                viewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+            }
+
+        });
 
     }
 
@@ -467,7 +459,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
         MenuItem item = optionsMenu.findItem(R.id.action_shuffle);
 
-        if (item == null)
+        if (item == null || musicService == null)
             return;
 
         int shuffleIconIndex = R.drawable.shufflegrey40;
@@ -477,6 +469,18 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
         Drawable shuffleIcon = getResources().getDrawable(shuffleIconIndex);
         item.setIcon(shuffleIcon);
+
+    }
+
+    public void updateViewsWithCurrentSong(){
+
+        Song song = musicService.getCurrentSong();
+
+        if (song == null)
+            return;
+
+        tabPagerAdapter.getNowPlayingFragment().setCurrentSong(song);
+        tabPagerAdapter.getPlaylistFragment().setCurrentSong(song);
 
     }
 
