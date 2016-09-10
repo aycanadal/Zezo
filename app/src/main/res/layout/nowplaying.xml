@@ -21,20 +21,28 @@
             android:id="@+id/currentTitle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
             android:textColor="@color/white"
             android:textSize="@dimen/textSizeBig"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit ="marquee_forever"/>
 
         <TextView
             android:id="@+id/currentArtist"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
             android:textColor="@color/gray"
-            android:textSize="@dimen/textSizeMedium" />
+            android:textSize="@dimen/textSizeMedium"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit ="marquee_forever"/>
     </LinearLayout>
 
     <FrameLayout
