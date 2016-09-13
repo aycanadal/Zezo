@@ -1,6 +1,5 @@
 package com.zezo.music;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -118,7 +117,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         }
     };
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -371,7 +369,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
     }
 
-    @TargetApi(Build.VERSION_CODES.FROYO)
     public void scrollToCurrent(View view) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
