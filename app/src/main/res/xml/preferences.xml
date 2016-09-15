@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#000000">
+    <Preference android:title="Font Size +"
+        android:key="@string/increaseTextSize"
+        android:summary="Increase font size"/>
+    <Preference android:title="Font Size -"
+        android:key="@string/decreaseTextSize"
+        android:summary="Decrease font size"/>
+
+</PreferenceScreen>

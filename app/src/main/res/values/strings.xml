@@ -21,4 +21,7 @@
     <string name="Queue">Queue</string>
     <string name="NowPlaying">Now Playing</string>
 
+    <string name="increaseTextSize">increaseTextSize</string>
+    <string name="decreaseTextSize">decreaseTextSize</string>
+
 </resources>

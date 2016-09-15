@@ -11,6 +11,7 @@ import com.zezo.music.tabs.folders.FoldersFragment;
 import com.zezo.music.tabs.nowplaying.NowPlayingFragment;
 import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.tabs.queue.QueueFragment;
+import com.zezo.music.tabs.settings.SettingsFragment;
 
 public class TabPagerAdapter extends FragmentPagerAdapterExt implements ViewPager.OnPageChangeListener {
 
@@ -19,7 +20,7 @@ public class TabPagerAdapter extends FragmentPagerAdapterExt implements ViewPage
     // Order has to match with tab indexes.
     public enum Tabs {
 
-        NOWPLAYING, PLAYLIST, QUEUE, FOLDERS
+        NOWPLAYING, PLAYLIST, QUEUE, FOLDERS, SETTINGS
 
     }
 
@@ -45,6 +46,8 @@ public class TabPagerAdapter extends FragmentPagerAdapterExt implements ViewPage
                 return new QueueFragment();
             case FOLDERS:
                 return new FoldersFragment();
+            case SETTINGS:
+                return new SettingsFragment();
 
         }
 
@@ -74,6 +77,8 @@ public class TabPagerAdapter extends FragmentPagerAdapterExt implements ViewPage
                 return context.getString(R.string.Queue);
             case FOLDERS:
                 return context.getString(R.string.Folders);
+            case SETTINGS:
+                return context.getString(R.string.Settings);
 
         }
 
