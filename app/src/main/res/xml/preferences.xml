@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="#000000">
-    <Preference android:title="Font Size +"
-        android:key="@string/increaseTextSize"
-        android:summary="Increase font size"/>
-    <Preference android:title="Font Size -"
-        android:key="@string/decreaseTextSize"
-        android:summary="Decrease font size"/>
+
+    <com.zezo.music.tabs.settings.FontSizeListPreference
+        android:key="FONT_SIZE"
+        android:title="Font Size"
+        android:dialogTitle="Choose A Font Size"
+        android:summary="Select a font size."/>
 
 </PreferenceScreen>

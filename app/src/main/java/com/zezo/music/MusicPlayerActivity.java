@@ -121,7 +121,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     protected void onCreate(Bundle savedInstanceState) {
 
         Log.d("Activity Lifecycle", "onCreate");
-
+        getTheme().applyStyle(new Preferences(this).getFontStyle().getResId(), true);
         super.onCreate(savedInstanceState);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -135,7 +135,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(tabPagerAdapter);
         viewPager.setCurrentItem(Tabs.PLAYLIST.ordinal());
-        viewPager.setOffscreenPageLimit(4);
+        viewPager.setOffscreenPageLimit(5);
         viewPager.addOnPageChangeListener(tabPagerAdapter);
 
     }

@@ -1,24 +1,22 @@
 package com.zezo.music.tabs.settings;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.zezo.music.MusicPlayerActivity;
+import com.zezo.music.Preferences;
 import com.zezo.music.R;
 
 /**
  * Created by 1 on 14.09.2016.
  */
-public class SettingsFragment extends PreferenceFragmentCompat {
+public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
-        Preference button = findPreference(getString(R.string.increaseTextSize));
+        /*Preference button = findPreference(getString(R.string.increaseTextSize));
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -27,18 +25,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                 return true;
             }
-        });
+        });*/
 
-        Preference buttonDecrease = findPreference(getString(R.string.decreaseTextSize));
-        buttonDecrease.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
+    }
 
-                Log.d("Preference","Text --");
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-                return true;
-            }
-        });
+        getActivity().getTheme().applyStyle(new Preferences(getActivity()).getFontStyle().getResId(), true);
 
     }
 }
