@@ -9,7 +9,8 @@ import com.zezo.music.tabs.settings.FontStyle;
  * Created by 1 on 15.09.2016.
  */
 public class Preferences {
-    private final static String FONT_STYLE = "FONT_STYLE";
+
+    public final static String FONT_STYLE = "FONT_STYLE";
 
     private final Context context;
 
