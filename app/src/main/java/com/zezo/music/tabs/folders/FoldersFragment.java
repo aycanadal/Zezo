@@ -46,12 +46,12 @@ public class FoldersFragment extends Fragment implements FolderClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         setHasOptionsMenu(true);
-        View browserView = inflater.inflate(R.layout.folders, container, false);
-        fileListView = (ListView) browserView.findViewById(R.id.filelist);
+        View foldersView = inflater.inflate(R.layout.folders, container, false);
+        fileListView = (ListView) foldersView.findViewById(R.id.filelist);
         fileListView.setAdapter(fileListAdapter);
-        currentPathView = (TextView)browserView.findViewById(R.id.currentPath);
+        currentPathView = (TextView)foldersView.findViewById(R.id.currentPath);
         currentPathView.setText(currentFolderPath);
-        return browserView;
+        return foldersView;
     }
 
     @Override

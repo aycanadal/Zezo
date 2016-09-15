@@ -1,10 +1,11 @@
 package com.zezo.music.tabs.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.util.Log;
 
+import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.Preferences;
 import com.zezo.music.R;
 
@@ -30,21 +31,17 @@ public class SettingsFragment extends PreferenceFragmentCompat{
                 Preferences preferences = new Preferences(getActivity());
                 preferences.setFontStyle(FontStyle.valueOf(newValue.toString()));
                 getActivity().getTheme().applyStyle(new Preferences(getActivity()).getFontStyle().getResId(), true);
+
+                getActivity().finish();
+                Intent intent = new Intent(getContext(), MusicPlayerActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
                 return true;
             }
 
         });
-
-        /*Preference button = findPreference(getString(R.string.increaseTextSize));
-        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-
-                Log.d("Preference","Text ++");
-
-                return true;
-            }
-        });*/
 
     }
 

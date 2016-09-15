@@ -29,12 +29,12 @@
         android:padding="5dp">
 
         <TextView
+            style="@style/Label.Large"
             android:id="@+id/song_title"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/list_item_background_selector"
             android:textColor="@drawable/list_item_text_selector"
-            android:textSize="?attr/font_large"
             android:textStyle="bold"
             android:singleLine="true"/>
 

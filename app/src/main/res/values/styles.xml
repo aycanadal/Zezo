@@ -72,5 +72,19 @@
         <item name="font_xlarge">32sp</item>
     </style>
 
+    <style name="Label" parent="@android:style/Widget.TextView">
+        <item name="android:textSize">?attr/font_medium</item>
+    </style>
+
+    <style name="Label.Small">
+        <item name="android:textSize">?attr/font_small</item>
+    </style>
+    <style name="Label.Large">
+        <item name="android:textSize">?attr/font_large</item>
+    </style>
+
+    <style name="Label.XLarge">
+        <item name="android:textSize">?attr/font_xlarge</item>
+    </style>
 
 </resources>
