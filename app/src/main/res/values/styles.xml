@@ -18,7 +18,6 @@
     <style name="MyTheme" parent="Theme.AppCompat">
         <item name="actionBarStyle">@style/MyActionBar</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-        <item name="android:background">@color/Black</item>
     </style>
 
     <style name="MyActionBar" parent="style/Widget.AppCompat.ActionBar">
@@ -48,24 +47,30 @@
         <item name="preferenceFragmentListStyle">@style/PreferenceFragmentList</item>
     </style>
 
-    <style name="FontStyle">
-    </style>
+    <style name="FontStyle"></style>
 
     <style name="FontStyle.Small">
+        <item name="font_small">10sp</item>
+        <item name="font_medium">12sp</item>
+        <item name="font_large">16sp</item>
+        <item name="font_xlarge">18sp</item>
+    </style>
+
+    <style name="FontStyle.Medium">
         <item name="font_small">14sp</item>
         <item name="font_medium">16sp</item>
         <item name="font_large">18sp</item>
         <item name="font_xlarge">20sp</item>
     </style>
 
-    <style name="FontStyle.Medium">
+    <style name="FontStyle.Large">
         <item name="font_small">18sp</item>
         <item name="font_medium">20sp</item>
         <item name="font_large">22sp</item>
         <item name="font_xlarge">24sp</item>
     </style>
 
-    <style name="FontStyle.Large">
+    <style name="FontStyle.XLarge">
         <item name="font_small">26sp</item>
         <item name="font_medium">28sp</item>
         <item name="font_large">30sp</item>
@@ -79,6 +84,7 @@
     <style name="Label.Small">
         <item name="android:textSize">?attr/font_small</item>
     </style>
+
     <style name="Label.Large">
         <item name="android:textSize">?attr/font_large</item>
     </style>

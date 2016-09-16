@@ -23,6 +23,6 @@
         android:choiceMode="singleChoice"
         android:fastScrollAlwaysVisible="true"
         android:fastScrollEnabled="true"
-        android:listSelector="#660000"/>
+        android:listSelector="#660000" />
 
 </LinearLayout>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#000000">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.zezo.music.tabs.settings.FontSizeListPreference
+        style="@style/Label.Large"
         android:key="FONT_STYLE"
         android:title="Font Style"
         android:dialogTitle="Choose A Font Style"
-        android:summary="Select a font style."/>
+        android:summary="Select a font style." />
 
 </PreferenceScreen>

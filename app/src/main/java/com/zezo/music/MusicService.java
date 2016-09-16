@@ -287,8 +287,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         Log.d("MediaPlayer", "onError");
 
-        if(what == 1 && extra == -2147483648)
-        Toast.makeText(this, "File type not supported.", Toast.LENGTH_SHORT).show();
+        if (what == 1 && extra == -2147483648)
+            Toast.makeText(this, "File type not supported.", Toast.LENGTH_SHORT).show();
         mp.reset();
 
         return true;
@@ -505,7 +505,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         this.playlist = songs;
         //if (songs != null && songs.size() > 0)
-          //  setCurrentSong(songs.get(0));
+        //  setCurrentSong(songs.get(0));
 
     }
 

@@ -8,7 +8,8 @@ import com.zezo.music.R;
 public enum FontStyle {
     Small(R.style.FontStyle_Small, "Small"),
     Medium(R.style.FontStyle_Medium, "Medium"),
-    Large(R.style.FontStyle_Large, "Large");
+    Large(R.style.FontStyle_Large, "Large"),
+    XLarge(R.style.FontStyle_XLarge, "XLarge");
 
     private int resId;
     private String title;

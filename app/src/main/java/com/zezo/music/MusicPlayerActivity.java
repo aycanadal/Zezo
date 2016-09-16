@@ -153,9 +153,9 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
                 Log.d("Activity", "onGlobalLayout");
                 viewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 startMusicService();
-                if(musicService == null)
+                if (musicService == null)
                     return;
-               updateViewsWithCurrentState();
+                updateViewsWithCurrentState();
 
             }
 
@@ -464,11 +464,11 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
     }
 
-    public void updateViewsWithCurrentState(){
+    public void updateViewsWithCurrentState() {
 
         NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
 
-        if (nowPlayingFragment != null){
+        if (nowPlayingFragment != null) {
             nowPlayingFragment.initController(musicService);
             if (viewPager.getCurrentItem() == Tabs.NOWPLAYING.ordinal())
                 nowPlayingFragment.show();

@@ -16,7 +16,6 @@
         android:fastScrollEnabled="true"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:listSelector="#660000">
-    </ListView>
+        android:listSelector="#660000"></ListView>
 
 </LinearLayout>
