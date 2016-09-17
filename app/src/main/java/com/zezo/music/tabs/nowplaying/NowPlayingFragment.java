@@ -60,7 +60,7 @@ public class NowPlayingFragment extends Fragment {
         nowPlayingFrame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nowPlayingClickListener.onNowPlayingClicked();
+                //nowPlayingClickListener.onNowPlayingClicked();
             }
         });
 
