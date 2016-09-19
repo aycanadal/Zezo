@@ -23,13 +23,13 @@ public class Song {
 
     }
 
-    public int getSampleRate(){
+    public int getSampleRate() {
 
         return sampleRate;
 
     }
 
-    public Uri getUri(){
+    public Uri getUri() {
 
         return ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, getId());
 

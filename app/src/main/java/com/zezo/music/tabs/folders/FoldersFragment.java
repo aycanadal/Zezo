@@ -49,7 +49,7 @@ public class FoldersFragment extends Fragment implements FolderClickListener {
         View foldersView = inflater.inflate(R.layout.folders, container, false);
         fileListView = (ListView) foldersView.findViewById(R.id.filelist);
         fileListView.setAdapter(fileListAdapter);
-        currentPathView = (TextView)foldersView.findViewById(R.id.currentPath);
+        currentPathView = (TextView) foldersView.findViewById(R.id.currentPath);
         currentPathView.setText(currentFolderPath);
         return foldersView;
     }

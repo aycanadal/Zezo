@@ -39,7 +39,7 @@ public class NowPlayingFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
 
         Log.d("NowPlaying Lifecycle", "onCreate");
         super.onCreate(savedInstanceState);
@@ -85,7 +85,7 @@ public class NowPlayingFragment extends Fragment {
 
     public void initController(MusicService musicService) {
 
-        if(musicController == null)
+        if (musicController == null)
             return;
 
         musicController.init(musicService);
@@ -108,7 +108,7 @@ public class NowPlayingFragment extends Fragment {
 
     public void hide() {
 
-        if(musicController == null)
+        if (musicController == null)
             return;
 
         musicController.setVisibility(View.GONE);

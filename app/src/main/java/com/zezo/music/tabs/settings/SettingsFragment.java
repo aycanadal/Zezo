@@ -16,7 +16,7 @@ import com.zezo.music.R;
 /**
  * Created by 1 on 14.09.2016.
  */
-public class SettingsFragment extends PreferenceFragmentCompat{
+public class SettingsFragment extends PreferenceFragmentCompat {
 
 
     @Override

@@ -36,7 +36,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
     private PlaylistAdapter playlistAdapter;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
 
         Log.d("Playlist Lifecycle", "onCreate");
         super.onCreate(savedInstanceState);

@@ -20,29 +20,36 @@ abstract public class FragmentPagerAdapterExt extends FragmentPagerAdapter {
         mFragments = new SparseArray<>(getCount());
     }
 
-    @Override public Object instantiateItem(ViewGroup container, int position) {
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
         Log.d("FragmentPagerAdapter", "instantiateItem:" + position);
         Object object = super.instantiateItem(container, position);
         mFragments.put(position, (Fragment) object);
         return object;
     }
 
-    @Override public void destroyItem(ViewGroup container, int position, Object object) {
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
         mFragments.remove(position);
         super.destroyItem(container, position, object);
     }
 
-    @Override public void setPrimaryItem(ViewGroup container, int position, Object object) {
+    @Override
+    public void setPrimaryItem(ViewGroup container, int position, Object object) {
         super.setPrimaryItem(container, position, object);
         mPrimaryFragment = (Fragment) object;
     }
 
-    /** Returns currently visible (primary) fragment */
+    /**
+     * Returns currently visible (primary) fragment
+     */
     public Fragment getPrimaryFragment() {
         return mPrimaryFragment;
     }
 
-    /** Returned list can contain null-values for not created fragments */
+    /**
+     * Returned list can contain null-values for not created fragments
+     */
     public SparseArray<Fragment> getFragments() {
         return mFragments; // Should actually return an unmodifiable copy.
     }
