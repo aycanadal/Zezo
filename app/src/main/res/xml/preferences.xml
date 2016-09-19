@@ -6,6 +6,7 @@
         android:key="FONT_STYLE"
         android:title="Font Style"
         android:dialogTitle="Choose A Font Style"
-        android:summary="Select a font style." />
+        android:summary="Select a font style."
+        android:defaultValue="Medium" />
 
 </PreferenceScreen>
