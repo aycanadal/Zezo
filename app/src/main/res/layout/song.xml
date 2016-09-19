@@ -52,12 +52,12 @@
             android:padding="5dp">
 
             <TextView
+                style="@style/Label.Medium"
                 android:id="@+id/song_artist"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
                 android:background="@drawable/list_item_background_selector"
                 android:textColor="@drawable/list_item_text_selector"
-                android:textSize="?attr/font_medium"
                 android:singleLine="true"
                 android:clickable="false"
                 android:focusable="false"

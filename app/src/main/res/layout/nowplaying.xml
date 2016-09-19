@@ -5,8 +5,9 @@
     android:focusable="false"
     android:focusableInTouchMode="false"
     android:orientation="vertical"
-    android:gravity="center"
-    android:windowSoftInputMode="adjustPan">
+    android:gravity="bottom"
+    android:windowSoftInputMode="adjustPan"
+    android:paddingBottom="25sp">
 
     <LinearLayout
         android:id="@+id/nowPlaying"

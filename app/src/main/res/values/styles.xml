@@ -84,6 +84,9 @@
     <style name="Label.Small">
         <item name="android:textSize">?attr/font_small</item>
     </style>
+    <style name="Label.Medium">
+        <item name="android:textSize">?attr/font_medium</item>
+    </style>
 
     <style name="Label.Large">
         <item name="android:textSize">?attr/font_large</item>
