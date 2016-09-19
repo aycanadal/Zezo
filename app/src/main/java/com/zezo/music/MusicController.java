@@ -1,7 +1,7 @@
 package com.zezo.music;
 
 import android.content.Context;
-import android.support.v7.internal.view.ContextThemeWrapper;
+import android.support.v7.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.MediaController.MediaPlayerControl;
