@@ -99,7 +99,7 @@ public class NowPlayingFragment extends Fragment {
 
     }
 
-    public void setCurrentSong(Song song) {
+    public void setInfo(Song song) {
 
         currentArtistView.setText(song.getArtist());
         currentTitleView.setText(song.getTitle());

@@ -333,7 +333,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         mediaPlayer.start();
 
         Intent notIntent = new Intent(this, MusicPlayerActivity.class);
-        notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         PendingIntent pendInt = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -504,8 +504,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void setPlaylist(ArrayList<Song> songs) {
 
         this.playlist = songs;
-        //if (songs != null && songs.size() > 0)
-        //  setCurrentSong(songs.get(0));
 
     }
 

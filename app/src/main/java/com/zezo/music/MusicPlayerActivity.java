@@ -163,6 +163,42 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
     }
 
+
+
+    @Override
+    protected void onResume() {
+
+        Log.d("Lifecycle", "onResume");
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause() {
+
+        Log.d("Lifecycle", "onPause");
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onStop() {
+
+        Log.d("Lifecycle", "onStop");
+        super.onStop();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        Log.d("Lifecycle", "onDestroy");
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onMediaPlayerPlayingReceiver);
+        unbindService(musicServiceConnection);
+
+    }
+
     private void startMusicService() {
 
         if (musicServiceIntent == null) {
@@ -172,14 +208,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             bindService(musicServiceIntent, musicServiceConnection, 0);
 
         }
-
-    }
-
-    @Override
-    protected void onResume() {
-
-        Log.d("Lifecycle", "onResume");
-        super.onResume();
 
     }
 
@@ -285,31 +313,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
     }
 
-    @Override
-    protected void onPause() {
 
-        Log.d("Lifecycle", "onPause");
-        super.onPause();
-
-    }
-
-    @Override
-    protected void onStop() {
-
-        Log.d("Lifecycle", "onStop");
-        super.onStop();
-
-    }
-
-    @Override
-    protected void onDestroy() {
-
-        Log.d("Lifecycle", "onDestroy");
-        super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(onMediaPlayerPlayingReceiver);
-        unbindService(musicServiceConnection);
-
-    }
 
     public void onContextMenuButtonClicked(View view) {
 
@@ -476,13 +480,13 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
         updateShuffleIcon();
 
-        Song song = musicService.getCurrentSong();
+        Song currentSong = musicService.getCurrentSong();
 
-        if (song == null)
+        if (currentSong == null)
             return;
 
-        tabPagerAdapter.getNowPlayingFragment().setCurrentSong(song);
-        tabPagerAdapter.getPlaylistFragment().setCurrentSong(song);
+        tabPagerAdapter.getNowPlayingFragment().setInfo(currentSong);
+        tabPagerAdapter.getPlaylistFragment().setItemChecked(currentSong);
 
     }
 

@@ -161,7 +161,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 
     }
 
-    public void setCurrentSong(Song song) {
+    public void setItemChecked(Song song) {
 
         playlistAdapter.setItemChecked(song.getId());
         songListView.setItemChecked(playlistAdapter.getFilteredSongs().indexOf(song), true);
