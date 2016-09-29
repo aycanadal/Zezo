@@ -19,13 +19,15 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.zezo.music.MusicPlayerActivity;
+import com.zezo.music.MusicService;
 import com.zezo.music.R;
 import com.zezo.music.domain.Song;
-import com.zezo.music.tabs.nowplaying.PlaylistBottomPane.NowPlayingClickListener;
+import com.zezo.music.tabs.nowplaying.NowPlayingFragment.NowPlayingClickListener;
 import com.zezo.music.tabs.playlist.PlaylistAdapter.SongClickListener;
 
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 
     private ListView songListView;
     private PlaylistAdapter playlistAdapter;
+    private PlaylistBottomPaneFragment playlistBottomPaneFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,32 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
         songListView.setAdapter(playlistAdapter);
         registerForContextMenu(songListView);
         setHasOptionsMenu(true);
+
+        playlistBottomPaneFragment = (PlaylistBottomPaneFragment) getChildFragmentManager().findFragmentById(R.id.playlistBottomPane);
+
+        ImageButton nowPlayingToggle = (ImageButton) playlistView.findViewById(R.id.nowPlayingToggle);
+
+        nowPlayingToggle.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View nowPlayingToggle) {
+
+                if (playlistBottomPaneFragment.isVisible()) {
+
+                    ((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsup);
+                    playlistBottomPaneFragment.hide();
+
+                } else {
+
+                    ((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsdown);
+                    playlistBottomPaneFragment.show();
+
+                }
+
+            }
+
+        });
+
         return playlistView;
 
     }
@@ -207,4 +236,9 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 
     }
 
+    public void initController(MusicService musicService) {
+
+        playlistBottomPaneFragment.initController(musicService);
+
+    }
 }

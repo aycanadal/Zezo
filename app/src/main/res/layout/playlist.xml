@@ -6,39 +6,45 @@
     android:paddingTop="5dp"
     android:windowSoftInputMode="adjustPan">
 
-    <ListView
-        android:id="@+id/song_list"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:choiceMode="singleChoice"
-        android:clickable="false"
-        android:fastScrollAlwaysVisible="true"
-        android:fastScrollEnabled="true"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:listSelector="#660000"></ListView>
+        android:layout_above="@+id/playlistBottomPane"
+        android:layout_alignWithParentIfMissing="true"
+        android:orientation="vertical">
 
-    <ImageButton
-        android:id="@+id/nowPlayingToggle"
+        <ListView
+            android:id="@+id/song_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:choiceMode="singleChoice"
+            android:clickable="false"
+            android:fastScrollAlwaysVisible="true"
+            android:fastScrollEnabled="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:listSelector="#660000"></ListView>
+
+        <ImageButton
+            android:id="@+id/nowPlayingToggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="#00FFFFFF"
+            android:src="@drawable/arrowsdown" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/White" />
+    </RelativeLayout>
+
+    <fragment
+        android:id="@+id/playlistBottomPane"
+        android:name="com.zezo.music.tabs.playlist.PlaylistBottomPaneFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#00FFFFFF"
-        android:src="@drawable/arrowsdown"
         android:layout_alignParentBottom="true" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/White" />
-
-    <FrameLayout
-        android:id="@+id/controllerFrame"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:clickable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:windowSoftInputMode="stateHidden" >
-    </FrameLayout>
 
 </RelativeLayout>

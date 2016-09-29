@@ -8,7 +8,7 @@ import android.util.SparseArray;
 
 import com.zezo.music.R;
 import com.zezo.music.tabs.folders.FoldersFragment;
-import com.zezo.music.tabs.nowplaying.PlaylistBottomPane;
+import com.zezo.music.tabs.nowplaying.NowPlayingFragment;
 import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.tabs.queue.QueueFragment;
 import com.zezo.music.tabs.settings.SettingsFragment;
@@ -39,7 +39,7 @@ public class TabPagerAdapter extends FragmentPagerAdapterExt implements ViewPage
         switch (tabName) {
 
             case NOWPLAYING:
-                return new PlaylistBottomPane();
+                return new NowPlayingFragment();
             case PLAYLIST:
                 return new PlaylistFragment();
             case QUEUE:
@@ -104,9 +104,9 @@ public class TabPagerAdapter extends FragmentPagerAdapterExt implements ViewPage
 
     }
 
-    public PlaylistBottomPane getNowPlayingFragment() {
+    public NowPlayingFragment getNowPlayingFragment() {
 
-        return (PlaylistBottomPane) getFragments().get(Tabs.NOWPLAYING.ordinal());
+        return (NowPlayingFragment) getFragments().get(Tabs.NOWPLAYING.ordinal());
 
     }
 
@@ -118,7 +118,7 @@ public class TabPagerAdapter extends FragmentPagerAdapterExt implements ViewPage
     @Override
     public void onPageSelected(int position) {
 
-        PlaylistBottomPane playlistBottomPane = getNowPlayingFragment();
+        NowPlayingFragment playlistBottomPane = getNowPlayingFragment();
 
         if (playlistBottomPane == null)
             return;
