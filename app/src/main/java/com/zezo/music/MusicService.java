@@ -460,23 +460,19 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         try {
 
             player.setDataSource(getApplicationContext(), trackUri);
+            setCurrentSong(song); // Set this as late as possible otherwise illegal state exception.
+            player.prepareAsync();
 
-            try {
-
-                setCurrentSong(song); // Set this as late as possible otherwise illegal state exception.
-                player.prepareAsync();
-
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (SecurityException e) {
-                e.printStackTrace();
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            }
-
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
+
     }
 
     public void removeFromPlaylist(Song song) {
