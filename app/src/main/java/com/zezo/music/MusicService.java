@@ -47,7 +47,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private final IBinder musicBind = new MusicBinder();
     private int pauseDuration = 0;
     private int pausePosition = 0;
-    private MediaPlayer player;
+    private MediaPlayer mediaPlayer;
     private Random rand;
     private boolean shuffle = false;
     private boolean isPlayerPrepared = false;
@@ -61,6 +61,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private class HeadsetStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+
             if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG) && !isInitialStickyBroadcast()) {
                 int state = intent.getIntExtra("state", -1);
                 switch (state) {
@@ -71,6 +72,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                         break;
                 }
             }
+
         }
     }
 
@@ -130,7 +132,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public int getDuration() {
-        return player.getDuration();
+        return mediaPlayer.getDuration();
     }
 
     public int getPauseDuration() {
@@ -142,7 +144,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public int getPosition() {
-        return player.getCurrentPosition();
+        return mediaPlayer.getCurrentPosition();
     }
 
     public Song getSongById(long songId) {
@@ -168,12 +170,12 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     public void initMusicPlayer() {
 
-        player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-        player.setOnPreparedListener(this);
-        player.setOnCompletionListener(this);
-        player.setOnErrorListener(this);
+        mediaPlayer.setOnPreparedListener(this);
+        mediaPlayer.setOnCompletionListener(this);
+        mediaPlayer.setOnErrorListener(this);
 
         IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         headsetStateReceiver = new HeadsetStateReceiver();
@@ -192,7 +194,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     public boolean isPlaying() {
 
-        return player.isPlaying();
+        return mediaPlayer.isPlaying();
 
     }
 
@@ -251,7 +253,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         Log.d("MediaPlayer", "onCompletion");
 
-        if (player.getCurrentPosition() > 0) {
+        if (mediaPlayer.getCurrentPosition() > 0) {
             mp.reset();
             playNext();
         }
@@ -264,7 +266,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         super.onCreate();
 
-        player = new MediaPlayer();
+        mediaPlayer = new MediaPlayer();
         initMusicPlayer();
         rand = new Random();
 
@@ -368,8 +370,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public boolean onUnbind(Intent intent) {
 
         Log.d("Service LifeCycle", "onUnbind");
-        //player.stop();
-        //player.release();
+        //mediaPlayer.stop();
+        //mediaPlayer.release();
         return false;
 
     }
@@ -378,7 +380,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         pauseDuration = getDuration();
         pausePosition = getPosition();
-        player.pause();
+        mediaPlayer.pause();
 
     }
 
@@ -388,7 +390,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
             return;
 
         if (isPlayerPrepared)
-            player.start();
+            mediaPlayer.start();
         else
             playSong(currentSong);
 
@@ -451,7 +453,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     public void playSong(Song song) {
 
-        player.reset();
+        mediaPlayer.reset();
         history.add(song.getId());
 
         Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -459,9 +461,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         try {
 
-            player.setDataSource(getApplicationContext(), trackUri);
+            mediaPlayer.setDataSource(getApplicationContext(), trackUri);
             setCurrentSong(song); // Set this as late as possible otherwise illegal state exception.
-            player.prepareAsync();
+            mediaPlayer.prepareAsync();
 
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -482,7 +484,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public void seek(int posn) {
-        player.seekTo(posn);
+        mediaPlayer.seekTo(posn);
     }
 
     public void setPausePosition(int pausePosition) {
