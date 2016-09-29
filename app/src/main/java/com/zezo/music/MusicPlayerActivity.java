@@ -38,7 +38,7 @@ import com.zezo.music.domain.Song;
 import com.zezo.music.tabs.TabPagerAdapter;
 import com.zezo.music.tabs.TabPagerAdapter.Tabs;
 import com.zezo.music.tabs.folders.FoldersFragment;
-import com.zezo.music.tabs.nowplaying.NowPlayingFragment;
+import com.zezo.music.tabs.nowplaying.PlaylistBottomPane;
 import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.util.Util;
 import com.zezo.music.util.YesNoDialogFragment;
@@ -472,12 +472,12 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
     public void updateViewsWithCurrentState() {
 
-        NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
+        PlaylistBottomPane playlistBottomPane = tabPagerAdapter.getNowPlayingFragment();
 
-        if (nowPlayingFragment != null) {
-            nowPlayingFragment.initController(musicService);
+        if (playlistBottomPane != null) {
+            playlistBottomPane.initController(musicService);
             if (viewPager.getCurrentItem() == Tabs.NOWPLAYING.ordinal())
-                nowPlayingFragment.show();
+                playlistBottomPane.show();
         }
 
         updateShuffleIcon();

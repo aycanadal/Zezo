@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.R;
 import com.zezo.music.domain.Song;
-import com.zezo.music.tabs.nowplaying.NowPlayingFragment.NowPlayingClickListener;
+import com.zezo.music.tabs.nowplaying.PlaylistBottomPane.NowPlayingClickListener;
 import com.zezo.music.tabs.playlist.PlaylistAdapter.SongClickListener;
 
 import java.util.ArrayList;

@@ -18,7 +18,7 @@ import com.zezo.music.MusicService;
 import com.zezo.music.R;
 import com.zezo.music.domain.Song;
 
-public class NowPlayingFragment extends Fragment {
+public class PlaylistBottomPane extends Fragment {
 
     private TextView currentArtistView;
     private TextView currentTitleView;

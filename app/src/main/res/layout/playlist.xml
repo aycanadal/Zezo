@@ -26,11 +26,19 @@
         android:src="@drawable/arrowsdown"
         android:layout_alignParentBottom="true" />
 
-    <fragment
-        android:id="@+id/nowplaying"
-        android:name="com.zezo.music.NowPlayingFragment"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_height="2dp"
+        android:background="@color/White" />
+
+    <FrameLayout
+        android:id="@+id/controllerFrame"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:windowSoftInputMode="stateHidden" >
+    </FrameLayout>
 
 </RelativeLayout>
