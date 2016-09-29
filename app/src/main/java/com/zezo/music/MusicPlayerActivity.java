@@ -162,7 +162,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
                 });
 
-        viewPager.requestLayout(); // To get onGlobalLayout called because it doesn't get called every other time activity is started from notification.
+        viewPager.requestLayout(); // To get onGlobalLayout called for sure because it doesn't get called every other time activity is started from notification.
 
     }
 
