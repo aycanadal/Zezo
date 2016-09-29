@@ -84,7 +84,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             if (playlistFragment != null)
                 playlistFragment.loadPlaylist(musicService.getPlaylist());
 
-
             updateViewsWithCurrentState();
 
         }
@@ -146,24 +145,26 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         Log.d("Lifecycle", "onStart");
         super.onStart();
 
-        viewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
+        viewPager.getViewTreeObserver().addOnGlobalLayoutListener(
 
-                Log.d("Activity", "onGlobalLayout");
-                viewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                startMusicService();
-                if (musicService == null)
-                    return;
-                updateViewsWithCurrentState();
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
 
-            }
+                        Log.d("Activity", "onGlobalLayout");
+                        viewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        startMusicService();
+                        if (musicService == null)
+                            return;
+                        updateViewsWithCurrentState();
 
-        });
+                    }
+
+                });
+
+        viewPager.requestLayout(); // To get onGlobalLayout called because it doesn't get called every other time activity is started from notification.
 
     }
-
-
 
     @Override
     protected void onResume() {
@@ -272,8 +273,9 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
                     mex.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
+
                     e.printStackTrace();
+
                 }
 
                 int count = mex.getTrackCount();
