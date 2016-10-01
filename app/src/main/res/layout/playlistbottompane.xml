@@ -1,14 +1,14 @@
-<RelativeLayoutLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="#000000"
-    android:orientation="vertical"
     android:windowSoftInputMode="adjustPan">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/White" />
+        android:background="@color/White"
+        android:layout_alignParentTop="true"/>
 
     <FrameLayout
         android:id="@+id/controllerFrame"
@@ -17,6 +17,7 @@
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:windowSoftInputMode="stateHidden"></FrameLayout>
+        android:windowSoftInputMode="stateHidden"
+        android:layout_alignParentBottom="true"/>
 
-</RelativeLayoutLayout>
+</RelativeLayout>

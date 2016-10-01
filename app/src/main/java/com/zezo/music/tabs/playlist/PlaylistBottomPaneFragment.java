@@ -19,7 +19,7 @@ public class PlaylistBottomPaneFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.nowplaying, container, false);
+        View view = inflater.inflate(R.layout.playlistbottompane, container, false);
         controllerFrame = (FrameLayout) view.findViewById(R.id.controllerFrame);
         musicController = new MusicController(getActivity());
         musicController.setAnchorView(controllerFrame);

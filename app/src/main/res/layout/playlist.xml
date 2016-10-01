@@ -24,15 +24,15 @@
             android:fastScrollEnabled="true"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:listSelector="#660000"></ListView>
+            android:listSelector="#660000"/>
 
         <ImageButton
             android:id="@+id/nowPlayingToggle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:background="#00FFFFFF"
-            android:src="@drawable/arrowsdown" />
+            android:src="@drawable/arrowsdown"
+            android:layout_alignParentBottom="true"/>
 
     </RelativeLayout>
 
@@ -40,7 +40,7 @@
         android:id="@+id/playlistBottomPane"
         android:name="com.zezo.music.tabs.playlist.PlaylistBottomPaneFragment"
         android:layout_width="match_parent"
-        android:layout_height="122dp"
+        android:layout_height="90dip"
         android:layout_alignParentBottom="true" />
 
 </RelativeLayout>
