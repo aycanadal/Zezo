@@ -92,6 +92,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         public void onServiceDisconnected(ComponentName name) {
 
             tabPagerAdapter.getNowPlayingFragment().unbindController();
+            tabPagerAdapter.getPlaylistFragment().unbindController();
             musicService = null;
 
         }
@@ -145,6 +146,14 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         Log.d("Lifecycle", "onStart");
         super.onStart();
 
+    }
+
+    @Override
+    protected void onResume() {
+
+        Log.d("Lifecycle", "onResume");
+        super.onResume();
+
         viewPager.getViewTreeObserver().addOnGlobalLayoutListener(
 
                 new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -163,14 +172,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
                 });
 
         viewPager.requestLayout(); // To get onGlobalLayout called for sure because it doesn't get called every other time activity is started from notification.
-
-    }
-
-    @Override
-    protected void onResume() {
-
-        Log.d("Lifecycle", "onResume");
-        super.onResume();
 
     }
 
@@ -314,7 +315,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         musicService.removeFromPlaylist(song);
 
     }
-
 
 
     public void onContextMenuButtonClicked(View view) {
@@ -482,13 +482,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
         PlaylistFragment playlistFragment = tabPagerAdapter.getPlaylistFragment();
 
-        if (playlistFragment != null) {
+        if (playlistFragment != null)
             playlistFragment.initController(musicService);
-
-            /*if (viewPager.getCurrentItem() == Tabs.PLAYLIST.ordinal())
-                nowPlayingFragment.show();*/
-
-        }
 
         updateShuffleIcon();
 

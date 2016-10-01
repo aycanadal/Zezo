@@ -118,15 +118,30 @@ public class TabPagerAdapter extends FragmentPagerAdapterExt implements ViewPage
     @Override
     public void onPageSelected(int position) {
 
-        NowPlayingFragment playlistBottomPane = getNowPlayingFragment();
+        getNowPlayingFragment().hide();
+        getPlaylistFragment().hideController();
 
-        if (playlistBottomPane == null)
-            return;
+        Tabs tab = Tabs.values()[position];
 
-        if (position == Tabs.NOWPLAYING.ordinal())
-            getNowPlayingFragment().show();
-        else
-            getNowPlayingFragment().hide();
+        switch (tab) {
+
+            case NOWPLAYING:
+                getNowPlayingFragment().show();
+                break;
+
+            case PLAYLIST:
+                if (getPlaylistFragment().isBottomDrawerOpen())
+                    getPlaylistFragment().showController();
+                break;
+
+            case QUEUE:
+                break;
+            case FOLDERS:
+                break;
+            case SETTINGS:
+                break;
+
+        }
 
     }
 

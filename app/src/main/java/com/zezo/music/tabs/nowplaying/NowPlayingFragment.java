@@ -108,9 +108,6 @@ public class NowPlayingFragment extends Fragment {
 
     public void hide() {
 
-        if (musicController == null)
-            return;
-
         musicController.setVisibility(View.GONE);
         musicController.hideSuper();
         controllerFrame.setVisibility(View.GONE);

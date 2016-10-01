@@ -37,6 +37,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
     private ListView songListView;
     private PlaylistAdapter playlistAdapter;
     private PlaylistBottomPaneFragment playlistBottomPaneFragment;
+    private boolean showBottomPane = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,11 +81,13 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
 
                     ((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsup);
                     playlistBottomPaneFragment.hide();
+                    showBottomPane = false;
 
                 } else {
 
                     ((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsdown);
                     playlistBottomPaneFragment.show();
+                    showBottomPane = true;
 
                 }
 
@@ -241,4 +244,29 @@ public class PlaylistFragment extends Fragment implements SongClickListener, Now
         playlistBottomPaneFragment.initController(musicService);
 
     }
+
+    public void unbindController() {
+
+        playlistBottomPaneFragment.unbindController();
+
+    }
+
+    public void showController() {
+
+        playlistBottomPaneFragment.show();
+
+    }
+
+    public void hideController() {
+
+        playlistBottomPaneFragment.hide();
+
+    }
+
+    public boolean isBottomDrawerOpen() {
+
+        return showBottomPane;
+
+    }
+
 }

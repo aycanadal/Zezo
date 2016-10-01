@@ -34,17 +34,13 @@
             android:background="#00FFFFFF"
             android:src="@drawable/arrowsdown" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/White" />
     </RelativeLayout>
 
     <fragment
         android:id="@+id/playlistBottomPane"
         android:name="com.zezo.music.tabs.playlist.PlaylistBottomPaneFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="122dp"
         android:layout_alignParentBottom="true" />
 
 </RelativeLayout>
