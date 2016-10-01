@@ -230,8 +230,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
             MediaButtonReceiver.removeBroadcastReceiveListener(this);
             am.abandonAudioFocus(this);
 
-            Song cuSo = currentSong;
-
             if (getCurrentSong() == null)
                 return;
 
@@ -307,6 +305,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                 break;
 
             case KeyEvent.KEYCODE_HEADSETHOOK:
+                break;
 
             case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
 
