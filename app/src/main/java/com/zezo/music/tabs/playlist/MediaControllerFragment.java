@@ -2,6 +2,7 @@ package com.zezo.music.tabs.playlist;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,7 @@ import com.zezo.music.MusicController;
 import com.zezo.music.MusicService;
 import com.zezo.music.R;
 
-public class PlaylistBottomPaneFragment extends Fragment {
+public class MediaControllerFragment extends Fragment {
 
     private FrameLayout controllerFrame;
     private MusicController musicController;
@@ -19,7 +20,9 @@ public class PlaylistBottomPaneFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.playlistbottompane, container, false);
+        Log.d("MediaControllerFragment", "onCreateView");
+
+        View view = inflater.inflate(R.layout.mediacontroller, container, false);
         controllerFrame = (FrameLayout) view.findViewById(R.id.controllerFrame);
         musicController = new MusicController(getActivity());
         musicController.setAnchorView(controllerFrame);

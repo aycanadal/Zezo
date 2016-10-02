@@ -17,26 +17,13 @@ import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.MusicService;
 import com.zezo.music.R;
 import com.zezo.music.domain.Song;
+import com.zezo.music.tabs.playlist.MediaControllerFragment;
 
 public class NowPlayingFragment extends Fragment {
 
     private TextView currentArtistView;
     private TextView currentTitleView;
-    private FrameLayout controllerFrame;
-    private MusicController musicController;
-    private NowPlayingClickListener nowPlayingClickListener;
-
-    public interface NowPlayingClickListener {
-
-        public void onNowPlayingClicked();
-
-    }
-
-    public void setNowPlayingClickListener(NowPlayingClickListener nowPlayingClickListener) {
-
-        this.nowPlayingClickListener = nowPlayingClickListener;
-
-    }
+    private MediaControllerFragment mediaControllerFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,26 +37,11 @@ public class NowPlayingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         Log.d("NowPlaying Lifecycle", "onCreateView");
-
         setHasOptionsMenu(true);
-
         View view = inflater.inflate(R.layout.nowplaying, container, false);
-
-        LinearLayout nowPlayingFrame = (LinearLayout) view.findViewById(R.id.nowPlaying);
-
-        nowPlayingFrame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //nowPlayingClickListener.onNowPlayingClicked();
-            }
-        });
-
         currentTitleView = (TextView) view.findViewById(R.id.currentTitle);
         currentArtistView = (TextView) view.findViewById(R.id.currentArtist);
-        controllerFrame = (FrameLayout) view.findViewById(R.id.controllerFrame);
-        musicController = new MusicController(getActivity());
-        musicController.setAnchorView(controllerFrame);
-
+        mediaControllerFragment = (MediaControllerFragment) getChildFragmentManager().findFragmentById(R.id.playlistBottomPane);
         return view;
     }
 
@@ -85,17 +57,13 @@ public class NowPlayingFragment extends Fragment {
 
     public void initController(MusicService musicService) {
 
-        if (musicController == null)
-            return;
-
-        musicController.init(musicService);
-        musicController.setMusicBound(true);
+        mediaControllerFragment.initController(musicService);
 
     }
 
     public void unbindController() {
 
-        musicController.setMusicBound(false);
+        mediaControllerFragment.unbindController();
 
     }
 
@@ -108,9 +76,7 @@ public class NowPlayingFragment extends Fragment {
 
     public void hide() {
 
-        musicController.setVisibility(View.GONE);
-        musicController.hideSuper();
-        controllerFrame.setVisibility(View.GONE);
+        mediaControllerFragment.hide();
 
     }
 
@@ -124,21 +90,7 @@ public class NowPlayingFragment extends Fragment {
 
     public void show() {
 
-        if (musicController == null)
-            return;
-
-        musicController.show(0);
-        musicController.setVisibility(View.VISIBLE);
-        musicController.setFocusable(false);
-        musicController.setFocusableInTouchMode(false);
-        controllerFrame.setVisibility(View.VISIBLE);
-
-    }
-
-    public void updateController() {
-
-        musicController.show(0);
-
+        mediaControllerFragment.show();
     }
 
 }

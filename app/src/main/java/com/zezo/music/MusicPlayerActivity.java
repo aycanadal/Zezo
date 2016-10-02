@@ -106,13 +106,9 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             if (i.getAction() != "MEDIA_PLAYER_PLAYING")
                 return;
 
-            updateViewsWithCurrentState();
             musicService.setPlayerPrepared(true);
-
-            if (viewPager.getCurrentItem() == Tabs.NOWPLAYING.ordinal())
-                tabPagerAdapter.getNowPlayingFragment().updateController();
-
             tabPagerAdapter.getQueueFragment().setQueue(musicService.getQueue());
+            updateViewsWithCurrentState();
 
         }
     };

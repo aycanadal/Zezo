@@ -46,12 +46,11 @@
             android:marqueeRepeatLimit="marquee_forever" />
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/controllerFrame"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:clickable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"></FrameLayout>
+    <fragment
+        android:id="@+id/playlistBottomPane"
+        android:name="com.zezo.music.tabs.playlist.MediaControllerFragment"
+        android:layout_width="match_parent"
+        android:layout_height="90dip"
+        android:layout_alignParentBottom="true" />
 
 </LinearLayout>
