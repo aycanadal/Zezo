@@ -2,7 +2,7 @@ package com.zezo.music.tabs.playlist;
 
 import android.widget.Filter;
 
-import com.zezo.music.domain.Song;
+import com.zezo.music.shared.Song;
 
 import java.util.ArrayList;
 import java.util.List;

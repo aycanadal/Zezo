@@ -1,4 +1,4 @@
-package com.zezo.music.domain;
+package com.zezo.music.shared;
 
 import android.content.ContentUris;
 import android.net.Uri;

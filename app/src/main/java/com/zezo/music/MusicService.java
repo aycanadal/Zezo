@@ -25,7 +25,7 @@ import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.zezo.music.MediaButtonReceiver.MediaButtonReceiverListener;
-import com.zezo.music.domain.Song;
+import com.zezo.music.shared.Song;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -51,6 +51,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private Random rand;
     private boolean shuffle = false;
     private boolean isPlayerPrepared = false;
+    private boolean isWaitingForResume = false;
 
     public class MusicBinder extends Binder {
         MusicService getService() {
@@ -211,7 +212,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
 
-            //pause(); IllegalStateException
+            if(isPlaying()) {
+                pause();
+                isWaitingForResume = true;
+            }
+
             ComponentName mRemoteControlResponder = new ComponentName(getPackageName(),
                     MediaButtonReceiver.class.getName());
             am.unregisterMediaButtonEventReceiver(mRemoteControlResponder);
@@ -221,6 +226,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
 
             registerMediaButtonListener();
+
+            if(isWaitingForResume){
+                play();
+                Toast.makeText(this, "Resumed playing.", Toast.LENGTH_LONG).show();
+            }
 
         } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
 

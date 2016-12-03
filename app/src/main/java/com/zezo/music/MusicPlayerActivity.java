@@ -31,10 +31,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.zezo.music.MusicService.MusicBinder;
-import com.zezo.music.domain.Song;
+import com.zezo.music.shared.MediaControllerFragment;
+import com.zezo.music.shared.Song;
 import com.zezo.music.tabs.TabPagerAdapter;
 import com.zezo.music.tabs.TabPagerAdapter.Tabs;
 import com.zezo.music.tabs.folders.FoldersFragment;
@@ -57,6 +59,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     private MusicService musicService;
     private Intent musicServiceIntent;
     private Menu optionsMenu;
+    private MediaControllerFragment mediaControllerFragment;
 
     private ServiceConnection musicServiceConnection = new ServiceConnection() {
 
@@ -91,8 +94,10 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         @Override
         public void onServiceDisconnected(ComponentName name) {
 
-            tabPagerAdapter.getNowPlayingFragment().unbindController();
-            tabPagerAdapter.getPlaylistFragment().unbindController();
+           /* tabPagerAdapter.getNowPlayingFragment().unbindController();
+            tabPagerAdapter.getPlaylistFragment().unbindController();*/
+
+            mediaControllerFragment.unbindController();
             musicService = null;
 
         }
@@ -133,6 +138,33 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         viewPager.setCurrentItem(Tabs.PLAYLIST.ordinal());
         viewPager.setOffscreenPageLimit(5);
         viewPager.addOnPageChangeListener(tabPagerAdapter);
+
+        mediaControllerFragment = (MediaControllerFragment) getSupportFragmentManager().findFragmentById(R.id.mediaController);
+
+        ImageButton nowPlayingToggle = (ImageButton) findViewById(R.id.mediaControllerToggle);
+
+        nowPlayingToggle.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View nowPlayingToggle) {
+
+                if (mediaControllerFragment.isVisible()) {
+
+                    ((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsup);
+                    mediaControllerFragment.hide();
+                    //showBottomPane = false;
+
+                } else {
+
+                    ((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsdown);
+                    mediaControllerFragment.show();
+                    //showBottomPane = true;
+
+                }
+
+            }
+
+        });
 
     }
 
@@ -470,16 +502,16 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
         NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
 
-        if (nowPlayingFragment != null) {
-            nowPlayingFragment.initController(musicService);
-            if (viewPager.getCurrentItem() == Tabs.NOWPLAYING.ordinal())
-                nowPlayingFragment.show();
-        }
+        //if (nowPlayingFragment != null) {
+            //nowPlayingFragment.initController(musicService);
+            //if (viewPager.getCurrentItem() == Tabs.NOWPLAYING.ordinal())
+                //nowPlayingFragment.show();
+        //}
 
-        PlaylistFragment playlistFragment = tabPagerAdapter.getPlaylistFragment();
+       // PlaylistFragment playlistFragment = tabPagerAdapter.getPlaylistFragment();
 
-        if (playlistFragment != null)
-            playlistFragment.initController(musicService);
+        //if (playlistFragment != null)
+            //playlistFragment.initController(musicService);
 
         updateShuffleIcon();
 
@@ -490,6 +522,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
         tabPagerAdapter.getNowPlayingFragment().setInfo(currentSong);
         tabPagerAdapter.getPlaylistFragment().setItemChecked(currentSong);
+
+        mediaControllerFragment.initController(musicService);
 
     }
 

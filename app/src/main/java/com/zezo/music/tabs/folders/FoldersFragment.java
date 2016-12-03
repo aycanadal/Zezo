@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.R;
-import com.zezo.music.domain.Folder;
 import com.zezo.music.tabs.folders.FoldersAdapter.FolderClickListener;
 
 public class FoldersFragment extends Fragment implements FolderClickListener {

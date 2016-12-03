@@ -5,7 +5,7 @@
     android:focusable="false"
     android:focusableInTouchMode="false"
     android:orientation="vertical"
-    android:gravity="bottom"
+    android:gravity="top"
     android:windowSoftInputMode="adjustPan"
     android:paddingBottom="25sp">
 
@@ -45,12 +45,5 @@
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever" />
     </LinearLayout>
-
-    <fragment
-        android:id="@+id/playlistBottomPane"
-        android:name="com.zezo.music.tabs.playlist.MediaControllerFragment"
-        android:layout_width="match_parent"
-        android:layout_height="90dip"
-        android:layout_alignParentBottom="true" />
 
 </LinearLayout>

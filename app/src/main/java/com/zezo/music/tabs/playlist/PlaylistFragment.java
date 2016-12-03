@@ -26,7 +26,8 @@ import android.widget.Toast;
 import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.MusicService;
 import com.zezo.music.R;
-import com.zezo.music.domain.Song;
+import com.zezo.music.shared.Song;
+import com.zezo.music.shared.MediaControllerFragment;
 import com.zezo.music.tabs.playlist.PlaylistAdapter.SongClickListener;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener {
 
     private ListView songListView;
     private PlaylistAdapter playlistAdapter;
-    private MediaControllerFragment mediaControllerFragment;
+    //private MediaControllerFragment mediaControllerFragment;
     private boolean showBottomPane = true;
 
     @Override
@@ -67,32 +68,9 @@ public class PlaylistFragment extends Fragment implements SongClickListener {
         registerForContextMenu(songListView);
         setHasOptionsMenu(true);
 
-        mediaControllerFragment = (MediaControllerFragment) getChildFragmentManager().findFragmentById(R.id.playlistBottomPane);
+        //mediaControllerFragment = (MediaControllerFragment) getChildFragmentManager().findFragmentById(R.id.playlistBottomPane);
 
-        ImageButton nowPlayingToggle = (ImageButton) playlistView.findViewById(R.id.nowPlayingToggle);
-
-        nowPlayingToggle.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View nowPlayingToggle) {
-
-                if (mediaControllerFragment.isVisible()) {
-
-                    ((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsup);
-                    mediaControllerFragment.hide();
-                    showBottomPane = false;
-
-                } else {
-
-                    ((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsdown);
-                    mediaControllerFragment.show();
-                    showBottomPane = true;
-
-                }
-
-            }
-
-        });
+        /**/
 
         return playlistView;
 
@@ -231,7 +209,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener {
 
     }
 
-    public void initController(MusicService musicService) {
+    /*public void initController(MusicService musicService) {
 
         mediaControllerFragment.initController(musicService);
 
@@ -253,7 +231,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener {
 
         mediaControllerFragment.hide();
 
-    }
+    }*/
 
     public boolean isBottomDrawerOpen() {
 

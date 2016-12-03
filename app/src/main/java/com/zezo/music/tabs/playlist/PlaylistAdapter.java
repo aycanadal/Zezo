@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zezo.music.R;
-import com.zezo.music.domain.Song;
+import com.zezo.music.shared.Song;
 
 import java.util.ArrayList;
 

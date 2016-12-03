@@ -7,9 +7,6 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
-/**
- * Created by 1 on 3.09.2016.
- */
 abstract public class FragmentPagerAdapterExt extends FragmentPagerAdapter {
 
     private final SparseArray<Fragment> mFragments;

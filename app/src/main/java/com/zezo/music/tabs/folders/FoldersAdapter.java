@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.zezo.music.R;
-import com.zezo.music.domain.Folder;
 
 import java.io.File;
 import java.io.FilenameFilter;

@@ -17,7 +17,7 @@ import android.widget.ListView;
 
 import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.R;
-import com.zezo.music.domain.Song;
+import com.zezo.music.shared.Song;
 
 import java.util.ArrayList;
 
