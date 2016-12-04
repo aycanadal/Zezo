@@ -8,10 +8,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zezo.music.MusicPlayerActivity;
 import com.zezo.music.R;
@@ -29,14 +31,12 @@ public class FoldersFragment extends Fragment implements FolderClickListener {
     public void onAttach(Context context) {
 
         super.onAttach(context);
-
         sharedPreferences = context.getSharedPreferences(MusicPlayerActivity.PACKAGE_NAME, Context.MODE_PRIVATE);
 
         String preferredFolderPath = sharedPreferences.getString(MusicPlayerActivity.KEY_DIRECTORY_SELECTED,
                 Environment.getExternalStorageDirectory().toString());
 
         fileListAdapter = new FoldersAdapter(getActivity(), preferredFolderPath, this);
-
         currentFolderPath = preferredFolderPath;
 
     }
@@ -59,6 +59,14 @@ public class FoldersFragment extends Fragment implements FolderClickListener {
         menu.clear();
         inflater.inflate(R.menu.folders, menu);
         super.onCreateOptionsMenu(menu, inflater);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        ((MusicPlayerActivity) getActivity()).loadFolder(getCurrentFolderPath());
+        return true;
 
     }
 

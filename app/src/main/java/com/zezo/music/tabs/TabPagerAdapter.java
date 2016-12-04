@@ -3,8 +3,6 @@ package com.zezo.music.tabs;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
-import android.util.SparseArray;
 
 import com.zezo.music.R;
 import com.zezo.music.tabs.folders.FoldersFragment;
@@ -13,7 +11,7 @@ import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.tabs.queue.QueueFragment;
 import com.zezo.music.tabs.settings.SettingsFragment;
 
-public class TabPagerAdapter extends FragmentPagerAdapterExt implements ViewPager.OnPageChangeListener {
+public class TabPagerAdapter extends FragmentPagerAdapterExt{
 
     private final Context context;
 
@@ -93,7 +91,6 @@ public class TabPagerAdapter extends FragmentPagerAdapterExt implements ViewPage
 
     public PlaylistFragment getPlaylistFragment() {
 
-        SparseArray<Fragment> sparse = getFragments();
         return (PlaylistFragment) getFragments().get(Tabs.PLAYLIST.ordinal());
 
     }
@@ -110,43 +107,4 @@ public class TabPagerAdapter extends FragmentPagerAdapterExt implements ViewPage
 
     }
 
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-
-        //getNowPlayingFragment().hide();
-        //getPlaylistFragment().hideController();
-
-        Tabs tab = Tabs.values()[position];
-
-        switch (tab) {
-
-            case NOWPLAYING:
-                //getNowPlayingFragment().show();
-                break;
-
-            case PLAYLIST:
-                //if (getPlaylistFragment().isBottomDrawerOpen())
-                  //  getPlaylistFragment().showController();
-                break;
-
-            case QUEUE:
-                break;
-            case FOLDERS:
-                break;
-            case SETTINGS:
-                break;
-
-        }
-
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
 }

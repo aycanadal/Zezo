@@ -31,15 +31,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
-// Service to play music even if activity is sent to stack.
-
 public class MusicService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener, MediaButtonReceiverListener, OnAudioFocusChangeListener {
 
     private static final int NOTIFY_ID = 1;
-
     private Song currentSong;
-
     private ArrayList<Song> playlist = new ArrayList<Song>();
     private ArrayList<Song> queue = new ArrayList<Song>();
     private LinkedList<Long> history = new LinkedList<Long>();
@@ -48,7 +44,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private int pauseDuration = 0;
     private int pausePosition = 0;
     private MediaPlayer mediaPlayer;
-    private Random rand;
+    private Random randomGenerator = new Random();
     private boolean shuffle = false;
     private boolean isPlayerPrepared = false;
     private boolean isWaitingForResume = false;
@@ -62,8 +58,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private class HeadsetStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG) && !isInitialStickyBroadcast()) {
+
                 int state = intent.getIntExtra("state", -1);
                 switch (state) {
                     case 0:
@@ -72,8 +68,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                     case 1:
                         break;
                 }
-            }
 
+            }
         }
     }
 
@@ -106,16 +102,18 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     };
 
     public void addToQueue(Song song) {
+
         queue.add(song);
 
     }
 
     public void removeFromQueue(Song song) {
+
         queue.remove(song);
 
     }
 
-    public boolean audioFocusGranted() {
+    public boolean getAudioFocus() {
 
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
@@ -163,34 +161,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         }
 
         return null;
-    }
-
-    public Song getSongByIndex(int index) {
-        return playlist.get(index);
-    }
-
-    public void initMusicPlayer() {
-
-        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-        mediaPlayer.setOnPreparedListener(this);
-        mediaPlayer.setOnCompletionListener(this);
-        mediaPlayer.setOnErrorListener(this);
-
-        IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-        headsetStateReceiver = new HeadsetStateReceiver();
-        registerReceiver(headsetStateReceiver, receiverFilter);
-
-        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
-        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        this.registerReceiver(onBluetoothStateChangeReceiver, filter1);
-        this.registerReceiver(onBluetoothStateChangeReceiver, filter2);
-        this.registerReceiver(onBluetoothStateChangeReceiver, filter3);
-
-        audioFocusGranted();
-
     }
 
     public boolean isPlaying() {
@@ -251,7 +221,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public IBinder onBind(Intent intent) {
 
-        Log.d("Service Lifecycle", "onBind");
         return musicBind;
 
     }
@@ -259,31 +228,41 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onCompletion(MediaPlayer mp) {
 
-        Log.d("MediaPlayer", "onCompletion");
-
         if (mediaPlayer.getCurrentPosition() > 0) {
             mp.reset();
             playNext();
         }
+
     }
 
     @Override
     public void onCreate() {
 
-        Log.d("Service LifeCycle", "onCreate");
-
         super.onCreate();
 
         mediaPlayer = new MediaPlayer();
-        initMusicPlayer();
-        rand = new Random();
+        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mediaPlayer.setOnPreparedListener(this);
+        mediaPlayer.setOnCompletionListener(this);
+        mediaPlayer.setOnErrorListener(this);
+
+        IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        headsetStateReceiver = new HeadsetStateReceiver();
+        registerReceiver(headsetStateReceiver, receiverFilter);
+        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        this.registerReceiver(onBluetoothStateChangeReceiver, filter1);
+        this.registerReceiver(onBluetoothStateChangeReceiver, filter2);
+        this.registerReceiver(onBluetoothStateChangeReceiver, filter3);
+
+        getAudioFocus();
 
     }
 
     @Override
     public void onDestroy() {
-
-        Log.d("Service LifeCycle", "onDestroy");
 
         unregisterReceiver(headsetStateReceiver);
         unregisterReceiver(onBluetoothStateChangeReceiver);
@@ -294,8 +273,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-
-        Log.d("MediaPlayer", "onError");
 
         if (what == 1 && extra == -2147483648)
             Toast.makeText(this, "File type not supported.", Toast.LENGTH_SHORT).show();
@@ -375,16 +352,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return START_STICKY;
     }
 
-    @Override
-    public boolean onUnbind(Intent intent) {
-
-        Log.d("Service LifeCycle", "onUnbind");
-        //mediaPlayer.stop();
-        //mediaPlayer.release();
-        return false;
-
-    }
-
     public void pause() {
 
         pauseDuration = getDuration();
@@ -395,7 +362,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     public void play() {
 
-        if (!audioFocusGranted() || getCurrentSong() == null)
+        if (!getAudioFocus() || getCurrentSong() == null)
             return;
 
         if (isPlayerPrepared)
@@ -424,15 +391,25 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         if (isShuffling()) {
 
-            int newSongIndex = rand.nextInt(playlist.size());
-            long newSongId = getCurrentSong().getId();
+            Song currentSong = getCurrentSong();
+            int newSongIndex;
 
-            while (newSongId == getCurrentSong().getId()) {
+            if (currentSong == null) {
 
-                newSongIndex = rand.nextInt(playlist.size());
-                newSongId = playlist.get(newSongIndex).getId();
+                newSongIndex = randomGenerator.nextInt(playlist.size());
+                playSong(playlist.get(newSongIndex));
+                return;
 
             }
+
+            long newSongId;
+
+            do {
+
+                newSongIndex = randomGenerator.nextInt(playlist.size());
+                newSongId = playlist.get(newSongIndex).getId();
+
+            } while (newSongId == currentSong.getId());
 
             playSong(playlist.get(newSongIndex));
 
@@ -553,9 +530,4 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return playlist;
 
     }
-
-    public MediaPlayer getMediaPlayer() {
-        return mediaPlayer;
-    }
-
 }
