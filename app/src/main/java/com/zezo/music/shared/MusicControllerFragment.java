@@ -12,7 +12,7 @@ import com.zezo.music.MusicController;
 import com.zezo.music.MusicService;
 import com.zezo.music.R;
 
-public class MediaControllerFragment extends Fragment {
+public class MusicControllerFragment extends Fragment {
 
     private FrameLayout controllerFrame;
     private MusicController musicController = null;
@@ -20,7 +20,7 @@ public class MediaControllerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        Log.d("MediaControllerFragment", "onCreateView");
+        Log.d("MusicControllerFragment", "onCreateView");
 
         View view = inflater.inflate(R.layout.mediacontroller, container, false);
         controllerFrame = (FrameLayout) view.findViewById(R.id.controllerFrame);
@@ -29,20 +29,25 @@ public class MediaControllerFragment extends Fragment {
             musicController = new MusicController(getActivity());
 
         musicController.setAnchorView(controllerFrame);
+        musicController.setMediaPlayer(musicController);
+        setRetainInstance(true);
         return view;
     }
 
     public void initController(MusicService musicService) {
 
         musicController.init(musicService);
-        musicController.setMusicBound(true);
-        musicController.show(0);
+       //musicController.setMusicBound(true);
+        //musicController.show(0);
 
     }
 
-    public void unbindController() {
+    public void show() {
 
-        musicController.setMusicBound(false);
+        musicController.show(0);
+        musicController.setVisibility(View.VISIBLE);
+        controllerFrame.setVisibility(View.VISIBLE);
+        getChildFragmentManager().beginTransaction().show(this).commit();
 
     }
 
@@ -55,13 +60,16 @@ public class MediaControllerFragment extends Fragment {
 
     }
 
-    public void show() {
+    public void hideController(){
 
-        musicController.show(0);
-        musicController.setVisibility(View.VISIBLE);
-        controllerFrame.setVisibility(View.VISIBLE);
-        getChildFragmentManager().beginTransaction().show(this).commit();
+        musicController.hideSuper();
 
     }
+
+     /*public void unbindController() {
+
+        musicController.setMusicBound(false);
+
+    }*/
 
 }

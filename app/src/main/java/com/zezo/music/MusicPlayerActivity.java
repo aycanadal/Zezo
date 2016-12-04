@@ -35,12 +35,11 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.zezo.music.MusicService.MusicBinder;
-import com.zezo.music.shared.MediaControllerFragment;
+import com.zezo.music.shared.MusicControllerFragment;
 import com.zezo.music.shared.Song;
 import com.zezo.music.tabs.TabPagerAdapter;
 import com.zezo.music.tabs.TabPagerAdapter.Tabs;
 import com.zezo.music.tabs.folders.FoldersFragment;
-import com.zezo.music.tabs.nowplaying.NowPlayingFragment;
 import com.zezo.music.tabs.playlist.PlaylistFragment;
 import com.zezo.music.util.Util;
 import com.zezo.music.util.YesNoDialogFragment;
@@ -59,7 +58,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     private MusicService musicService;
     private Intent musicServiceIntent;
     private Menu optionsMenu;
-    private MediaControllerFragment mediaControllerFragment;
+    private MusicControllerFragment musicControllerFragment;
 
     private ServiceConnection musicServiceConnection = new ServiceConnection() {
 
@@ -87,6 +86,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             if (playlistFragment != null)
                 playlistFragment.loadPlaylist(musicService.getPlaylist());
 
+            musicControllerFragment.initController(musicService);
+
             updateViewsWithCurrentState();
 
         }
@@ -97,7 +98,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
            /* tabPagerAdapter.getNowPlayingFragment().unbindController();
             tabPagerAdapter.getPlaylistFragment().unbindController();*/
 
-            mediaControllerFragment.unbindController();
+            //musicControllerFragment.unbindController();
             musicService = null;
 
         }
@@ -117,6 +118,25 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
         }
     };
+
+    public void updateViewsWithCurrentState() {
+
+        updateShuffleIcon();
+
+
+        musicControllerFragment.show();
+
+        Song currentSong = musicService.getCurrentSong();
+
+        if (currentSong == null)
+            return;
+
+        tabPagerAdapter.getNowPlayingFragment().setInfo(currentSong);
+        tabPagerAdapter.getPlaylistFragment().setItemChecked(currentSong);
+
+        musicControllerFragment.initController(musicService);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +159,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         viewPager.setOffscreenPageLimit(5);
         viewPager.addOnPageChangeListener(tabPagerAdapter);
 
-        mediaControllerFragment = (MediaControllerFragment) getSupportFragmentManager().findFragmentById(R.id.mediaController);
+        musicControllerFragment = (MusicControllerFragment) getSupportFragmentManager().findFragmentById(R.id.mediaController);
+
 
         ImageButton nowPlayingToggle = (ImageButton) findViewById(R.id.mediaControllerToggle);
 
@@ -148,16 +169,16 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
             @Override
             public void onClick(View nowPlayingToggle) {
 
-                if (mediaControllerFragment.isVisible()) {
+                if (musicControllerFragment.isVisible()) {
 
                     ((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsup);
-                    mediaControllerFragment.hide();
+                    musicControllerFragment.hide();
                     //showBottomPane = false;
 
                 } else {
 
                     ((ImageButton) nowPlayingToggle).setImageResource(R.drawable.arrowsdown);
-                    mediaControllerFragment.show();
+                    musicControllerFragment.show();
                     //showBottomPane = true;
 
                 }
@@ -199,7 +220,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
 
                 });
 
-        viewPager.requestLayout(); // To get onGlobalLayout called for sure because it doesn't get called every other time activity is started from notification.
+        // To get onGlobalLayout called for sure because it doesn't get called every other time activity is started from notification.
+        viewPager.requestLayout();
 
     }
 
@@ -215,6 +237,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
     protected void onStop() {
 
         Log.d("Lifecycle", "onStop");
+        musicControllerFragment.hideController();
         super.onStop();
 
     }
@@ -497,34 +520,4 @@ public class MusicPlayerActivity extends AppCompatActivity implements OnDeleteCo
         item.setIcon(shuffleIcon);
 
     }
-
-    public void updateViewsWithCurrentState() {
-
-        NowPlayingFragment nowPlayingFragment = tabPagerAdapter.getNowPlayingFragment();
-
-        //if (nowPlayingFragment != null) {
-            //nowPlayingFragment.initController(musicService);
-            //if (viewPager.getCurrentItem() == Tabs.NOWPLAYING.ordinal())
-                //nowPlayingFragment.show();
-        //}
-
-       // PlaylistFragment playlistFragment = tabPagerAdapter.getPlaylistFragment();
-
-        //if (playlistFragment != null)
-            //playlistFragment.initController(musicService);
-
-        updateShuffleIcon();
-
-        Song currentSong = musicService.getCurrentSong();
-
-        if (currentSong == null)
-            return;
-
-        tabPagerAdapter.getNowPlayingFragment().setInfo(currentSong);
-        tabPagerAdapter.getPlaylistFragment().setItemChecked(currentSong);
-
-        mediaControllerFragment.initController(musicService);
-
-    }
-
 }

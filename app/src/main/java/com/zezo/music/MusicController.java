@@ -15,6 +15,28 @@ public final class MusicController extends MediaController implements MediaPlaye
         super(new ContextThemeWrapper(context, R.style.MediaController));
     }
 
+    public void init(MusicService musicService) {
+
+        this.musicService = musicService;
+
+        setPrevNextListeners(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                playNext();
+            }
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playPrev();
+            }
+        });
+
+        setMediaPlayer(this);
+        setEnabled(true);
+
+    }
+
     @Override
     public boolean canPause() {
         return true;
@@ -42,9 +64,9 @@ public final class MusicController extends MediaController implements MediaPlaye
 
     @Override
     public int getCurrentPosition() {
-        if (musicService != null && isMusicBound() && musicService.isPlaying())
+        if (musicService != null /*&& isMusicBound()*/ && musicService.isPlaying())
             return musicService.getPosition();
-        else if (musicService != null && isMusicBound())
+        else if (musicService != null /*&& isMusicBound()*/)
             return musicService.getPausePosition();
         else
             return 0;
@@ -53,10 +75,10 @@ public final class MusicController extends MediaController implements MediaPlaye
     @Override
     public int getDuration() {
 
-        if (musicService != null && isMusicBound() && musicService.isPlaying())
+        if (musicService != null /*&& isMusicBound()*/ && musicService.isPlaying())
             return musicService.getDuration();
 
-        else if (musicService != null && isMusicBound())
+        else if (musicService != null /*&& isMusicBound()*/)
             return musicService.getPauseDuration();
 
         else
@@ -75,35 +97,10 @@ public final class MusicController extends MediaController implements MediaPlaye
 
     }
 
-    public void init(MusicService musicService) {
-
-        this.musicService = musicService;
-
-        setPrevNextListeners(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                playNext();
-            }
-        }, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playPrev();
-            }
-        });
-
-        setMediaPlayer(this);
-        setEnabled(true);
-
-    }
-
-    public boolean isMusicBound() {
-        return isMusicBound;
-    }
 
     @Override
     public boolean isPlaying() {
-        if (musicService != null & isMusicBound())
+        if (musicService != null /*& isMusicBound()*/)
             return musicService.isPlaying();
         return false;
     }
@@ -128,26 +125,32 @@ public final class MusicController extends MediaController implements MediaPlaye
 
     }
 
-    public void setMusicBound(boolean musicBound) {
-        this.isMusicBound = musicBound;
-    }
-
     @Override
     public void start() {
 
         musicService.play();
-        // show(0);
 
     }
 
     private void playNext() {
+
         musicService.playNext();
-        // show(0);
+
     }
 
     private void playPrev() {
+
         musicService.playPrevious();
-        // show(0);
+
     }
+
+     /* public boolean isMusicBound() {
+        return isMusicBound;
+    }*/
+
+    /* public void setMusicBound(boolean musicBound) {
+        this.isMusicBound = musicBound;
+    }*/
+
 
 }

@@ -212,7 +212,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
 
-            if(isPlaying()) {
+            if (isPlaying()) {
                 pause();
                 isWaitingForResume = true;
             }
@@ -227,7 +227,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
             registerMediaButtonListener();
 
-            if(isWaitingForResume){
+            if (isWaitingForResume) {
                 play();
                 Toast.makeText(this, "Resumed playing.", Toast.LENGTH_LONG).show();
             }
@@ -543,7 +543,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public ArrayList<Song> getQueue() {
+
         return queue;
+
     }
 
     public ArrayList<Song> getPlaylist() {
@@ -551,4 +553,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return playlist;
 
     }
+
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
+    }
+
 }

@@ -11,16 +11,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.zezo.music.MusicPlayerActivity;
-import com.zezo.music.MusicService;
 import com.zezo.music.R;
 import com.zezo.music.shared.Song;
-import com.zezo.music.shared.MediaControllerFragment;
 
 public class NowPlayingFragment extends Fragment {
 
     private TextView currentArtistView;
     private TextView currentTitleView;
-    //private MediaControllerFragment mediaControllerFragment;
+    //private MusicControllerFragment mediaControllerFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,7 +36,7 @@ public class NowPlayingFragment extends Fragment {
         View view = inflater.inflate(R.layout.nowplaying, container, false);
         currentTitleView = (TextView) view.findViewById(R.id.currentTitle);
         currentArtistView = (TextView) view.findViewById(R.id.currentArtist);
-       //mediaControllerFragment = (MediaControllerFragment) getChildFragmentManager().findFragmentById(R.id.playlistBottomPane);
+       //mediaControllerFragment = (MusicControllerFragment) getChildFragmentManager().findFragmentById(R.id.playlistBottomPane);
         return view;
     }
 

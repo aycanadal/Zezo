@@ -19,15 +19,12 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.zezo.music.MusicPlayerActivity;
-import com.zezo.music.MusicService;
 import com.zezo.music.R;
 import com.zezo.music.shared.Song;
-import com.zezo.music.shared.MediaControllerFragment;
 import com.zezo.music.tabs.playlist.PlaylistAdapter.SongClickListener;
 
 import java.util.ArrayList;
@@ -36,7 +33,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener {
 
     private ListView songListView;
     private PlaylistAdapter playlistAdapter;
-    //private MediaControllerFragment mediaControllerFragment;
+    //private MusicControllerFragment mediaControllerFragment;
     private boolean showBottomPane = true;
 
     @Override
@@ -68,7 +65,7 @@ public class PlaylistFragment extends Fragment implements SongClickListener {
         registerForContextMenu(songListView);
         setHasOptionsMenu(true);
 
-        //mediaControllerFragment = (MediaControllerFragment) getChildFragmentManager().findFragmentById(R.id.playlistBottomPane);
+        //mediaControllerFragment = (MusicControllerFragment) getChildFragmentManager().findFragmentById(R.id.playlistBottomPane);
 
         /**/
 
