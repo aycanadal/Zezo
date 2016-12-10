@@ -47,7 +47,7 @@ public class MusicControllerFragment extends Fragment {
         musicController.show(0);
         musicController.setVisibility(View.VISIBLE);
         controllerFrame.setVisibility(View.VISIBLE);
-        getChildFragmentManager().beginTransaction().show(this).commit();
+        getChildFragmentManager().beginTransaction().show(this).commitAllowingStateLoss();
 
     }
 

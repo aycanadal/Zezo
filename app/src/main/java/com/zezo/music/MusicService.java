@@ -458,7 +458,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         } catch (IllegalStateException e) {
             e.printStackTrace();
         } catch (Exception e) {
-            Log.e("MUSIC SERVICE", "Error setting data source", e);
+            Toast.makeText(this, "Cannot play media.", Toast.LENGTH_SHORT).show();
         }
 
     }
