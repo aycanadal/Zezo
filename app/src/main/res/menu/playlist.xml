@@ -1,12 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ayco="http://schemas.android.com/apk/res-auto">
+    xmlns:zezo="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/search"
         android:icon="@drawable/magnifierwhite40"
         android:title="search"
-        ayco:showAsAction="always"
-        ayco:actionViewClass="android.support.v7.widget.SearchView"
+        zezo:showAsAction="always"
+        zezo:actionViewClass="android.support.v7.widget.SearchView"
         android:orderInCategory="1" />
 
     <item
@@ -14,12 +14,12 @@
         android:icon="@drawable/shufflegrey40"
         android:orderInCategory="3"
         android:title="@string/Shuffle"
-        ayco:showAsAction="always" />
+        zezo:showAsAction="always" />
     <item
         android:id="@+id/action_exit"
         android:icon="@drawable/whitex"
         android:orderInCategory="4"
         android:title="@string/Exit"
-        ayco:showAsAction="always" />
+        zezo:showAsAction="always" />
 
 </menu>

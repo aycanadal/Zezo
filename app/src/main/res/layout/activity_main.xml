@@ -36,7 +36,7 @@
 
     <fragment
         android:id="@+id/mediaController"
-        android:name="com.ayco.player.shared.MusicControllerFragment"
+        android:name="com.zezo.music.shared.MusicControllerFragment"
         android:layout_width="match_parent"
         android:layout_height="90dip"
         android:layout_alignParentBottom="true" />
