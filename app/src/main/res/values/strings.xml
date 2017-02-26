@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Zezo</string>
+    <string name="app_name">ayco</string>
     <string name="search_hint">Search songs</string>
-    <string name="zezo">zezo</string>
+    <string name="ayco">ayco</string>
     <string name="Settings">Settings</string>
     <string name="Exit">Exit</string>
     <string name="Search">Search</string>

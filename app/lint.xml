@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <lint>
     <issue id="NewApi">
-        <ignore path="src/com/zezo/zezomusicplayer/MusicService.java" />
+        <ignore path="src/com/ayco/player/MusicService.java" />
     </issue>
 </lint>
