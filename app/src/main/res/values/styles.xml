@@ -20,7 +20,7 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
-    <style name="MyActionBar" parent="style/Widget.AppCompat.ActionBar">
+    <style name="MyActionBar" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:titleTextStyle">@style/NoTitleText</item>
         <item name="android:subtitleTextStyle">@style/NoTitleText</item>
         <item name="background">@color/Black</item>
